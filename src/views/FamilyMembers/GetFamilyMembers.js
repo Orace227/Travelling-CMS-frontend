@@ -136,7 +136,7 @@ export default function GetFamilyMembers() {
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       // If the checkbox is checked, select all items
-      const newSelecteds = USERLIST.map((n) => n.FamilyMemberId);
+      const newSelecteds = USERLIST.map((n) => n.clientId);
       setSelected(newSelecteds);
     } else {
       // If the checkbox is unchecked, clear the selection
@@ -750,7 +750,7 @@ export default function GetFamilyMembers() {
                       </>
                     );
                   })}
-                  {emptyRows == 0 && (
+                  {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
                     </TableRow>
