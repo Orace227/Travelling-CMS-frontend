@@ -4,6 +4,8 @@ import { lazy } from 'react';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import CreateCustomer from 'views/Customer/CreateCustomer';
+import CreateFamilyMembers from 'views/FamilyMembers/CreateFamilyMembers';
+// import GetFamilyMemers from 'views/FamilyMembers/GetFamilymembers';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
@@ -12,6 +14,7 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')))
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
 const Customers = Loadable(lazy(() => import('views/Customer/Customers')));
+const GetFamilyMembers = Loadable(lazy(() => import('views/FamilyMembers/GetFamilyMembers')));
 const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
@@ -44,6 +47,14 @@ const MainRoutes = {
     {
       path: '/createCustomer',
       element: <CreateCustomer />
+    },
+    {
+      path: '/familyMembers',
+      element: <GetFamilyMembers />
+    },
+    {
+      path: '/CreatefamilyMembers',
+      element: <CreateFamilyMembers />
     },
     {
       path: 'utils',

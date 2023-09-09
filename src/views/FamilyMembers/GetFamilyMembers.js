@@ -32,7 +32,7 @@ import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -83,16 +83,14 @@ function applySortFilter(array, comparator, query) {
 // };
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'relationship', label: 'relationship', alignRight: false },
   { id: 'Mobile', label: 'Mobile No', alignRight: false },
   { id: 'Email', label: 'Email', alignRight: false },
-  { id: 'Family Members', label: 'Family Members', alignRight: false },
-  { id: 'total Bookings', label: 'total Bookings', alignRight: false },
   { id: 'address', label: 'address', alignRight: false },
   { id: 'action', label: 'action' }
 ];
 
-export default function Customers() {
+export default function GetFamilyMembers() {
   // const [open, setOpen] = useState(null);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -103,17 +101,26 @@ export default function Customers() {
   const [USERLIST, setUserlist] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editedUserData, setEditedUserData] = useState([]);
+  const [CLIENTID, setCLIENTID] = useState();
+  const location = useLocation();
 
-  const fetchCustomers = async () => {
-    const customers = await axios.get('/getclients');
-    // console.log(customers.data.allClients[0]);
-    const customersData = customers.data.allClients;
-    setUserlist(customersData);
+  const fetchFamilyMembers = async () => {
+    const searchParams = new URLSearchParams(location.search);
+    const queryParams = searchParams.get('clientId');
+    setCLIENTID(queryParams);
+    // console.log(queryParams)
+    const url = `/getFamilyMembers?id=${queryParams}`;
+    // console.log(url)
+    const familyMembers = await axios.get(url);
+    // console.log(familyMembers.data);
+    const familyMembersData = familyMembers.data.allFamilyMembers;
+    setUserlist(familyMembersData);
   };
 
   useEffect(() => {
-    fetchCustomers();
+    fetchFamilyMembers();
     // console.log(USERLIST);
+    // eslint-disable-next-line
   }, []);
 
   // const handleCloseMenu = () => {
@@ -129,7 +136,7 @@ export default function Customers() {
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       // If the checkbox is checked, select all items
-      const newSelecteds = USERLIST.map((n) => n.clientId);
+      const newSelecteds = USERLIST.map((n) => n.FamilyMemberId);
       setSelected(newSelecteds);
     } else {
       // If the checkbox is unchecked, clear the selection
@@ -137,16 +144,16 @@ export default function Customers() {
     }
   };
 
-  const handleClick = (event, clientId) => {
-    const selectedIndex = selected.indexOf(clientId);
+  const handleClick = (event, FamilyMemberId) => {
+    const selectedIndex = selected.indexOf(FamilyMemberId);
     let newSelected = [];
 
     if (selectedIndex === -1) {
       // If the item is not selected, add it to the selection
-      newSelected = [...selected, clientId];
+      newSelected = [...selected, FamilyMemberId];
     } else if (selectedIndex >= 0) {
       // If the item is selected, remove it from the selection
-      newSelected = selected.filter((id) => id !== clientId);
+      newSelected = selected.filter((id) => id !== FamilyMemberId);
     }
 
     setSelected(newSelected);
@@ -179,11 +186,11 @@ export default function Customers() {
   };
   const handleDeleteCustomer = async (row) => {
     try {
-      const user = USERLIST.find((user) => user.clientId == row.clientId);
+      const user = USERLIST.find((user) => user.FamilyMemberId == row.FamilyMemberId);
       console.log(user);
       const isDelete = window.confirm('Are you sure you want to delete customer having name ' + user.firstName + user.lastName);
       if (isDelete) {
-        const deletedCustomer = await axios.post('/deleteClient', { clientId: user.clientId });
+        const deletedCustomer = await axios.post('/DeleteFamilyMember', { clientId: user.clientId, FamilyMemberId: user.FamilyMemberId });
         if (deletedCustomer) {
           toast.success('Customer deleted successfully!!');
         }
@@ -233,14 +240,11 @@ export default function Customers() {
     city: Yup.string().required('City is required'),
     country: Yup.string().required('Country is required'),
     postalCode: Yup.string().required('Postal Code is required'),
-    foodPreferences: Yup.string(),
-    companyName: Yup.string(),
-    companyGSTNumber: Yup.string(),
-    companyGSTEmail: Yup.string().email('Invalid email address')
+    foodPreferences: Yup.string()
   });
   const handleSubmit = async () => {
     // console.log(editedUserData);
-    const updatedCustomer = await axios.post('/updateClient', editedUserData);
+    const updatedCustomer = await axios.post('/updateFamilyMember', editedUserData);
     console.log(updatedCustomer);
     toast.success('Customer updated successfully!!');
     handleSaveChanges();
@@ -248,6 +252,7 @@ export default function Customers() {
     // console.log(createdUser);
     // window.location.reload();
   };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -259,11 +264,17 @@ export default function Customers() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={4}>
           <Typography variant="h1" gutterBottom>
-            Customers
+            Family Members
           </Typography>
-          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            Add Customer
-          </Button> */}
+          <Button
+            component={Link}
+            to={`/createFamilyMembers?clientId=${CLIENTID}`} 
+            variant="contained"
+            style={{ textAlign: 'center' }}
+            color="primary"
+          >
+            Add Family members
+          </Button>
         </Stack>
         <Toaster />
         {openEditModal && (
@@ -695,14 +706,15 @@ export default function Customers() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // console.log(row);
-                    const { clientId, firstName, lastName, companyName, familyMembers, totalBookings, email, mobile, address } = row;
-                    const selectedUser = selected.indexOf(clientId) !== -1;
+                    const { FamilyMemberId, firstName, lastName, email, mobile, address,relationship } = row;
+                    // console.log(row)
+                    const selectedUser = selected.indexOf(FamilyMemberId) !== -1;
 
                     return (
                       <>
-                        <TableRow hover key={clientId} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                        <TableRow hover key={FamilyMemberId} tabIndex={-1} role="checkbox" selected={selectedUser}>
                           <TableCell padding="checkbox">
-                            <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, clientId)} />
+                            <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, FamilyMemberId)} />
                           </TableCell>
 
                           <TableCell align="left">
@@ -710,15 +722,12 @@ export default function Customers() {
                               {firstName} {lastName}
                             </Typography>
                           </TableCell>
-
-                          <TableCell align="left">{companyName}</TableCell>
+                          <TableCell align="left">{relationship}</TableCell>
 
                           <TableCell align="left">{mobile}</TableCell>
 
                           <TableCell align="left">{email}</TableCell>
 
-                          <TableCell align="left">{familyMembers}</TableCell>
-                          <TableCell align="left">{totalBookings}</TableCell>
                           <TableCell align="left">{address}</TableCell>
 
                           <TableCell align="left">
@@ -735,21 +744,13 @@ export default function Customers() {
                             >
                               <Iconify icon={'eva:trash-2-outline'} />
                             </IconButton>
-                            <Button
-                              component={Link}
-                              to={`/familyMembers?clientId=${clientId}`} // Specify the correct URL here
-                              variant="contained"
-                              style={{textAlign: 'center'}}
-                              color="primary"
-                            >
-                              Go to Details
-                            </Button>
+                            
                           </TableCell>
                         </TableRow>
                       </>
                     );
                   })}
-                  {emptyRows > 0 && (
+                  {emptyRows == 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
                     </TableRow>
