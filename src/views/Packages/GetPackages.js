@@ -38,9 +38,9 @@ export default function GetPackages() {
     GetPackages();
   }, []);
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={5}>
       {allPackages.map((Package) => (
-        <Grid key={Package._id} item xs={12} sm={6} md={4}>
+        <Grid key={Package._id} item xs={12} md={4}>
           <ShopProductCard Package={Package} />
         </Grid>
       ))}

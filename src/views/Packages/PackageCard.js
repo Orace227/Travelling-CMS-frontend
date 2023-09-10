@@ -4,17 +4,17 @@ import { IconArrowUpRight } from '@tabler/icons';
 
 import { Box, Card, Link, Typography, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
-// import img from '../../assets/images/banner.jpg';
+import img from '../../assets/images/banner.jpg';
 // import { width } from '@mui/system';
 const StyledPackageCard = styled('img')({
   top: 0,
   width: '100%',
   height: '200px',
   objectFit: 'cover',
-  position: 'absolute',
-  borderTopRightRadius: '15px',
-  borderTopLeftRadius: '15px',
-  border: '3px solid blue'
+  position: 'absolute'
+  // borderTopRightRadius: '15px',
+  // borderTopLeftRadius: '15px',
+  // border: '3px solid blue'
 });
 
 // ----------------------------------------------------------------------
@@ -24,10 +24,10 @@ PackageCard.propTypes = {
 };
 
 export default function PackageCard({ Package }) {
-  const { packageName, packageDesc, packageImgPath } = Package;
+  const { packageName, packageDesc } = Package;
 
   return (
-    <Card>
+    <Card sx={{ boxShadow: '10px 43px 100px -48px rgba(0,0,0,0.1)' }}>
       <Box sx={{ pt: '200px', position: 'relative' }}>
         {/* {status && (
           <Label
@@ -44,7 +44,7 @@ export default function PackageCard({ Package }) {
             NEW
           </Label>
         )} */}
-        <StyledPackageCard alt={packageName} src={packageImgPath} />
+        <StyledPackageCard alt={packageName} src={img} />
       </Box>
 
       <Stack spacing={2} sx={{ pl: 2, pb: 2, pr: 2, pt: 3 }} alignItems="center">
