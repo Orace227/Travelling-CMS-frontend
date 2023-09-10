@@ -742,7 +742,7 @@ export default function Customers() {
                               style={{textAlign: 'center'}}
                               color="primary"
                             >
-                              Go to Details
+                              Family Details
                             </Button>
                           </TableCell>
                         </TableRow>

@@ -221,9 +221,13 @@ export default function GetFamilyMembers() {
     mobile: Yup.string()
       .matches(/^[0-9]{10}$/, 'Mobile must contain exactly 10 digits')
       .required('Mobile is required'),
-    // dateOfBirth: Yup.date().required('Date of Birth is required'),
+    dateOfBirth: Yup.date().required('Date of Birth is required'),
     passportNumber: Yup.string().required('Passport Number is required'),
-    // passportExpiryDate: Yup.date().required('Passport Expiry Date is required'),
+    passportExpiryDate: Yup.date().required('Passport Expiry Date is required'),
+    address: Yup.string().required('Address is required'),
+    city: Yup.string().required('City is required'),
+    country: Yup.string().required('Country is required'),
+    postalCode: Yup.string().required('Postal Code is required'),
     frequentFlyerNumbers: Yup.array().of(
       Yup.object().shape({
         type: Yup.string().required('Frequent Flyer Type is required'),
@@ -235,18 +239,13 @@ export default function GetFamilyMembers() {
         type: Yup.string().required('Hotel Loyalty Type is required'),
         number: Yup.string().required('Hotel Loyalty Number is required')
       })
-    ),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('City is required'),
-    country: Yup.string().required('Country is required'),
-    postalCode: Yup.string().required('Postal Code is required'),
-    foodPreferences: Yup.string()
+    )
   });
   const handleSubmit = async () => {
     // console.log(editedUserData);
     const updatedCustomer = await axios.post('/updateFamilyMember', editedUserData);
     console.log(updatedCustomer);
-    toast.success('Customer updated successfully!!');
+    toast.success('Family Member updated successfully!!');
     handleSaveChanges();
     window.location.reload();
     // console.log(createdUser);
@@ -268,7 +267,7 @@ export default function GetFamilyMembers() {
           </Typography>
           <Button
             component={Link}
-            to={`/createFamilyMembers?clientId=${CLIENTID}`} 
+            to={`/createFamilyMembers?clientId=${CLIENTID}`}
             variant="contained"
             style={{ textAlign: 'center' }}
             color="primary"
@@ -283,7 +282,9 @@ export default function GetFamilyMembers() {
             <DialogContent>
               <Container>
                 <Formik initialValues={editedUserData} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                  {() => (
+                  {(
+                    { values } // Use values from Formik props
+                  ) => (
                     <Form>
                       <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
@@ -317,6 +318,22 @@ export default function GetFamilyMembers() {
                             variant="outlined"
                           />
                           <ErrorMessage name="lastName" component="div" className="error" style={{ color: 'red' }} />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <Field
+                            name="relationship"
+                            as={TextField}
+                            label="relationship"
+                            value={editedUserData.relationship || ' '}
+                            onChange={(e) => {
+                              const updatedUserData = { ...editedUserData, relationship: e.target.value };
+                              setEditedUserData(updatedUserData);
+                            }}
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                          />
+                          <ErrorMessage name="relationship" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <Field
@@ -361,10 +378,13 @@ export default function GetFamilyMembers() {
                             name="dateOfBirth"
                             as={TextField}
                             label="Date of Birth"
-                            // value={editedUserData.dateOfBirth}
-                            // onChange = {(e) =>{
-                            //   const updatedUserData = {...editedUserData,dateOfBirth : e.target.value}
-                            //   setEditedUserData(updatedUserData)}}
+                            // onChange={(e) => {
+                            //   console.log(editedUserData.dateOfBirth.split("T"))
+                            //   const inputValue = e.target.value;
+                            //   const formattedDate = inputValue.replace(/(\d{4})-(\d{2})-(\d{2})/, '$1-$2-dd'); // Replace "dd" with "gg"
+                            //   const updatedUserData = { ...editedUserData, dateOfBirth: formattedDate };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             type="date"
                             fullWidth
                             margin="normal"
@@ -375,6 +395,7 @@ export default function GetFamilyMembers() {
                           />
                           <ErrorMessage name="dateOfBirth" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
+
                         <Grid item xs={12} sm={6}>
                           <Field
                             name="passportNumber"
@@ -395,10 +416,11 @@ export default function GetFamilyMembers() {
                           <Field
                             name="passportExpiryDate"
                             as={TextField}
-                            // value={editedUserData.passportExpiryDate}
-                            // onChange = {(e) =>{
-                            //   const updatedUserData = {...editedUserData,passportExpiryDate : e.target.value}
-                            //   setEditedUserData(updatedUserData)}}
+                            value={editedUserData?.passportExpiryDate || ''}
+                            onChange={(e) => {
+                              const updatedUserData = { ...editedUserData, passportExpiryDate: e.target.value };
+                              setEditedUserData(updatedUserData);
+                            }}
                             label="Passport Expiry Date"
                             type="date"
                             fullWidth
@@ -407,9 +429,13 @@ export default function GetFamilyMembers() {
                             InputLabelProps={{
                               shrink: true
                             }}
+                            inputProps={{
+                              pattern: '\\d{4}-\\d{2}-\\d{2}' // Ensure the date is in yyyy-mm-dd format
+                            }}
                           />
                           <ErrorMessage name="passportExpiryDate" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
+
                         <Grid item xs={12}>
                           <Typography variant="h5" gutterBottom>
                             Frequent Flyer Numbers
@@ -417,17 +443,19 @@ export default function GetFamilyMembers() {
                           <FieldArray name="frequentFlyerNumbers">
                             {({ push, remove }) => (
                               <div>
-                                {editedUserData.frequentFlyerNumbers.map((ffNumber, index) => (
+                                {values.frequentFlyerNumbers.map((ffNumber, index) => (
                                   <div key={index}>
                                     <Field
                                       name={`frequentFlyerNumbers[${index}].type`}
                                       as={TextField}
                                       label="Frequent Flyer Type"
-                                      value={editedUserData.frequentFlyerNumbers[index].type || ' '}
+                                      value={editedUserData?.frequentFlyerNumbers[index]?.type || ' '}
                                       onChange={(e) => {
+                                        console.log('Change event triggered'); // Debugging line
                                         const updatedUserData = { ...editedUserData };
                                         const frequentFlyerNumbers = [...updatedUserData.frequentFlyerNumbers];
                                         frequentFlyerNumbers[index].type = e.target.value;
+                                        console.log('Updated type:', e.target.value); // Debugging line
                                         updatedUserData.frequentFlyerNumbers = frequentFlyerNumbers;
                                         setEditedUserData(updatedUserData);
                                       }}
@@ -435,20 +463,16 @@ export default function GetFamilyMembers() {
                                       margin="normal"
                                       variant="outlined"
                                     />
-                                    <ErrorMessage
-                                      name={`frequentFlyerNumbers[${index}].type`}
-                                      component="div"
-                                      className="error"
-                                      style={{ color: 'red' }}
-                                    />
+
                                     <Field
                                       name={`frequentFlyerNumbers[${index}].number`}
                                       as={TextField}
                                       label="Frequent Flyer Number"
-                                      value={editedUserData.frequentFlyerNumbers[index].number || ''}
+                                      value={editedUserData?.frequentFlyerNumbers[index]?.number || ' '}
                                       onChange={(e) => {
                                         const updatedUserData = { ...editedUserData };
                                         const frequentFlyerNumbers = [...updatedUserData.frequentFlyerNumbers];
+                                        console.log(frequentFlyerNumbers)
                                         frequentFlyerNumbers[index].number = e.target.value;
                                         updatedUserData.frequentFlyerNumbers = frequentFlyerNumbers;
                                         setEditedUserData(updatedUserData);
@@ -472,7 +496,11 @@ export default function GetFamilyMembers() {
                                   type="button"
                                   variant="outlined"
                                   style={{ marginTop: '10px' }}
-                                  onClick={() => push({ type: '', number: '' })}
+                                  onClick={() => {
+                                    updateFrequentFlyerNumbers = [push({ type: ' ', number: ' ' })] 
+                                    setEditedUserData(updateFrequentFlyerNumbers);
+
+                                  }}
                                 >
                                   Add Frequent Flyer
                                 </Button>
@@ -494,7 +522,7 @@ export default function GetFamilyMembers() {
                                         name={`hotelLoyaltyNumbers[${index}].type`}
                                         as={TextField}
                                         label="Hotel Loyalty Type"
-                                        value={editedUserData.hotelLoyaltyNumbers[index].type || ''}
+                                        value={editedUserData?.hotelLoyaltyNumbers[index]?.type || ' '}
                                         onChange={(e) => {
                                           const updatedUserData = { ...editedUserData };
                                           const hotelLoyaltyNumbers = [...updatedUserData.hotelLoyaltyNumbers];
@@ -516,7 +544,7 @@ export default function GetFamilyMembers() {
                                         name={`hotelLoyaltyNumbers[${index}].number`}
                                         as={TextField}
                                         label="Hotel Loyalty Number"
-                                        value={editedUserData.hotelLoyaltyNumbers[index].number || ''}
+                                        value={editedUserData?.hotelLoyaltyNumbers[index]?.number || ' '}
                                         onChange={(e) => {
                                           const updatedUserData = { ...editedUserData };
                                           const hotelLoyaltyNumbers = [...updatedUserData.hotelLoyaltyNumbers];
@@ -543,7 +571,7 @@ export default function GetFamilyMembers() {
                                     type="button"
                                     variant="outlined"
                                     style={{ marginTop: '10px' }}
-                                    onClick={() => push({ type: '', number: '' })}
+                                    onClick={() => push({ type: ' ', number: ' ' })}
                                   >
                                     Add Hotel Loyalty
                                   </Button>
@@ -631,52 +659,6 @@ export default function GetFamilyMembers() {
                             variant="outlined"
                           />
                         </Grid>
-                        <Grid item xs={12}>
-                          <Field
-                            name="companyName"
-                            value={editedUserData.companyName || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, companyName: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
-                            as={TextField}
-                            label="Company Name"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Field
-                            name="companyGSTNumber"
-                            as={TextField}
-                            label="Company GST Number"
-                            value={editedUserData.companyGSTNumber || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, companyGSTNumber: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Field
-                            name="companyGSTEmail"
-                            as={TextField}
-                            value={editedUserData.companyGSTEmail || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, companyGSTEmail: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
-                            label="Company GST Email"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                          <ErrorMessage name="companyGSTEmail" component="div" className="error" style={{ color: 'red' }} />
-                        </Grid>
                       </Grid>
                       <Button type="submit" variant="contained" color="primary" size="large" style={{ marginTop: '1rem' }}>
                         Save
@@ -706,7 +688,7 @@ export default function GetFamilyMembers() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // console.log(row);
-                    const { FamilyMemberId, firstName, lastName, email, mobile, address,relationship } = row;
+                    const { FamilyMemberId, firstName, lastName, email, mobile, address, relationship } = row;
                     // console.log(row)
                     const selectedUser = selected.indexOf(FamilyMemberId) !== -1;
 
@@ -744,7 +726,6 @@ export default function GetFamilyMembers() {
                             >
                               <Iconify icon={'eva:trash-2-outline'} />
                             </IconButton>
-                            
                           </TableCell>
                         </TableRow>
                       </>

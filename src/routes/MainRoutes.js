@@ -5,6 +5,8 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import CreateCustomer from 'views/Customer/CreateCustomer';
 import CreateFamilyMembers from 'views/FamilyMembers/CreateFamilyMembers';
+import GetPackages from 'views/Packages/GetPackages';
+import CreatePackage from 'views/Packages/CreatePackage';
 // import GetFamilyMemers from 'views/FamilyMembers/GetFamilymembers';
 
 // dashboard routing
@@ -55,6 +57,14 @@ const MainRoutes = {
     {
       path: '/CreatefamilyMembers',
       element: <CreateFamilyMembers />
+    },
+    {
+      path: '/Packages',
+      element: <GetPackages />
+    },
+    {
+      path: '/createPackage',
+      element: <CreatePackage />
     },
     {
       path: 'utils',
