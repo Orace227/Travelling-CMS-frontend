@@ -6,8 +6,11 @@ import ShopProductCard from './PackageCard';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 export default function GetPackages() {
   const [allPackages, setallPackages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   // const products = [
   //   { id: 1, packageName: 'Advanture Package', cover: img },
   //   { id: 2, packageName: 'Advanture Package', cover: img },
@@ -23,6 +26,7 @@ export default function GetPackages() {
   //   { id: 12, packageName: 'Advanture Package', cover: img }
   // ];
   const GetPackages = async () => {
+    setIsLoading(true);
     const LivePackages = await axios.get('/getLivePackages');
     const DraftPackages = await axios.get('/getDraftPackages');
     // console.log(LivePackages.data.allPackages);
@@ -31,6 +35,7 @@ export default function GetPackages() {
     const allPackages = [...LivePackages.data.allPackages, ...DraftPackages.data.allPackages];
     setallPackages(allPackages);
     console.log(allPackages);
+    setIsLoading(false);
   };
   console.log(allPackages);
 
@@ -38,12 +43,16 @@ export default function GetPackages() {
     GetPackages();
   }, []);
   return (
-    <Grid container spacing={5}>
-      {allPackages.map((Package) => (
-        <Grid key={Package._id} item xs={12} md={4}>
-          <ShopProductCard Package={Package} />
-        </Grid>
-      ))}
-    </Grid>
+    <>
+      {isLoading ? toast.success('Loading all Packages') : ''}
+      <Grid container spacing={5}>
+        {allPackages.map((Package) => (
+          <Grid key={Package._id} item xs={12} md={4}>
+            <ShopProductCard Package={Package} />
+          </Grid>
+        ))}
+      </Grid>
+      <Toaster />
+    </>
   );
 }
