@@ -4,7 +4,8 @@ import { IconArrowUpRight } from '@tabler/icons';
 
 import { Box, Card, Link, Typography, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import img from '../../assets/images/banner.jpg';
+import { useState } from 'react';
+import { useEffect } from 'react';
 // import { width } from '@mui/system';
 const StyledPackageCard = styled('img')({
   top: 0,
@@ -24,27 +25,22 @@ PackageCard.propTypes = {
 };
 
 export default function PackageCard({ Package }) {
-  const { packageName, packageDesc } = Package;
+  console.log(Package);
+  const { packageName, packageDesc, packageImgPath } = Package;
+  const [imageUrl, setImageUrl] = useState('');
+
+  useEffect(() => {
+    if (Package) {
+      const serverBaseUrl = 'http://localhost:7000'; // Replace with your server's localhost URL and port number
+      const fullImageUrl = `${serverBaseUrl}/${packageImgPath}`;
+      setImageUrl(fullImageUrl);
+    }
+  }, []);
 
   return (
     <Card sx={{ boxShadow: '10px 43px 100px -48px rgba(0,0,0,0.1)' }}>
       <Box sx={{ pt: '200px', position: 'relative' }}>
-        {/* {status && (
-          <Label
-            variant="filled"
-            color={(status === 'sale' && 'error') || 'info'}
-            sx={{
-              zIndex: 9,
-              top: 16,
-              right: 16,
-              position: 'absolute',
-              textTransform: 'uppercase'
-            }}
-          >
-            NEW
-          </Label>
-        )} */}
-        <StyledPackageCard alt={packageName} src={img} />
+        <StyledPackageCard alt={packageName} src={imageUrl} />
       </Box>
 
       <Stack spacing={2} sx={{ pl: 2, pb: 2, pr: 2, pt: 3 }} alignItems="center">
