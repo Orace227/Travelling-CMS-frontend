@@ -186,7 +186,7 @@ const CreatePackage = () => {
                   </Field>
                 </FormControl>
               </Grid>
-              
+
               <Grid item xs={12} sm={6} style={{ marginTop: '24px' }}>
                 <input
                   id="packageImg"
@@ -424,22 +424,11 @@ const CreatePackage = () => {
               variant="contained"
               color="primary"
               size="large"
-              // onSubmit={handleLive}
-              style={{ marginTop: '1rem' }}
-              disabled={loading} // Disable the button when loading is true
-            >
-              {loading ? 'Loading...' : 'Make Live'}
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
               // onSubmit={handleSave}
               style={{ marginTop: '1rem', marginLeft: '10px' }}
               disabled={loading} // Disable the button when loading is true
             >
-              {loading ? 'Loading...' : 'Save'}
+              {loading ? 'Loading...' : 'Submit'}
             </Button>
           </Form>
         )}

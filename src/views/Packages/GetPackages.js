@@ -358,6 +358,7 @@ export default function Customers() {
                             }}
                             onKeyPress={handlePriceKeyPress}
                           />
+                          
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
