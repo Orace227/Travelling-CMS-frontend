@@ -739,7 +739,7 @@ export default function Customers() {
                               component={Link}
                               to={`/familyMembers?clientId=${clientId}`} // Specify the correct URL here
                               variant="contained"
-                              style={{textAlign: 'center'}}
+                              style={{ textAlign: 'center' }}
                               color="primary"
                             >
                               Family Details

@@ -78,6 +78,7 @@ const CreatePackage = () => {
       event.preventDefault();
     }
   };
+
   const handleSubmit = async (values) => {
     try {
       // console.log(values);
@@ -175,7 +176,18 @@ const CreatePackage = () => {
                 <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
 
-              <Grid item xs={12}  style={{ marginTop: '24px' }}>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <InputLabel htmlFor="isLive">Make Live</InputLabel>
+                  <Field name="isLive" as={Select} label="Make Live" fullWidth initialvalue="false">
+                    <MenuItem value="true">Live</MenuItem>
+                    <MenuItem value="false">Draft</MenuItem>
+                    {/* You can add more continents as needed */}
+                  </Field>
+                </FormControl>
+              </Grid>
+              
+              <Grid item xs={12} sm={6} style={{ marginTop: '24px' }}>
                 <input
                   id="packageImg"
                   name="packageImg"
@@ -412,10 +424,22 @@ const CreatePackage = () => {
               variant="contained"
               color="primary"
               size="large"
+              // onSubmit={handleLive}
               style={{ marginTop: '1rem' }}
               disabled={loading} // Disable the button when loading is true
             >
-              {loading ? 'Loading...' : 'Submit'}
+              {loading ? 'Loading...' : 'Make Live'}
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              // onSubmit={handleSave}
+              style={{ marginTop: '1rem', marginLeft: '10px' }}
+              disabled={loading} // Disable the button when loading is true
+            >
+              {loading ? 'Loading...' : 'Save'}
             </Button>
           </Form>
         )}
