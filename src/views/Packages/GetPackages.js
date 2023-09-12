@@ -120,6 +120,7 @@ const TABLE_HEAD = [
   { id: 'PackagePirce', label: 'Package Price', alignRight: false },
   { id: 'PackageType', label: 'Package Type', alignRight: false },
   { id: 'Status', label: 'Status', alignRight: false },
+  { id: 'PDF', label: 'PDF', alignRight: false },
   { id: 'action', label: 'action' }
 ];
 
@@ -168,31 +169,32 @@ export default function Customers() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [USERLIST, setPackageDetails] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [isGene, setIsGene] = useState(false);
   const [editedUserData, setEditedUserData] = useState([]);
   // const [loading, setLoading] = useState(false);
 
-    const GetPackages = () => {
-      const promise = new Promise((resolve, reject) => {
-        axios
-          .get('/getLivePackages')
-          .then((LivePackages) => {
-            return axios.get('/getDraftPackages').then((DraftPackages) => {
-              const allPackages = [...LivePackages.data.allPackages, ...DraftPackages.data.allPackages];
-              setPackageDetails(allPackages);
-              resolve(allPackages);
-            });
-          })
-          .catch((error) => {
-            reject(error);
+  const GetPackages = () => {
+    const promise = new Promise((resolve, reject) => {
+      axios
+        .get('/getLivePackages')
+        .then((LivePackages) => {
+          return axios.get('/getDraftPackages').then((DraftPackages) => {
+            const allPackages = [...LivePackages.data.allPackages, ...DraftPackages.data.allPackages];
+            setPackageDetails(allPackages);
+            resolve(allPackages);
           });
-      });
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
 
-      toast.promise(promise, {
-        loading: 'Fetching packages...',
-        success: 'Packages fetched successfully!',
-        error: 'Failed to fetch packages!'
-      });
-    };
+    toast.promise(promise, {
+      loading: 'Fetching packages...',
+      success: 'Packages fetched successfully!',
+      error: 'Failed to fetch packages!'
+    });
+  };
 
   useEffect(() => {
     GetPackages();
@@ -306,6 +308,23 @@ export default function Customers() {
       toast.error('Failed to update customer. Please try again.');
     }
   };
+  const handleGeneratePdf = async (row) => {
+    try {
+      // console.log(row.PackageId);
+      setIsGene(true);
+      if (row) {
+        const pdf = await axios.get(`/generate-pdf/${row.PackageId}`);
+        if (pdf) {
+          setTimeout(() => {
+            setIsGene(false);
+          }, 1000);
+        }
+      }
+    } catch (err) {
+      console.log({ error: err });
+      setIsGene(false);
+    }
+  };
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -361,7 +380,6 @@ export default function Customers() {
                             }}
                             onKeyPress={handlePriceKeyPress}
                           />
-                          
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
@@ -677,7 +695,7 @@ export default function Customers() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    console.log(row);
+                    // console.log(row);
                     const { PackageId, packageName, packageType, isLive, packagePrice } = row;
                     const selectedUser = selected.indexOf(PackageId) !== -1;
 
@@ -696,6 +714,18 @@ export default function Customers() {
                           <TableCell align="left">{packageType}</TableCell>
 
                           <TableCell align="left">{isLive ? 'Live' : 'Draft'}</TableCell>
+                          <TableCell align="left">
+                            {' '}
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => {
+                                handleGeneratePdf(row);
+                              }}
+                            >
+                              {isGene ? 'Generating PDF...' : 'Generate PDF'}
+                            </Button>
+                          </TableCell>
 
                           <TableCell align="left">
                             <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
