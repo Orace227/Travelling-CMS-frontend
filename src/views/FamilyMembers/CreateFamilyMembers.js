@@ -65,6 +65,7 @@ export default function CreateFamilyMembers() {
             if (response) {
               toast.success('Family members were successfully created!!');
               setLoading(false);
+              window.location.reload();
 
               resolve();
             } else {
@@ -82,8 +83,6 @@ export default function CreateFamilyMembers() {
         setLoading(false);
         reject(err);
       }
-      window.location.reload();
-      window.location.href = `/familyMembers?${FamilyMembersArr.clientId}`;
     });
     toast.promise(promise, {
       loading: 'Creating family members...',
