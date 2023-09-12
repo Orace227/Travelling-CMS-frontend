@@ -60,27 +60,6 @@ function applySortFilter(array, comparator, query) {
   }
   return stabilizedThis.map((el) => el[0]);
 }
-// const initialValues = {
-//   clientId: 0,
-//   familyMembers: 0,
-//   firstName: '',
-//   lastName: '',
-//   email: '',
-//   mobile: '',
-//   dateOfBirth: '',
-//   passportNumber: '',
-//   passportExpiryDate: '',
-//   frequentFlyerNumbers: [{ type: '', number: '' }],
-//   hotelLoyaltyNumbers: [{ type: '', number: '' }],
-//   address: '',
-//   city: '',
-//   country: '',
-//   postalCode: '',
-//   foodPreferences: '',
-//   companyName: '',
-//   companyGSTNumber: '',
-//   companyGSTEmail: ''
-// };
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'company', label: 'Company', alignRight: false },
@@ -104,11 +83,28 @@ export default function Customers() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editedUserData, setEditedUserData] = useState([]);
 
-  const fetchCustomers = async () => {
-    const customers = await axios.get('/getclients');
-    // console.log(customers.data.allClients[0]);
-    const customersData = customers.data.allClients;
-    setUserlist(customersData);
+  const fetchCustomers = () => {
+    const promise = new Promise((resolve, reject) => {
+      axios
+        .get('/getclients')
+        .then((response) => {
+          const customersData = response.data.allClients;
+          setUserlist(customersData);
+          toast.success('Customers fetched successfully!');
+          resolve(customersData);
+        })
+        .catch((error) => {
+          toast.error('Failed to fetch customers. Please try again later.');
+          console.error('Error fetching customers:', error);
+          reject(error);
+        });
+    });
+
+    toast.promise(promise, {
+      loading: 'Fetching customers...',
+      success: 'Customers fetched successfully!',
+      error: 'Failed to fetch customers!'
+    });
   };
 
   useEffect(() => {
@@ -245,8 +241,6 @@ export default function Customers() {
     toast.success('Customer updated successfully!!');
     handleSaveChanges();
     window.location.reload();
-    // console.log(createdUser);
-    // window.location.reload();
   };
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -261,9 +255,11 @@ export default function Customers() {
           <Typography variant="h1" gutterBottom>
             Customers
           </Typography>
-          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            Add Customer
-          </Button> */}
+          <Link to="/createCustomer">
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              Add Customer
+            </Button>
+          </Link>
         </Stack>
         <Toaster />
         {openEditModal && (

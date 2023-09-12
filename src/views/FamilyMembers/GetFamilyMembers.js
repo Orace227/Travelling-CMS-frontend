@@ -60,27 +60,7 @@ function applySortFilter(array, comparator, query) {
   }
   return stabilizedThis.map((el) => el[0]);
 }
-// const initialValues = {
-//   clientId: 0,
-//   familyMembers: 0,
-//   firstName: '',
-//   lastName: '',
-//   email: '',
-//   mobile: '',
-//   dateOfBirth: '',
-//   passportNumber: '',
-//   passportExpiryDate: '',
-//   frequentFlyerNumbers: [{ type: '', number: '' }],
-//   hotelLoyaltyNumbers: [{ type: '', number: '' }],
-//   address: '',
-//   city: '',
-//   country: '',
-//   postalCode: '',
-//   foodPreferences: '',
-//   companyName: '',
-//   companyGSTNumber: '',
-//   companyGSTEmail: ''
-// };
+
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'relationship', label: 'relationship', alignRight: false },
@@ -105,16 +85,37 @@ export default function GetFamilyMembers() {
   const [loading, setLoading] = useState(false);
 
   const fetchFamilyMembers = async () => {
-    const searchParams = new URLSearchParams(location.search);
-    const queryParams = searchParams.get('clientId');
-    setCLIENTID(queryParams);
-    // console.log(queryParams)
-    const url = `/getFamilyMembers?id=${queryParams}`;
-    // console.log(url)
-    const familyMembers = await axios.get(url);
-    // console.log(familyMembers.data);
-    const familyMembersData = familyMembers.data.allFamilyMembers;
-    setUserlist(familyMembersData);
+    const promise = new Promise((resolve, reject) => {
+      try {
+        const searchParams = new URLSearchParams(location.search);
+        const queryParams = searchParams.get('clientId');
+        setCLIENTID(queryParams);
+
+        const url = `/getFamilyMembers?id=${queryParams}`;
+        axios
+          .get(url)
+          .then((response) => {
+            const familyMembersData = response.data.allFamilyMembers;
+            setUserlist(familyMembersData);
+            toast.success('Family members fetched successfully!');
+            resolve(familyMembersData);
+          })
+          .catch((error) => {
+            toast.error('Failed to fetch family members. Please try again later.');
+            console.error('Error fetching family members:', error);
+            reject(error);
+          });
+      } catch (error) {
+        toast.error('Failed to fetch family members. Please try again later.');
+        console.error('Error fetching family members:', error);
+        reject(error);
+      }
+    });
+    toast.promise(promise, {
+      loading: 'Fetching family members...',
+      success: 'Family members fetched successfully!',
+      error: 'Failed to fetch family members!'
+    });
   };
 
   useEffect(() => {
