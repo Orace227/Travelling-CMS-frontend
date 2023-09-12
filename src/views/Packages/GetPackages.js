@@ -171,28 +171,28 @@ export default function Customers() {
   const [editedUserData, setEditedUserData] = useState([]);
   // const [loading, setLoading] = useState(false);
 
-  const GetPackages = () => {
-    const promise = new Promise((resolve, reject) => {
-      axios
-        .get('/getLivePackages')
-        .then((LivePackages) => {
-          return axios.get('/getDraftPackages').then((DraftPackages) => {
-            const allPackages = [...LivePackages.data.allPackages, ...DraftPackages.data.allPackages];
-            setPackageDetails(allPackages);
-            resolve(allPackages);
+    const GetPackages = () => {
+      const promise = new Promise((resolve, reject) => {
+        axios
+          .get('/getLivePackages')
+          .then((LivePackages) => {
+            return axios.get('/getDraftPackages').then((DraftPackages) => {
+              const allPackages = [...LivePackages.data.allPackages, ...DraftPackages.data.allPackages];
+              setPackageDetails(allPackages);
+              resolve(allPackages);
+            });
+          })
+          .catch((error) => {
+            reject(error);
           });
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+      });
 
-    toast.promise(promise, {
-      loading: 'Fetching packages...',
-      success: 'Packages fetched successfully!',
-      error: 'Failed to fetch packages!'
-    });
-  };
+      toast.promise(promise, {
+        loading: 'Fetching packages...',
+        success: 'Packages fetched successfully!',
+        error: 'Failed to fetch packages!'
+      });
+    };
 
   useEffect(() => {
     GetPackages();
@@ -291,17 +291,20 @@ export default function Customers() {
   };
 
   const handleEdit = async (values) => {
-    console.log(values);
-    const updatedPackage = await axios.post('/updatePackage', values);
-    console.log(updatedPackage);
-    console.log(editedUserData);
-    if (updatedPackage) {
-      toast.success('Customer updated successfully!!');
-      handleSaveChanges();
-      window.location.reload();
+    try {
+      console.log(values);
+      const updatedPackage = await axios.post('/updatePackage', values);
+      console.log(updatedPackage);
+      console.log(editedUserData);
+      if (updatedPackage) {
+        toast.success('Customer updated successfully!!');
+        handleSaveChanges();
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error updating package:', error);
+      toast.error('Failed to update customer. Please try again.');
     }
-    // console.log(createdUser);
-    // window.location.reload();
   };
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 

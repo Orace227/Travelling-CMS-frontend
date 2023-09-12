@@ -2,28 +2,38 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { useLocation } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { Button, Container, Grid, TextField, Typography } from '@mui/material';
+import axios from 'axios';
+import { useState } from 'react';
 
-// Define your Yup validation schema
 const validationSchema = Yup.object().shape({
-  firstName: Yup.string().required('First Name is required'),
-  lastName: Yup.string().required('Last Name is required'),
-  email: Yup.string().email('Invalid email address').required('Email is required'),
-  mobile: Yup.string().required('Mobile number is required'),
-  dateOfBirth: Yup.date().nullable().required('Date of Birth is required'),
-  relationship: Yup.string().required('Relationship is required'),
-  address: Yup.string().required('Address is required'),
-  city: Yup.string().required('City is required'),
-  country: Yup.string().required('Country is required'),
-  postalCode: Yup.string().required('Postal Code is required'),
-  passportExpiryDate: Yup.date().nullable().required('Passport Expiry Date is required'),
-  passportNumber: Yup.string().required('Passport Number is required'),
-  foodPreferences: Yup.string()
-  // frequentFlyerNumbers: Yup.array().of(Yup.string())
+  familyMembers: Yup.array().of(
+    Yup.object().shape({
+      firstName: Yup.string().required('First Name is required'),
+      lastName: Yup.string().required('Last Name is required'),
+      email: Yup.string().email('Invalid email address').required('Email is required'),
+      mobile: Yup.string()
+        .required('Mobile number is required')
+        .matches(/^[0-9]+$/, 'Mobile number must contain only digits'),
+      dateOfBirth: Yup.date().nullable().required('Date of Birth is required'),
+      relationship: Yup.string().required('Relationship is required'),
+      address: Yup.string().required('Address is required'),
+      city: Yup.string().required('City is required'),
+      country: Yup.string().required('Country is required'),
+      postalCode: Yup.string()
+        .required('Postal Code is required')
+        .matches(/^\d{5}$/, 'Postal Code must be a 5-digit number'),
+      passportExpiryDate: Yup.date().nullable().required('Passport Expiry Date is required'),
+      passportNumber: Yup.string().required('Passport Number is required'),
+      foodPreferences: Yup.string()
+    })
+  )
+  // ... other top-level validations if needed
 });
-
 export default function CreateFamilyMembers() {
+  const [loading, setLoading] = useState(false);
+
   const location = useLocation();
 
   const getClientId = () => {
@@ -38,47 +48,70 @@ export default function CreateFamilyMembers() {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  const handleSubmit = async (values) => {
-    console.log(values);
-    // for (let i = 0; i < values.length; i++) {
-    // values.FamilyMemberId = generateSixDigitNumber();
-    // }
-    const newFamilyMember = {
-      FamilyMemberId: generateSixDigitNumber(),
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      mobile: values.mobile,
-      dateOfBirth: values.dateOfBirth,
-      relationship: values.relationship,
-      address: values.address,
-      city: values.city,
-      country: values.country,
-      postalCode: values.postalCode,
-      passportNumber: values.passportNumber,
-      passportExpiryDate: values.passportExpiryDate,
-      foodPreferences: values.foodPreferences
-    };
+  const handleSubmit = (values) => {
+    // console.log(values.familyMembers);
 
-    const updatedFamilyMembers = [...values.familyMembers, newFamilyMember];
+    const promise = new Promise((resolve, reject) => {
+      try {
+        setLoading(true);
+        const FamilyMembersArr = values?.familyMembers.map((familyMember) => ({
+          ...familyMember,
+          FamilyMemberId: generateSixDigitNumber()
+        }));
+        console.log(FamilyMembersArr);
+        axios
+          .post('/createFamilyMembers', { FamilyMembersArr })
+          .then((response) => {
+            if (response) {
+              toast.success('Family members were successfully created!!');
+              setLoading(false);
 
-    // Now you have all family members in one array
-    console.log(updatedFamilyMembers);
-
-    // console.log(values);
-    // const FamilyMembersArr = await values.familyMembers;
-    // console.log(FamilyMembersArr);
-    // const createFamilyMembers = await axios.post('/createFamilyMembers', { FamilyMembersArr });
-    // if (createFamilyMembers) {
-    // toast.success('Family members added successfully!!');
-    // window.location.href = `/familyMembers?clientId=${FamilyMembersArr.clientId}`;
-    // window.location.reload();
-    // }
+              resolve();
+            } else {
+              setLoading(false);
+              reject(new Error('Failed to create family members'));
+            }
+          })
+          .catch((error) => {
+            console.log({ error });
+            setLoading(false);
+            reject(error);
+          });
+      } catch (err) {
+        console.log({ error: err });
+        setLoading(false);
+        reject(err);
+      }
+      window.location.reload();
+      window.location.href = `/familyMembers?${FamilyMembersArr.clientId}`;
+    });
+    toast.promise(promise, {
+      loading: 'Creating family members...',
+      success: 'Family members were successfully created!',
+      error: 'Failed to create family members!'
+    });
   };
 
   const initialValues = {
-    clientId: getClientId(),
-    familyMembers: [] // Initialize as an empty array
+    familyMembers: [
+      {
+        clientId: getClientId(),
+        FamilyMemberId: 0,
+        firstName: '',
+        lastName: '',
+        email: '',
+        mobile: '',
+        dateOfBirth: '',
+        relationship: '',
+        address: '',
+        city: '',
+        country: '',
+        postalCode: '',
+        passportNumber: '',
+        passportExpiryDate: '',
+        foodPreferences: ''
+      }
+    ]
   };
 
   return (
@@ -95,27 +128,68 @@ export default function CreateFamilyMembers() {
                   {values.familyMembers.map((familyMember, index) => (
                     <Grid container spacing={2} key={index}>
                       <Grid item xs={12} sm={6}>
-                        <Field name="firstName" as={TextField} label="first Name" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="firstName" component="div" className="error" style={{ color: 'red' }} />
+                        <Field
+                          name={`familyMembers[${index}].firstName`}
+                          as={TextField}
+                          type="text"
+                          label="first Name"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage
+                          name={`familyMembers[${index}].firstName`}
+                          component="div"
+                          className="error"
+                          style={{ color: 'red' }}
+                        />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Field name="lastName" as={TextField} label="last Name" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="lastName" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Field name="email" as={TextField} label="email" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="email" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Field name="mobile" as={TextField} label="mobile" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="mobile" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-
                       <Grid item xs={12} sm={6}>
                         <Field
-                          name="dateOfBirth"
+                          name={`familyMembers[${index}].lastName`}
                           as={TextField}
-                          label="date Of Birth"
+                          label="last Name"
+                          type="text"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage
+                          name={`familyMembers[${index}].lastName`}
+                          component="div"
+                          className="error"
+                          style={{ color: 'red' }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].email`}
+                          as={TextField}
+                          label="Email"
+                          type="email"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage name={`familyMembers[${index}].email`} component="div" className="error" style={{ color: 'red' }} />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].mobile`}
+                          as={TextField}
+                          label="Mobile"
+                          fullWidth
+                          type="text"
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage name={`familyMembers[${index}].mobile`} component="div" className="error" style={{ color: 'red' }} />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].dateOfBirth`}
+                          as={TextField}
+                          label="Date of Birth"
                           type="date"
                           fullWidth
                           margin="normal"
@@ -124,44 +198,105 @@ export default function CreateFamilyMembers() {
                             shrink: true
                           }}
                         />
-                        <ErrorMessage name="dateOfBirth" component="div" className="error" style={{ color: 'red' }} />
+                        <ErrorMessage
+                          name={`familyMembers[${index}].dateOfBirth`}
+                          component="div"
+                          className="error"
+                          style={{ color: 'red' }}
+                        />
                       </Grid>
-
-                      <Grid item xs={12} sm={6}>
-                        <Field name="relationship" as={TextField} label="relationship" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="relationship" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-
-                      <Grid item xs={12} sm={6}>
-                        <Field name="city" as={TextField} label="city" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="city" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-
-                      <Grid item xs={12} sm={6}>
-                        <Field name="address" as={TextField} label="address" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="address" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-
-                      <Grid item xs={12} sm={6}>
-                        <Field name="country" as={TextField} label="country" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="country" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-
-                      <Grid item xs={12} sm={6}>
-                        <Field name="postalCode" as={TextField} label="postal Code" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="postalCode" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-
-                      <Grid item xs={12} sm={6}>
-                        <Field name="passportNumber" as={TextField} label="passport Number" fullWidth margin="normal" variant="outlined" />
-                        <ErrorMessage name="passportNumber" component="div" className="error" style={{ color: 'red' }} />
-                      </Grid>
-
                       <Grid item xs={12} sm={6}>
                         <Field
-                          name="passportExpiryDate"
+                          name={`familyMembers[${index}].relationship`}
                           as={TextField}
-                          label="passport Expiry Date"
+                          label="Relationship"
+                          fullWidth
+                          type="text"
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage
+                          name={`familyMembers[${index}].relationship`}
+                          component="div"
+                          className="error"
+                          style={{ color: 'red' }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].city`}
+                          as={TextField}
+                          label="City"
+                          type="text"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage name={`familyMembers[${index}].city`} component="div" className="error" style={{ color: 'red' }} />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].address`}
+                          as={TextField}
+                          type="text"
+                          label="Address"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage name={`familyMembers[${index}].address`} component="div" className="error" style={{ color: 'red' }} />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].country`}
+                          as={TextField}
+                          type="text"
+                          label="Country"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage name={`familyMembers[${index}].country`} component="div" className="error" style={{ color: 'red' }} />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].postalCode`}
+                          as={TextField}
+                          label="Postal Code"
+                          type="text"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage
+                          name={`familyMembers[${index}].postalCode`}
+                          component="div"
+                          className="error"
+                          style={{ color: 'red' }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].passportNumber`}
+                          as={TextField}
+                          label="Passport Number"
+                          type="text"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                        />
+                        <ErrorMessage
+                          name={`familyMembers[${index}].passportNumber`}
+                          component="div"
+                          className="error"
+                          style={{ color: 'red' }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Field
+                          name={`familyMembers[${index}].passportExpiryDate`}
+                          as={TextField}
+                          label="Passport Expiry Date"
                           type="date"
                           fullWidth
                           margin="normal"
@@ -170,20 +305,32 @@ export default function CreateFamilyMembers() {
                             shrink: true
                           }}
                         />
-                        <ErrorMessage name="passportExpiryDate" component="div" className="error" style={{ color: 'red' }} />
+                        <ErrorMessage
+                          name={`familyMembers[${index}].passportExpiryDate`}
+                          component="div"
+                          className="error"
+                          style={{ color: 'red' }}
+                        />
                       </Grid>
 
                       <Grid item xs={12} sm={6}>
                         <Field
-                          name="foodPreferences"
+                          name={`familyMembers[${index}].foodPreferences`}
                           as={TextField}
-                          label="food Preferences"
+                          type="text"
+                          label="Food Preferences"
                           fullWidth
                           margin="normal"
                           variant="outlined"
                         />
-                        <ErrorMessage name="foodPreferences" component="div" className="error" style={{ color: 'red' }} />
+                        <ErrorMessage
+                          name={`familyMembers[${index}].foodPreferences`}
+                          component="div"
+                          className="error"
+                          style={{ color: 'red' }}
+                        />
                       </Grid>
+
                       <Grid item xs={12}>
                         <Button
                           variant="contained"
@@ -197,14 +344,14 @@ export default function CreateFamilyMembers() {
                       </Grid>
                     </Grid>
                   ))}
-                  <Button variant="contained" color="primary" size="small" onClick={() => push(initialValues.familyMembers)}>
+                  <Button variant="contained" color="primary" size="small" onClick={() => push({ ...initialValues.familyMembers[0] })}>
                     Add Family Member
                   </Button>
                 </div>
               )}
             </FieldArray>
             <Button type="submit" variant="contained" color="primary" size="large" style={{ marginTop: '1rem' }}>
-              Submit
+              {loading ? 'Loading...' : 'Submit'}
             </Button>
           </Form>
         )}
