@@ -176,7 +176,7 @@ export default function GetFamilyMembers() {
   const handleOpenEditModal = (row) => {
     try {
       console.log(row);
-      const user = USERLIST.find((user) => user.clientId == row.clientId);
+      const user = USERLIST.find((user) => user.FamilyMemberId == row.FamilyMemberId);
       console.log(user);
       setEditUserData(user);
       setOpenEditModal(true);
