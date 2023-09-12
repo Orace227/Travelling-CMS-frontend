@@ -169,7 +169,7 @@ export default function Customers() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [USERLIST, setPackageDetails] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [isGene, setIsGene] = useState(false);
+  // const [isGene, setIsGene] = useState(false);
   const [editedUserData, setEditedUserData] = useState([]);
   // const [loading, setLoading] = useState(false);
 
@@ -308,23 +308,31 @@ export default function Customers() {
       toast.error('Failed to update customer. Please try again.');
     }
   };
-  const handleGeneratePdf = async (row) => {
-    try {
-      // console.log(row.PackageId);
-      setIsGene(true);
+  const handleGeneratePdf = (row) => {
+    const promise = new Promise((resolve, reject) => {
       if (row) {
-        const pdf = await axios.get(`/generate-pdf/${row.PackageId}`);
-        if (pdf) {
-          setTimeout(() => {
-            setIsGene(false);
-          }, 1000);
-        }
+        axios
+          .get(`/generate-pdf/${row.PackageId}`)
+          .then(() => {
+            toast.success('PDF generated successfully!');
+            resolve();
+          })
+          .catch((err) => {
+            setTimeout(() => {
+              console.log({ error: err });
+              toast.error('Failed to generate PDF.');
+              reject(err);
+            }, 1000);
+          });
       }
-    } catch (err) {
-      console.log({ error: err });
-      setIsGene(false);
-    }
+    });
+    toast.promise(promise, {
+      loading: 'Generating PDF...',
+      success: 'PDF generated successfully!',
+      error: 'Failed to generate PDF.'
+    });
   };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -723,7 +731,7 @@ export default function Customers() {
                                 handleGeneratePdf(row);
                               }}
                             >
-                              {isGene ? 'Generating PDF...' : 'Generate PDF'}
+                              Generate PDF
                             </Button>
                           </TableCell>
 
