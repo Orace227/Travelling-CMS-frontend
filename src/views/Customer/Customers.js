@@ -674,7 +674,12 @@ export default function Customers() {
           </Dialog>
         )}
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+            placeholder="Customers"
+          />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
