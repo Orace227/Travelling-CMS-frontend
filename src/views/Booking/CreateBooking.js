@@ -37,7 +37,10 @@ const defaultBookingDetail = {
   bookingType: '',
   bookingName: '',
   docImgName: '',
-  docImg: {}
+  docImgPath: '',
+  docImg: {
+    key: ''
+  }
 };
 
 const initialValues = {
@@ -53,40 +56,90 @@ const initialValues = {
 const CreateBooking = () => {
   const handleSubmit = async (values) => {
     const formData = new FormData();
-    // console.log(values);
-    formData.append('clientId', values.clientId);
-    formData.append('bookingDetails', JSON.stringify(values.bookingDetails)); // Assuming bookingDetailsArray contains your data
 
-    for (let i = 0; i < values.bookingDetails.length; i++) {
-      formData.append('docImg', values.bookingDetails[i].docImg); // Add your image files to the formData
-    }
-    // console.log(formData);
-    axios
-      .post('/upload-images', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then((response) => {
-        console.log('Response:', response.data);
+    // Filter out the booking details for the desired booking type
+    const bookingTypeToImages = {};
 
-        // axios.post("createBooking",)
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+    values.bookingDetails.forEach((bookingDetail) => {
+      const bookingType = bookingDetail.bookingType;
+
+      // If the booking type is not already in the object, initialize it as an empty array
+      if (!bookingTypeToImages[bookingType]) {
+        bookingTypeToImages[bookingType] = [];
+      }
+
+      // Add the image object to the array
+      bookingTypeToImages[bookingType].push({
+        docImg: bookingDetail.docImg
       });
-  };
+    });
 
-  // const handleMobileKeyPress = (event) => {
-  //   // Prevent non-numeric characters
-  //   if (!/^\d+$/.test(event.key)) {
-  //     event.preventDefault();
-  //   }
-  // };
+    const keys = Object.keys(bookingTypeToImages);
+
+    // Using a loop to extract docImg from each object
+    let paths = [];
+    for (let i = 0; i < keys.length; i++) {
+      // let i = 0;
+      const docImgs = bookingTypeToImages[keys[i]].map((item) => item.docImg);
+
+      formData.append('key', keys[i]);
+      formData.append('clientId', values.clientId);
+
+      // Append each image individually
+      docImgs.forEach((docImg) => {
+        formData.append('docImg', docImg);
+      });
+
+      try {
+        const response = await axios.post('/upload-images', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log(`Response for key ${keys[i]}:`, response.data.uploadedFilesPath);
+        const pathsForCurrentKey = response.data.uploadedFilesPath.map((uploadedFile) => ({
+          path: uploadedFile.path,
+          originalname: uploadedFile.originalname
+        }));
+        paths.push(...pathsForCurrentKey);
+      } catch (error) {
+        console.error(`Error for key ${keys[i]}:`, error);
+      }
+      // Clear formData for the next iteration
+      formData.delete('key');
+      formData.delete('clientId');
+      formData.delete('docImg');
+    }
+    console.log('paths', paths);
+    console.log('values', values);
+
+    let data = values;
+    for (let i = 0; i < data.bookingDetails.length; i++) {
+      const bookingDetail = data.bookingDetails[i];
+      const docImgName = bookingDetail.docImgName;
+
+      // Loop through the paths array to find a matching originalname
+      for (let j = 0; j < paths.length; j++) {
+        const pathObj = paths[j];
+        if (pathObj.originalname === docImgName) {
+          // Update the docImgPath property with the path from the paths object
+          bookingDetail.docImgPath = pathObj.path;
+          console.log('docImgPath', bookingDetail.docImgPath);
+          break; // Stop searching once a match is found
+        }
+      }
+    }
+    console.log('data', data);
+
+    const createdBooking = await axios.post('createBooking', data);
+    if (createdBooking) {
+      console.log(createdBooking);
+    }
+  };
 
   return (
     <Container>
-      <Typography variant="h2"style={{marginBottom:"15px"}} gutterBottom>
+      <Typography variant="h2" style={{ marginBottom: '15px' }} gutterBottom>
         Create Booking
       </Typography>
 
@@ -138,7 +191,9 @@ const CreateBooking = () => {
                 <ErrorMessage name="modifiedPackagePrice" style={{ color: 'red' }} component="div" className="error" />
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="h3" style={{marginTop:"10px"}}>Booking Details</Typography>
+                <Typography variant="h3" style={{ marginTop: '10px' }}>
+                  Booking Details
+                </Typography>
                 <FieldArray name="bookingDetails">
                   {({ push, remove }) => (
                     <div>
