@@ -3,15 +3,24 @@ import { Container, Typography, TextField, Button, Grid, Paper, IconButton, Form
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 // import axios from 'axios';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import ClearIcon from '@mui/icons-material/Clear';
 import axios from 'axios';
+import { useState } from 'react';
 // import axios from 'axios';
 
 const validationSchema = Yup.object().shape({
   bookingId: Yup.number().required('Booking ID is required'),
-  packageId: Yup.string().required('Package ID is required'),
-  clientId: Yup.string().required('Client ID is required'),
+  packageId: Yup.string()
+    .required('Package ID is required')
+    .matches(/^\d+$/, 'Package ID must contain only digits')
+    .min(6, 'Package ID must be at least 6 digits')
+    .max(6, 'Package ID must not exceed 6 digits'),
+  clientId: Yup.string()
+    .required('Client ID is required')
+    .matches(/^\d+$/, 'Client ID must contain only digits')
+    .min(6, 'Client ID must be at least 6 digits')
+    .max(6, 'Client ID must not exceed 6 digits'),
   startDate: Yup.date().required('Start Date is required'),
   endDate: Yup.date().required('End Date is required'),
   modifiedPackagePrice: Yup.number().required('Modified Package Price is required'),
@@ -54,9 +63,11 @@ const initialValues = {
 };
 
 const CreateBooking = () => {
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (values) => {
     const formData = new FormData();
-
+    setLoading(true);
+    toast.loading('Create Booking...');
     // Filter out the booking details for the desired booking type
     const bookingTypeToImages = {};
 
@@ -131,9 +142,16 @@ const CreateBooking = () => {
     }
     console.log('data', data);
 
-    const createdBooking = await axios.post('createBooking', data);
-    if (createdBooking) {
-      console.log(createdBooking);
+    try {
+      const createdBooking = await axios.post('createBooking', data);
+
+      if (createdBooking) {
+        setLoading(false);
+        window.location.reload();
+        window.location.href = 'http://localhost:3000/Bookings';
+      }
+    } catch (error) {
+      console.error('Error creating booking:', error);
     }
   };
 
@@ -147,9 +165,9 @@ const CreateBooking = () => {
         {({ values, setFieldValue }) => (
           <Form>
             <Grid container spacing={2}>
-              {/* <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6}>
                 <TextField fullWidth name="bookingId" label="Booking ID" variant="outlined" value={values.bookingId} disabled />
-              </Grid> */}
+              </Grid>
               <Grid item xs={12} md={6}>
                 <Field fullWidth name="packageId" as={TextField} label="Package ID" variant="outlined" />
                 <ErrorMessage name="packageId" component="div" className="error" style={{ color: 'red' }} />
@@ -277,7 +295,7 @@ const CreateBooking = () => {
               </Grid>
               <Grid item xs={12}>
                 <Button variant="contained" color="primary" type="submit">
-                  Submit
+                  {loading ? 'loading...' : 'Submit'}
                 </Button>
               </Grid>
             </Grid>
