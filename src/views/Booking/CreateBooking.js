@@ -1,5 +1,18 @@
 import React from 'react';
-import { Container, Typography, TextField, Button, Grid, Paper, IconButton, FormLabel } from '@mui/material';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Paper,
+  IconButton,
+  FormLabel,
+  InputLabel,
+  FormControl,
+  MenuItem,
+  Select
+} from '@mui/material';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 // import axios from 'axios';
@@ -7,6 +20,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import ClearIcon from '@mui/icons-material/Clear';
 import axios from 'axios';
 import { useState } from 'react';
+import { useEffect } from 'react';
+
 // import axios from 'axios';
 
 const validationSchema = Yup.object().shape({
@@ -64,6 +79,9 @@ const initialValues = {
 
 const CreateBooking = () => {
   const [loading, setLoading] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [Packages, setPackages] = useState([]);
+
   const handleSubmit = async (values) => {
     const formData = new FormData();
     setLoading(true);
@@ -155,6 +173,50 @@ const CreateBooking = () => {
     }
   };
 
+  const fetchClientInfo = async () => {
+    const allClients = await axios.get('/getclients');
+    if (allClients) {
+      let clientIDS = [];
+      for (let i = 0; i < allClients.data.allClients.length; i++) {
+        // console.log(allClients.data.allClients[i].clientId);
+        clientIDS.push(allClients.data.allClients[i].clientId);
+      }
+      // console.log(clientIDS);
+      setClients(clientIDS);
+      // console.log(clients);
+    }
+  };
+
+  const fetchPackageInfo = async () => {
+    const getLivePackages = await axios.get('/getLivePackages');
+    const getDraftPackages = await axios.get('/getDraftPackages');
+
+    if (getLivePackages && getDraftPackages) {
+      let packageIDS = [];
+      for (let i = 0; i < getLivePackages.data.allPackages.length; i++) {
+        if (getLivePackages.data.allPackages[i].isLive) {
+          let packageIdName = `${getLivePackages.data.allPackages[i].PackageId} - Live`;
+          packageIDS.push({ packageId: getLivePackages.data.allPackages[i].PackageId, packageIdName: packageIdName });
+        }
+      }
+      for (let i = 0; i < getDraftPackages.data.allPackages.length; i++) {
+        let packageIdName = `${getDraftPackages.data.allPackages[i].PackageId} - Draft`;
+
+        packageIDS.push({
+          packageId: getDraftPackages.data.allPackages[i].PackageId,
+          packageIdName: packageIdName
+        });
+      }
+
+      console.log(packageIDS);
+      setPackages(packageIDS);
+    }
+  };
+
+  useEffect(() => {
+    fetchPackageInfo();
+    fetchClientInfo();
+  }, []);
   return (
     <Container>
       <Typography variant="h2" style={{ marginBottom: '15px' }} gutterBottom>
@@ -168,12 +230,32 @@ const CreateBooking = () => {
               <Grid item xs={12} md={6}>
                 <TextField fullWidth name="bookingId" label="Booking ID" variant="outlined" value={values.bookingId} disabled />
               </Grid>
+
               <Grid item xs={12} md={6}>
-                <Field fullWidth name="packageId" as={TextField} label="Package ID" variant="outlined" />
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel htmlFor="packageId">Package ID</InputLabel>
+                  <Field as={Select} label="Package ID" name="packageId" variant="outlined">
+                    {Packages.map((option) => (
+                      <MenuItem key={option.packageId} value={option.packageId}>
+                        {option.packageIdName}
+                      </MenuItem>
+                    ))}
+                  </Field>
+                </FormControl>
                 <ErrorMessage name="packageId" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
+
               <Grid item xs={12} md={6}>
-                <Field fullWidth name="clientId" as={TextField} label="Client ID" variant="outlined" />
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel htmlFor="clientId">Client ID</InputLabel>
+                  <Field as={Select} label="Client ID" name="clientId" variant="outlined">
+                    {clients.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Field>
+                </FormControl>
                 <ErrorMessage name="clientId" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
               <Grid item xs={12} md={6}>
