@@ -86,6 +86,7 @@ import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -373,9 +374,11 @@ export default function Customers() {
           <Typography variant="h1" gutterBottom>
             Packages
           </Typography>
-          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            Add Customer
-          </Button> */}
+          <Link to="/createPackage">
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              Add Package
+            </Button>
+          </Link>
         </Stack>
         <Toaster />
         {openEditModal && (

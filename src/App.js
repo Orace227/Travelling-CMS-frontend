@@ -17,7 +17,7 @@ import axios from 'axios';
 
 const App = () => {
   const customization = useSelector((state) => state.customization);
-  // axios.defaults.baseURL = 'http://localhost:7000';
+  // axios.defaults.baseURL = 'http://localhost:7000/';
   axios.defaults.baseURL = 'https://travelling-cms-backend.onrender.com/';
 
   return (

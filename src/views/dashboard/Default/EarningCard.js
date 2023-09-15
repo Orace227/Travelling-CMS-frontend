@@ -14,6 +14,7 @@ import { IconUsers } from '@tabler/icons';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 // import EarningIcon from 'assets/images/icons/earning.svg';
 // import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -85,25 +86,28 @@ const EarningCard = ({ isLoading }) => {
         <SkeletonEarningCard />
       ) : (
         <CardWrapper border={false} content={false}>
-          <Box sx={{ p: 2.25 }}>
-            <Grid container direction="column">
-              <Grid item>
-                <Grid container justifyContent="space-between">
-                  <Grid item>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.largeAvatar,
-                        backgroundColor: theme.palette.secondary[800],
-                        mt: 1
-                      }}
-                    >
-                      <IconUsers />
-                      {/* <img src={IconUsers} alt="Notification" /> */}
-                    </Avatar>
-                  </Grid>
-                  {/* <Grid item>
+          <Link to="/Customers" style={{ textDecoration: 'none', color: 'white' }}>
+            <Box sx={{ p: 2.25 }}>
+              <Grid container direction="column">
+                <Grid item>
+                  <Grid container justifyContent="space-between">
+                    <Grid item>
+                      <Avatar
+                        style={{ color: 'white' }}
+
+                        variant="rounded"
+                        sx={{
+                          ...theme.typography.commonAvatar,
+                          ...theme.typography.largeAvatar,
+                          backgroundColor: theme.palette.secondary[800],
+                          mt: 1
+                        }}
+                      >
+                        <IconUsers />
+                        {/* <img src={IconUsers} alt="Notification" /> */}
+                      </Avatar>
+                    </Grid>
+                    {/* <Grid item>
                     <Avatar
                       variant="rounded"
                       sx={{
@@ -149,19 +153,19 @@ const EarningCard = ({ isLoading }) => {
                       </MenuItem>
                     </Menu>
                   </Grid> */}
-                </Grid>
-              </Grid>
-              <Grid item>
-                <Grid container alignItems="center">
-                  <Grid item>
-                    <Typography
-                      sx={{ fontSize: '1.9rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
-                      style={{ zIndex: '10', position: 'relative' }}
-                    >
-                      Total Customers: {clientsNo}
-                    </Typography>
                   </Grid>
-                  {/* <Grid item>
+                </Grid>
+                <Grid item>
+                  <Grid container alignItems="center">
+                    <Grid item>
+                      <Typography
+                        sx={{ fontSize: '1.9rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
+                        style={{ zIndex: '10', position: 'relative' }}
+                      >
+                        Total Customers: {clientsNo}
+                      </Typography>
+                    </Grid>
+                    {/* <Grid item>
                     <Avatar
                       sx={{
                         cursor: 'pointer',
@@ -173,9 +177,9 @@ const EarningCard = ({ isLoading }) => {
                       <ArrowUpwardIcon fontSize="inherit" sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }} />
                     </Avatar>
                   </Grid> */}
+                  </Grid>
                 </Grid>
-              </Grid>
-              {/* <Grid item sx={{ mb: 1.25 }}>
+                {/* <Grid item sx={{ mb: 1.25 }}>
                 <Typography
                   sx={{
                     fontSize: '1rem',
@@ -186,8 +190,9 @@ const EarningCard = ({ isLoading }) => {
                   Total Customers
                 </Typography>
               </Grid> */}
-            </Grid>
-          </Box>
+              </Grid>
+            </Box>
+          </Link>
         </CardWrapper>
       )}
     </>

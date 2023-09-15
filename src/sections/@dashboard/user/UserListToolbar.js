@@ -56,7 +56,15 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         <StyledSearch
           value={filterName}
           onChange={onFilterName}
-          placeholder={`Search ${placeholder === 'Packages' ? 'Packages...' : placeholder === 'Customers' ? 'Customers...' : 'Bookings...'}
+          placeholder={`Search ${
+            placeholder === 'Packages'
+              ? 'Packages...'
+              : placeholder === 'Customers'
+              ? 'Customers...'
+              : placeholder === 'Countries'
+              ? 'Countries...'
+              : 'Bookings...'
+          }
           `}
           startAdornment={
             <InputAdornment position="start">

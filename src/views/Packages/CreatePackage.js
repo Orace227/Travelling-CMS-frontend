@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 const tourDetailSchema = Yup.object().shape({
   day: Yup.number().required('Day is required').positive().integer(),
@@ -73,6 +74,8 @@ const initialValues = {
 
 const CreatePackage = () => {
   const [loading, setLoading] = useState(false);
+  const [countries, setCountries] = useState([]);
+
   const handlePriceKeyPress = (event) => {
     if (!/^\d+$/.test(event.key)) {
       event.preventDefault();
@@ -109,6 +112,20 @@ const CreatePackage = () => {
       setLoading(false);
     }
   };
+  const GetCountries = async () => {
+    try {
+      const Countries = await axios.get('/GetCountries');
+      if (Countries) {
+        console.log(Countries.data.allCountries);
+        setCountries(Countries.data.allCountries);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    GetCountries();
+  }, []);
 
   return (
     <Container>
@@ -157,8 +174,18 @@ const CreatePackage = () => {
                 </FormControl>
                 <ErrorMessage name="packageType" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Field name="country" as={TextField} label="Country" type="text" fullWidth margin="normal" variant="outlined" />
+
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth margin="normal" variant="outlined">
+                  <InputLabel htmlFor="country">Select Country</InputLabel>
+                  <Field as={Select} label="Select Country" name="country" variant="outlined">
+                    {countries.map((option) => (
+                      <MenuItem key={option.countryId} value={option.countryName}>
+                        {option.countryName}
+                      </MenuItem>
+                    ))}
+                  </Field>
+                </FormControl>
                 <ErrorMessage name="country" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// import { filter } from 'lodash';
+import { filter } from 'lodash';
 import {
   Card,
   Table,
@@ -63,33 +63,15 @@ function getComparator(order, orderBy) {
 // }
 
 function applySortFilter(array, comparator, query) {
-  // Filter the array based on the query
-  let filteredArray = array;
-  if (query && query.bookingId) {
-    filteredArray = filteredArray.filter((_user) => {
-      const { bookingId, clientId, packageId, startDate, endDate } = _user;
-      const filterTerm = query.bookingId.toLowerCase(); // Convert to lowercase for case-insensitive matching
-
-      // Check if any of the relevant fields contain the filter term
-      return (
-        bookingId.toString().includes(filterTerm) ||
-        clientId.toString().includes(filterTerm) ||
-        packageId.toString().includes(filterTerm) ||
-        startDate.includes(filterTerm) ||
-        endDate.includes(filterTerm)
-      );
-    });
-  }
-
-  // Sort the filtered array
-  const stabilizedThis = filteredArray.map((el, index) => [el, index]);
+  const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-
-  // Return the sorted and filtered result
+  if (query) {
+    return filter(array, (_user) => _user.firstName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  }
   return stabilizedThis.map((el) => el[0]);
 }
 
@@ -303,7 +285,7 @@ export default function Bookings() {
                           <TableCell align="left">{bookingId}</TableCell>
 
                           <TableCell align="left">
-                            {firstName}{" "} {lastName}
+                            {firstName} {lastName}
                           </TableCell>
                           <TableCell align="left">{packageId}</TableCell>
 

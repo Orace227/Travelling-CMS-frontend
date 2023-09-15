@@ -9,6 +9,8 @@ import GetPackages from 'views/Packages/GetPackages';
 import CreatePackage from 'views/Packages/CreatePackage';
 import Bookings from 'views/Booking/GetBookings';
 import CreateBooking from 'views/Booking/CreateBooking';
+import GetCountries from 'views/Country/GetContries';
+import CreateCountry from 'views/Country/CreateCountry';
 // import GetFamilyMemers from 'views/FamilyMembers/GetFamilymembers';
 
 // dashboard routing
@@ -69,6 +71,14 @@ const MainRoutes = {
     {
       path: '/createBooking',
       element: <CreateBooking />
+    },
+    {
+      path: '/Countries',
+      element: <GetCountries />
+    },
+    {
+      path: '/CreateCountry',
+      element: <CreateCountry />
     }
   ]
 };
