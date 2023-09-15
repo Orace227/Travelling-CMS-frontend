@@ -728,7 +728,7 @@ export default function Customers() {
                             <Button
                               variant="contained"
                               color="primary"
-                              href={`http://localhost:7000/generate-pdf/${row.PackageId}`}
+                              href={`https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`}
                               // onClick={() => {
                               //   handleGeneratePdf(row);
                               // }}
