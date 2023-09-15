@@ -334,6 +334,31 @@ export default function Customers() {
   //   });
   // };
 
+  function downloadPdf(pdfUrl, fileName) {
+    fetch(pdfUrl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error('Error downloading PDF:', error);
+        console.error('URL:', pdfUrl);
+      });
+  }
+  const handleGeneratePdf = (row) => {
+    // const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
+    const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
+
+    const fileName = 'generated-pdf.pdf';
+    downloadPdf(pdfUrl, fileName);
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -728,10 +753,9 @@ export default function Customers() {
                             <Button
                               variant="contained"
                               color="primary"
-                              href={`https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`}
-                              // onClick={() => {
-                              //   handleGeneratePdf(row);
-                              // }}
+                              onClick={() => {
+                                handleGeneratePdf(row);
+                              }}
                             >
                               Generate PDF
                             </Button>
