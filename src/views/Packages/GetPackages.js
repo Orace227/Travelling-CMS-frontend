@@ -307,32 +307,32 @@ export default function Customers() {
       toast.error('Failed to update customer. Please try again.');
     }
   };
-  const handleGeneratePdf = (row) => {
-    const promise = new Promise((resolve, reject) => {
-      if (row) {
-        axios
-          .get(`/generate-pdf/${row.PackageId}`)
-          .then((res) => {
-            console.log(res)
-            toast.success('PDF generated successfully!');
+  // const handleGeneratePdf = (row) => {
+  //   const promise = new Promise((resolve, reject) => {
+  //     if (row) {
+  //       axios
+  //         .get(`/generate-pdf/${row.PackageId}`)
+  //         .then((res) => {
+  //           console.log(res);
+  //           toast.success('PDF generated successfully!');
 
-            resolve();
-          })
-          .catch((err) => {
-            setTimeout(() => {
-              console.log({ error: err });
-              toast.error('Failed to generate PDF.');
-              reject(err);
-            }, 1000);
-          });
-      }
-    });
-    toast.promise(promise, {
-      loading: 'Generating PDF...',
-      success: 'PDF generated successfully!',
-      error: 'Failed to generate PDF.'
-    });
-  };
+  //           resolve();
+  //         })
+  //         .catch((err) => {
+  //           setTimeout(() => {
+  //             console.log({ error: err });
+  //             toast.error('Failed to generate PDF.');
+  //             reject(err);
+  //           }, 1000);
+  //         });
+  //     }
+  //   });
+  //   toast.promise(promise, {
+  //     loading: 'Generating PDF...',
+  //     success: 'PDF generated successfully!',
+  //     error: 'Failed to generate PDF.'
+  //   });
+  // };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -728,9 +728,10 @@ export default function Customers() {
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={() => {
-                                handleGeneratePdf(row);
-                              }}
+                              href={`http://localhost:7000/generate-pdf/${row.PackageId}`}
+                              // onClick={() => {
+                              //   handleGeneratePdf(row);
+                              // }}
                             >
                               Generate PDF
                             </Button>
