@@ -180,6 +180,7 @@ export default function Customers() {
           return axios.get('/getDraftPackages').then((DraftPackages) => {
             const allPackages = [...LivePackages.data.allPackages, ...DraftPackages.data.allPackages];
             setPackageDetails(allPackages);
+
             resolve(allPackages);
           });
         })
@@ -307,32 +308,6 @@ export default function Customers() {
       toast.error('Failed to update customer. Please try again.');
     }
   };
-  // const handleGeneratePdf = (row) => {
-  //   const promise = new Promise((resolve, reject) => {
-  //     if (row) {
-  //       axios
-  //         .get(`/generate-pdf/${row.PackageId}`)
-  //         .then((res) => {
-  //           console.log(res);
-  //           toast.success('PDF generated successfully!');
-
-  //           resolve();
-  //         })
-  //         .catch((err) => {
-  //           setTimeout(() => {
-  //             console.log({ error: err });
-  //             toast.error('Failed to generate PDF.');
-  //             reject(err);
-  //           }, 1000);
-  //         });
-  //     }
-  //   });
-  //   toast.promise(promise, {
-  //     loading: 'Generating PDF...',
-  //     success: 'PDF generated successfully!',
-  //     error: 'Failed to generate PDF.'
-  //   });
-  // };
 
   const downloadPdf = async (pdfUrl, fileName) => {
     try {

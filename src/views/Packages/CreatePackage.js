@@ -94,6 +94,8 @@ const CreatePackage = () => {
         if (createPackage) {
           toast.success('Package created successfully!!');
           setLoading(false);
+
+          window.location.reload();
         }
       }
     } catch (error) {
@@ -209,7 +211,7 @@ const CreatePackage = () => {
                 </div>
                 <ErrorMessage name="packageImg" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
-              
+
               <Grid item xs={12}>
                 <Typography variant="h5" gutterBottom>
                   Tour Details
