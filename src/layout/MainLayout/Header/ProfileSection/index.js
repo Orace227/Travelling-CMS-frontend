@@ -6,12 +6,12 @@ import { useSelector } from 'react-redux';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
-  Avatar,
+  // Avatar,
   Box,
   Chip,
   ClickAwayListener,
   Divider,
-  Grid,
+  // Grid,
   List,
   ListItemButton,
   ListItemIcon,
@@ -29,11 +29,11 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 // import UpgradePlanCard from './UpgradePlanCard';
-import User1 from 'assets/images/users/user-round.svg';
+// import User1 from 'assets/images/users/user-round.svg';
 
 // assets
-import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
-
+import { IconLogout, IconSettings } from '@tabler/icons';
+// IconUser
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
@@ -41,7 +41,6 @@ const ProfileSection = () => {
   const customization = useSelector((state) => state.customization);
   const navigate = useNavigate();
 
-  
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
   /**
@@ -102,20 +101,20 @@ const ProfileSection = () => {
             lineHeight: 0
           }
         }}
-        icon={
-          <Avatar
-            src={User1}
-            sx={{
-              ...theme.typography.mediumAvatar,
-              margin: '8px 0 8px 8px !important',
-              cursor: 'pointer'
-            }}
-            ref={anchorRef}
-            aria-controls={open ? 'menu-list-grow' : undefined}
-            aria-haspopup="true"
-            color="inherit"
-          />
-        }
+        // icon={
+        //   <Avatar
+        //     src={User1}
+        //     sx={{
+        //       ...theme.typography.mediumAvatar,
+        //       margin: '8px 0 8px 8px !important',
+        //       cursor: 'pointer'
+        //     }}
+        //     ref={anchorRef}
+        //     aria-controls={open ? 'menu-list-grow' : undefined}
+        //     aria-haspopup="true"
+        //     color="inherit"
+        //   />
+        // }
         label={<IconSettings stroke={1.5} size="1.5rem" color={theme.palette.primary.main} />}
         variant="outlined"
         ref={anchorRef}
@@ -160,8 +159,6 @@ const ProfileSection = () => {
                   </Box>
                   <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
                     <Box sx={{ p: 2 }}>
-                     
-                     
                       <Divider />
                       <List
                         component="nav"
@@ -189,7 +186,8 @@ const ProfileSection = () => {
                           </ListItemIcon>
                           <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
                         </ListItemButton>
-                        <ListItemButton
+
+                        {/* <ListItemButton
                           sx={{ borderRadius: `${customization.borderRadius}px` }}
                           selected={selectedIndex === 1}
                           onClick={(event) => handleListItemClick(event, 1, '#')}
@@ -216,7 +214,8 @@ const ProfileSection = () => {
                               </Grid>
                             }
                           />
-                        </ListItemButton>
+                        </ListItemButton> */}
+
                         <ListItemButton
                           sx={{ borderRadius: `${customization.borderRadius}px` }}
                           selected={selectedIndex === 4}

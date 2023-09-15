@@ -312,8 +312,10 @@ export default function Customers() {
       if (row) {
         axios
           .get(`/generate-pdf/${row.PackageId}`)
-          .then(() => {
+          .then((res) => {
+            console.log(res)
             toast.success('PDF generated successfully!');
+
             resolve();
           })
           .catch((err) => {

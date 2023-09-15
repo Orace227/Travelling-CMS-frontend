@@ -95,7 +95,7 @@ function applySortFilter(array, comparator, query) {
 
 const TABLE_HEAD = [
   { id: 'bookingId', label: 'Booking ID', alignRight: false },
-  { id: 'clientId', label: 'Client ID', alignRight: false },
+  { id: 'clientName', label: 'Client Name', alignRight: false },
   { id: 'packageId', label: 'Package ID', alignRight: false },
   { id: 'startDate', label: 'Trip Start Date', alignRight: false },
   { id: 'endDate', label: 'Trip End Date', alignRight: false },
@@ -118,11 +118,33 @@ export default function Bookings() {
     const promise = new Promise((resolve, reject) => {
       axios
         .get('/getBookings')
-        .then((response) => {
-          const bookingData = response.data.allBookings;
-          setUserlist(bookingData);
-          toast.success('Bookings fetched successfully!');
-          resolve(bookingData);
+        .then((bookingResponse) => {
+          const bookingData = bookingResponse.data.allBookings;
+
+          axios.get('/getClients').then((clientResponse) => {
+            const clientData = clientResponse.data.allClients;
+
+            // Create a map for efficient lookup by clientId
+            const clientMap = {};
+            clientData.forEach((client) => {
+              clientMap[client.clientId] = client;
+            });
+
+            // Iterate through bookingData and add firstName from clientData
+            const enrichedBookingData = bookingData.map((booking) => {
+              const client = clientMap[booking.clientId];
+              if (client) {
+                booking.firstName = client.firstName;
+                booking.lastName = client.lastName;
+              }
+              return booking;
+            });
+
+            // Now, enrichedBookingData contains bookings with firstName from clientData
+            setUserlist(enrichedBookingData);
+            toast.success('Bookings fetched successfully!');
+            resolve(enrichedBookingData);
+          });
         })
         .catch((error) => {
           toast.error('Failed to fetch Bookings. Please try again later.');
@@ -268,7 +290,7 @@ export default function Bookings() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // console.log(row);
-                    const { clientId, bookingId, packageId, startDate, endDate } = row;
+                    const { firstName, lastName, bookingId, packageId, startDate, endDate } = row;
                     const selectedUser = selected.indexOf(bookingId) !== -1;
 
                     return (
@@ -280,7 +302,9 @@ export default function Bookings() {
 
                           <TableCell align="left">{bookingId}</TableCell>
 
-                          <TableCell align="left">{clientId}</TableCell>
+                          <TableCell align="left">
+                            {firstName}{" "} {lastName}
+                          </TableCell>
                           <TableCell align="left">{packageId}</TableCell>
 
                           <TableCell align="left">{startDate?.split('T')[0]}</TableCell>

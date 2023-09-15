@@ -9,7 +9,6 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 const CardStyle = styled(Card)(({ theme }) => ({
   background: theme.palette.warning.light,
   marginTop: '16px',
-  marginBottom: '16px',
   overflow: 'hidden',
   position: 'relative',
   '&:after': {

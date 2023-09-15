@@ -11,9 +11,9 @@ import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
 // assets
 import { IconUsers } from '@tabler/icons';
+import { useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { useState } from 'react';
 
 // import EarningIcon from 'assets/images/icons/earning.svg';
 // import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -65,20 +65,20 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const EarningCard = ({ isLoading }) => {
+const Bookingcard = ({ isLoading }) => {
   const theme = useTheme();
+  const [bookingsNo, setBookingNo] = useState(0);
 
-  const [clientsNo, setClientsNo] = useState(0);
-
-  const clients = async () => {
-    const clients = await axios.get('/getclients');
+  const Booking = async () => {
+    const Booking = await axios.get('/getBookings');
     // console.log(clients.data.allClients.length);
-    setClientsNo(clients.data.allClients.length);
+    setBookingNo(Booking.data.allBookings.length);
   };
 
   useEffect(() => {
-    clients();
+    Booking();
   }, []);
+
   return (
     <>
       {isLoading ? (
@@ -158,7 +158,7 @@ const EarningCard = ({ isLoading }) => {
                       sx={{ fontSize: '1.9rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
                       style={{ zIndex: '10', position: 'relative' }}
                     >
-                      Total Customers: {clientsNo}
+                      Total Bookings: {bookingsNo}
                     </Typography>
                   </Grid>
                   {/* <Grid item>
@@ -194,8 +194,8 @@ const EarningCard = ({ isLoading }) => {
   );
 };
 
-EarningCard.propTypes = {
+Bookingcard.propTypes = {
   isLoading: PropTypes.bool
 };
 
-export default EarningCard;
+export default Bookingcard;

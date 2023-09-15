@@ -12,8 +12,8 @@ import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 // assets
 import { IconUsers } from '@tabler/icons';
 import { useEffect } from 'react';
-import axios from 'axios';
 import { useState } from 'react';
+import axios from 'axios';
 
 // import EarningIcon from 'assets/images/icons/earning.svg';
 // import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -65,20 +65,33 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const EarningCard = ({ isLoading }) => {
+const PackagesCard = ({ isLoading }) => {
   const theme = useTheme();
+  const [packagesNo, setPackagesNo] = useState(0);
 
-  const [clientsNo, setClientsNo] = useState(0);
+  // const [anchorEl, setAnchorEl] = useState(null);
 
-  const clients = async () => {
-    const clients = await axios.get('/getclients');
+  // const handleClick = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
+
+  // const handleClose = () => {
+  //   setAnchorEl(null);
+  // };
+
+  const packages = async () => {
+    const getLivePackages = await axios.get('/getLivePackages');
     // console.log(clients.data.allClients.length);
-    setClientsNo(clients.data.allClients.length);
+    const getDraftPackages = await axios.get('/getDraftPackages');
+
+    let totalPackages = (await getLivePackages.data.allPackages.length) + (await getDraftPackages.data.allPackages.length);
+    setPackagesNo(totalPackages);
   };
 
   useEffect(() => {
-    clients();
+    packages();
   }, []);
+
   return (
     <>
       {isLoading ? (
@@ -158,7 +171,7 @@ const EarningCard = ({ isLoading }) => {
                       sx={{ fontSize: '1.9rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
                       style={{ zIndex: '10', position: 'relative' }}
                     >
-                      Total Customers: {clientsNo}
+                      Total Packages: {packagesNo}
                     </Typography>
                   </Grid>
                   {/* <Grid item>
@@ -194,8 +207,8 @@ const EarningCard = ({ isLoading }) => {
   );
 };
 
-EarningCard.propTypes = {
+PackagesCard.propTypes = {
   isLoading: PropTypes.bool
 };
 
-export default EarningCard;
+export default PackagesCard;
