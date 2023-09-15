@@ -354,8 +354,8 @@ export default function Customers() {
   const handleGeneratePdf = (row) => {
     // const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
     const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
-
-    const fileName = 'generated-pdf.pdf';
+    console.log(row);
+    const fileName = `${row.packageName}.pdf`;
     downloadPdf(pdfUrl, fileName);
   };
 
