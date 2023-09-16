@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import MarkdownEditor from '@uiw/react-markdown-editor';
 
 const tourDetailSchema = Yup.object().shape({
   day: Yup.number().required('Day is required').positive().integer(),
@@ -262,27 +263,31 @@ const CreatePackage = () => {
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <Field
+                          <Typography variant="h4" gutterBottom>
+                            add Title
+                          </Typography>
+                          <MarkdownEditor
                             name={`packageBody.tourDetails[${index}].title`}
-                            as={TextField}
-                            label="Title"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
+                            value={tour.title}
+                            onChange={(val) => setFieldValue(`packageBody.tourDetails[${index}].title`, val)}
+                            height={70} // Set a suitable height
                           />
                           <ErrorMessage
                             name={`packageBody.tourDetails[${index}].title`}
                             component="div"
+                            // style={{  }}
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <Field
+                          <div style={{ margin: '20px' }}></div>
+                          <Typography variant="h4" gutterBottom>
+                            add Description
+                          </Typography>
+                          <MarkdownEditor
                             name={`packageBody.tourDetails[${index}].description`}
-                            as={TextField}
-                            label="Description"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
+                            value={tour.description}
+                            onChange={(val) => setFieldValue(`packageBody.tourDetails[${index}].description`, val)}
+                            height={150} // Set a suitable height
                           />
                           <ErrorMessage
                             name={`packageBody.tourDetails[${index}].description`}
@@ -290,7 +295,13 @@ const CreatePackage = () => {
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <Button type="button" variant="outlined" color="secondary" onClick={() => remove(index)}>
+                          <Button
+                            type="button"
+                            style={{ marginTop: '10px' }}
+                            variant="outlined"
+                            color="secondary"
+                            onClick={() => remove(index)}
+                          >
                             Remove Tour Detail
                           </Button>
                         </div>

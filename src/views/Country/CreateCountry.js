@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, TextField, Button, Grid } from '@mui/material';
+import { Container, Typography, TextField, Button, Grid, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import toast, { Toaster } from 'react-hot-toast';
@@ -8,7 +8,8 @@ import { useState } from 'react';
 
 const validationSchema = Yup.object().shape({
   countryId: Yup.number().required('Package ID is required'),
-  countryName: Yup.string().required('Package name is required')
+  countryName: Yup.string().required('Package name is required'),
+  continent: Yup.string().required('select country name')
 });
 
 const generateSixDigitNumber = () => {
@@ -19,7 +20,8 @@ const generateSixDigitNumber = () => {
 
 const initialValues = {
   countryId: generateSixDigitNumber(),
-  countryName: ''
+  countryName: '',
+  continent: ''
 };
 
 const CreateCountry = () => {
@@ -76,6 +78,21 @@ const CreateCountry = () => {
               <Grid item xs={12} sm={6}>
                 <Field name="countryName" as={TextField} label="Country Name" fullWidth margin="normal" variant="outlined" />
                 <ErrorMessage name="countryName" component="div" className="error" style={{ color: 'red' }} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <InputLabel htmlFor="continent">Select Continent</InputLabel>
+                  <Field name="continent" as={Select} label="Select Continent" fullWidth>
+                    <MenuItem value="Africa">Africa</MenuItem>
+                    <MenuItem value="Asia">Asia</MenuItem>
+                    <MenuItem value="Europe">Europe</MenuItem>
+                    <MenuItem value="North America">North America</MenuItem>
+                    <MenuItem value="South America">South America</MenuItem>
+                    <MenuItem value="Australia">Australia</MenuItem>
+                    {/* You can add more continents as needed */}
+                  </Field>
+                </FormControl>
+                <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
             </Grid>
             <Button

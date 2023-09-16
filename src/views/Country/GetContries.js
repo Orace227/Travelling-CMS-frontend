@@ -69,7 +69,11 @@ import {
   Button,
   // DialogActions,
   TextField,
-  Grid
+  Grid,
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel
 } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
@@ -112,11 +116,13 @@ function applySortFilter(array, comparator, query) {
 const TABLE_HEAD = [
   { id: 'id', label: 'Country ID ', alignRight: false },
   { id: 'name', label: 'Country Name', alignRight: false },
+  { id: 'continent', label: 'continent Name', alignRight: false },
   { id: 'action', label: 'action' }
 ];
 
 const validationSchema = Yup.object().shape({
-  countryName: Yup.string().required('Package name is required')
+  countryName: Yup.string().required('Package name is required'),
+  continent: Yup.string().required('Continent name is required')
 });
 
 export default function GetCountries() {
@@ -298,6 +304,21 @@ export default function GetCountries() {
                           <Field name="countryName" as={TextField} label="Country Name" fullWidth margin="normal" variant="outlined" />
                           <ErrorMessage name="countryName" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <FormControl fullWidth variant="outlined" margin="normal">
+                            <InputLabel htmlFor="continent">Select Continent</InputLabel>
+                            <Field name="continent" as={Select} label="Select Continent" fullWidth>
+                              <MenuItem value="Africa">Africa</MenuItem>
+                              <MenuItem value="Asia">Asia</MenuItem>
+                              <MenuItem value="Europe">Europe</MenuItem>
+                              <MenuItem value="North America">North America</MenuItem>
+                              <MenuItem value="South America">South America</MenuItem>
+                              <MenuItem value="Australia">Australia</MenuItem>
+                              {/* You can add more continents as needed */}
+                            </Field>
+                          </FormControl>
+                          <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} />
+                        </Grid>
                       </Grid>
                       <Button
                         type="submit"
@@ -340,7 +361,7 @@ export default function GetCountries() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // console.log(row);
-                    const { countryId, countryName } = row;
+                    const { countryId, countryName, continent } = row;
                     const selectedUser = selected.indexOf(countryId) !== -1;
 
                     return (
@@ -353,6 +374,7 @@ export default function GetCountries() {
                           <TableCell align="left">{countryId}</TableCell>
 
                           <TableCell align="left">{countryName}</TableCell>
+                          <TableCell align="left">{continent}</TableCell>
 
                           <TableCell align="left">
                             <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
