@@ -1,18 +1,5 @@
 import React from 'react';
-import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Grid,
-  Paper,
-  IconButton,
-  FormLabel,
-  InputLabel,
-  FormControl,
-  MenuItem,
-  Select
-} from '@mui/material';
+import { Container, Typography, TextField, Button, Grid, Paper, IconButton, FormLabel, Autocomplete } from '@mui/material';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 // import axios from 'axios';
@@ -21,7 +8,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
-
 // import axios from 'axios';
 
 const validationSchema = Yup.object().shape({
@@ -31,11 +17,7 @@ const validationSchema = Yup.object().shape({
     .matches(/^\d+$/, 'Package ID must contain only digits')
     .min(6, 'Package ID must be at least 6 digits')
     .max(6, 'Package ID must not exceed 6 digits'),
-  clientId: Yup.string()
-    .required('Client ID is required')
-    .matches(/^\d+$/, 'Client ID must contain only digits')
-    .min(6, 'Client ID must be at least 6 digits')
-    .max(6, 'Client ID must not exceed 6 digits'),
+  clientId: Yup.string().required('Client Name is required'),
   startDate: Yup.date().required('Start Date is required'),
   endDate: Yup.date().required('End Date is required'),
   modifiedPackagePrice: Yup.number().required('Modified Package Price is required'),
@@ -81,7 +63,36 @@ const CreateBooking = () => {
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState([]);
   const [Packages, setPackages] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
+  const handleClientChange = (_, newValue, setFieldValue) => {
+    // When a client is selected, update the clientId field with the client ID
+    if (newValue) {
+      setFieldValue('clientId', newValue.clientId);
+      setSelectedClient(newValue);
+    } else {
+      setFieldValue('clientId', ''); // Clear the clientId field if nothing is selected
+      setSelectedClient(null);
+    }
+  };
+
+  // Function to handle package change
+  const handlePackageChange = (_, newValue, setFieldValue) => {
+    // When a package is selected, update the packageId field with the package ID
+    if (newValue) {
+      setFieldValue('packageId', newValue.packageId);
+      setSelectedPackage(newValue);
+    } else {
+      setFieldValue('packageId', ''); // Clear the packageId field if nothing is selected
+      setSelectedPackage(null);
+    }
+  };
+
+  // Custom filtering function to filter clients based on input value
+  const filterClientOptions = (options, { inputValue }) => {
+    return options.filter((option) => option.name.toLowerCase().includes(inputValue.toLowerCase()));
+  };
   const handleSubmit = async (values) => {
     const formData = new FormData();
     setLoading(true);
@@ -161,7 +172,8 @@ const CreateBooking = () => {
     console.log('data', data);
 
     try {
-      const createdBooking = await axios.post('createBooking', data);
+      console.log('this is last:', values);
+      const createdBooking = await axios.post('/createBooking', data);
 
       if (createdBooking) {
         setLoading(false);
@@ -173,17 +185,23 @@ const CreateBooking = () => {
     }
   };
 
-  const fetchClientInfo = async () => {
-    const allClients = await axios.get('/getclients');
-    if (allClients) {
-      let clientIDS = [];
-      for (let i = 0; i < allClients.data.allClients.length; i++) {
-        // console.log(allClients.data.allClients[i].clientId);
-        clientIDS.push(allClients.data.allClients[i].clientId);
-      }
-      // console.log(clientIDS);
-      setClients(clientIDS);
-      // console.log(clients);
+  const fetchClients = async () => {
+    try {
+      const response = await axios.get('/getclients');
+      const allClientsData = response.data.allClients;
+
+      // Map the client data to an array of client objects
+      const clientObjects = allClientsData.map((item) => ({
+        clientId: item.clientId,
+        name: `${item.firstName} ${item.lastName}`
+      }));
+
+      // Set the clients state with the array of client objects
+      setClients(clientObjects);
+
+      console.log('clientObjects', clientObjects);
+    } catch (error) {
+      console.error('Error fetching clients:', error);
     }
   };
 
@@ -209,13 +227,15 @@ const CreateBooking = () => {
       }
 
       console.log(packageIDS);
+      // console.log(clients);
       setPackages(packageIDS);
     }
   };
+  console.log('clients:', clients);
 
   useEffect(() => {
     fetchPackageInfo();
-    fetchClientInfo();
+    fetchClients();
   }, []);
   return (
     <Container>
@@ -232,30 +252,29 @@ const CreateBooking = () => {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel htmlFor="packageId">Package ID</InputLabel>
-                  <Field as={Select} label="Package ID" name="packageId" variant="outlined">
-                    {Packages.map((option) => (
-                      <MenuItem key={option.packageId} value={option.packageId}>
-                        {option.packageIdName}
-                      </MenuItem>
-                    ))}
-                  </Field>
-                </FormControl>
+                <Autocomplete
+                  id="packageId"
+                  options={Packages}
+                  getOptionLabel={(option) => option.packageIdName}
+                  value={selectedPackage}
+                  onChange={(_, newValue) => handlePackageChange(_, newValue, setFieldValue)}
+                  renderInput={(params) => <Field {...params} as={TextField} label="Select Package" name="packageId" variant="outlined" />}
+                />
                 <ErrorMessage name="packageId" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
-
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel htmlFor="clientId">Client ID</InputLabel>
-                  <Field as={Select} label="Client ID" name="clientId" variant="outlined">
-                    {clients.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Field>
-                </FormControl>
+              <Grid xs={12} sm={6}>
+                <Autocomplete
+                  style={{ paddingLeft: '15px' }}
+                  id="clientId"
+                  options={clients}
+                  getOptionLabel={(option) => option.name}
+                  filterOptions={filterClientOptions}
+                  value={selectedClient}
+                  onChange={(_, newValue) => handleClientChange(_, newValue, setFieldValue)}
+                  renderInput={(params) => (
+                    <Field {...params} as={TextField} label="Select Client" name="clientId" variant="outlined" margin="normal" />
+                  )}
+                />
                 <ErrorMessage name="clientId" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
               <Grid item xs={12} md={6}>
