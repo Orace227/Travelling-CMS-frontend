@@ -178,7 +178,7 @@ const CreateBooking = () => {
       if (createdBooking) {
         setLoading(false);
         window.location.reload();
-        window.location.href = 'http://localhost:3000/Bookings';
+        window.location.href = 'https://travelling-cms-frontend.vercel.app/Bookings';
       }
     } catch (error) {
       console.error('Error creating booking:', error);
