@@ -1,13 +1,28 @@
 import React from 'react';
-import { Container, Typography, TextField, FormLabel, Button, Grid, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import {
+  Container,
+  Typography,
+  TextField,
+  FormLabel,
+  Button,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  IconButton
+} from '@mui/material';
 import { Formik, Form, FieldArray, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import MarkdownEditor from '@uiw/react-markdown-editor';
-
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import ClearIcon from '@mui/icons-material/Clear';
+import { EditorState, convertToRaw } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
 const tourDetailSchema = Yup.object().shape({
   day: Yup.number().required('Day is required').positive().integer(),
   title: Yup.string().required('Title is required'),
@@ -77,6 +92,16 @@ const CreatePackage = () => {
   const [loading, setLoading] = useState(false);
   const [countries, setCountries] = useState([]);
 
+  // const initialTour = {
+  //   title: 'Initial Title',
+  //   description: 'Initial Description'
+  // };
+
+  // const [tour, setTour] = useState({});
+  // setTour(initialTour);
+  const [titleEditorState, setTitleEditorState] = useState(EditorState.createEmpty());
+  const [descriptionEditorState, setDescriptionEditorState] = useState(EditorState.createEmpty());
+
   const handlePriceKeyPress = (event) => {
     if (!/^\d+$/.test(event.key)) {
       event.preventDefault();
@@ -128,6 +153,28 @@ const CreatePackage = () => {
     GetCountries();
   }, []);
 
+  const editorStyle = {
+    minHeight: '80px',
+    padding: '8px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    backgroundColor: '#fff',
+    boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.1)',
+    fontSize: '14px',
+    lineHeight: '1.4',
+    color: '#333'
+  };
+  const toolbarOptions = {
+    options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'history'],
+    inline: {
+      inDropdown: false,
+      options: ['bold', 'italic', 'underline']
+    },
+    blockType: {
+      inDropdown: true,
+      options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6']
+    }
+  };
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
@@ -263,15 +310,34 @@ const CreatePackage = () => {
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <Typography variant="h4" gutterBottom>
-                            add Title
+                          <Typography variant="h5" gutterBottom>
+                            <div style={{ position: 'relative', top: '30px' }}>add title</div>
                           </Typography>
-                          <MarkdownEditor
+                          <Typography variant="h5" style={{ display: 'flex', justifyContent: 'flex-end' }} gutterBottom>
+                            <IconButton onClick={() => remove(index)} color="error" aria-label="delete">
+                              <ClearIcon />
+                            </IconButton>
+                          </Typography>
+                          <Editor
                             name={`packageBody.tourDetails[${index}].title`}
-                            value={tour.title}
-                            onChange={(val) => setFieldValue(`packageBody.tourDetails[${index}].title`, val)}
-                            height={70} // Set a suitable height
+                            editorState={titleEditorState}
+                            toolbar={toolbarOptions}
+                            onEditorStateChange={(newEditorState) => {
+                              setTitleEditorState(newEditorState);
+                              // Convert EditorState to HTML
+                              const contentState = newEditorState.getCurrentContent();
+                              const contentStateAsRaw = convertToRaw(contentState);
+                              const contentStateAsHTML = draftToHtml(contentStateAsRaw);
+
+                              // Update your form field here with HTML
+                              // console.log(contentStateAsHTML);
+                              setFieldValue(`packageBody.tourDetails[${index}].title`, contentStateAsHTML);
+                            }}
+                            toolbarHidden={false}
+                            editorStyle={editorStyle}
+                            wrapperStyle={{ height: '100px', marginTop: '10px', marginBottom: '90px' }}
                           />
+
                           <ErrorMessage
                             name={`packageBody.tourDetails[${index}].title`}
                             component="div"
@@ -279,15 +345,30 @@ const CreatePackage = () => {
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <div style={{ margin: '20px' }}></div>
-                          <Typography variant="h4" gutterBottom>
-                            add Description
+                          <div style={{ marginTop: '10px' }}></div>
+                          <Typography variant="h5" gutterBottom>
+                            <div>add Description</div>
                           </Typography>
-                          <MarkdownEditor
+                          <Editor
                             name={`packageBody.tourDetails[${index}].description`}
-                            value={tour.description}
-                            onChange={(val) => setFieldValue(`packageBody.tourDetails[${index}].description`, val)}
-                            height={150} // Set a suitable height
+                            editorState={descriptionEditorState}
+                            toolbar={toolbarOptions}
+                            onEditorStateChange={(newEditorState) => {
+                              setDescriptionEditorState(newEditorState);
+
+                              // Convert EditorState to HTML
+                              const contentState = newEditorState.getCurrentContent();
+                              const contentStateAsRaw = convertToRaw(contentState);
+
+                              // Convert raw content state to HTML
+                              const contentStateAsHTML = draftToHtml(contentStateAsRaw);
+                              // console.log(contentStateAsHTML);
+                              // Update your form field here with HTML
+                              setFieldValue(`packageBody.tourDetails[${index}].description`, contentStateAsHTML);
+                            }}
+                            toolbarHidden={false}
+                            editorStyle={editorStyle}
+                            wrapperStyle={{ height: '100px', marginTop: '10px', marginBottom: '90px' }}
                           />
                           <ErrorMessage
                             name={`packageBody.tourDetails[${index}].description`}
@@ -295,21 +376,12 @@ const CreatePackage = () => {
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <Button
-                            type="button"
-                            style={{ marginTop: '10px' }}
-                            variant="outlined"
-                            color="secondary"
-                            onClick={() => remove(index)}
-                          >
-                            Remove Tour Detail
-                          </Button>
                         </div>
                       ))}
                       <Button
                         type="button"
                         variant="outlined"
-                        style={{ marginTop: '10px' }}
+                        // style={{ marginTop: '0px' }}
                         onClick={() => push({ day: '', title: '', description: '' })}
                       >
                         Add Tour Detail
@@ -320,37 +392,45 @@ const CreatePackage = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h5" gutterBottom>
+                <Typography variant="h5" style={{ position: 'relative', top: '10px' }} gutterBottom>
                   Inclusions
                 </Typography>
                 <FieldArray name="packageBody.inclusionsAndExclusions.inclusions">
                   {({ push, remove }) => (
-                    <div>
-                      {values.packageBody.inclusionsAndExclusions.inclusions.map((inclusion, index) => (
-                        <div key={index}>
-                          <Field
-                            name={`packageBody.inclusionsAndExclusions.inclusions[${index}]`}
-                            as={TextField}
-                            label={`Inclusion ${index + 1}`}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                          <ErrorMessage
-                            name={`packageBody.inclusionsAndExclusions.inclusions[${index}]`}
-                            component="div"
-                            className="error"
-                            style={{ color: 'red' }}
-                          />
-                          <Button type="button" variant="outlined" color="secondary" onClick={() => remove(index)}>
-                            Remove Inclusion
-                          </Button>
-                        </div>
-                      ))}
-                      <Button type="button" variant="outlined" style={{ marginTop: '10px' }} onClick={() => push('')}>
-                        Add Inclusion
-                      </Button>
-                    </div>
+                    <>
+                      <div>
+                        {values.packageBody.inclusionsAndExclusions.inclusions.map((inclusion, index) => (
+                          <div key={index}>
+                            <Typography
+                              variant="h6"
+                              style={{ height: '30px', position: 'relative', top: '10px', display: 'flex', justifyContent: 'flex-end' }}
+                              gutterBottom
+                            >
+                              <IconButton onClick={() => remove(index)} color="error" aria-label="delete">
+                                <ClearIcon />
+                              </IconButton>
+                            </Typography>
+                            <Field
+                              name={`packageBody.inclusionsAndExclusions.inclusions[${index}]`}
+                              as={TextField}
+                              label={`Inclusion ${index + 1}`}
+                              fullWidth
+                              margin="normal"
+                              variant="outlined"
+                            />
+                            <ErrorMessage
+                              name={`packageBody.inclusionsAndExclusions.inclusions[${index}]`}
+                              component="div"
+                              className="error"
+                              style={{ color: 'red' }}
+                            />
+                          </div>
+                        ))}
+                        <Button type="button" variant="outlined" style={{ marginTop: '10px' }} onClick={() => push('')}>
+                          Add Inclusion
+                        </Button>
+                      </div>
+                    </>
                   )}
                 </FieldArray>
               </Grid>
@@ -363,6 +443,15 @@ const CreatePackage = () => {
                     <div>
                       {values.packageBody.inclusionsAndExclusions.exclusions.map((inclusion, index) => (
                         <div key={index}>
+                          <Typography
+                            variant="h6"
+                            style={{ height: '30px', position: 'relative', top: '10px', display: 'flex', justifyContent: 'flex-end' }}
+                            gutterBottom
+                          >
+                            <IconButton onClick={() => remove(index)} color="error" aria-label="delete">
+                              <ClearIcon />
+                            </IconButton>
+                          </Typography>
                           <Field
                             name={`packageBody.inclusionsAndExclusions.exclusions[${index}]`}
                             as={TextField}
@@ -377,9 +466,6 @@ const CreatePackage = () => {
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <Button type="button" variant="outlined" color="secondary" onClick={() => remove(index)}>
-                            Remove Exclusion
-                          </Button>
                         </div>
                       ))}
                       <Button type="button" variant="outlined" style={{ marginTop: '10px' }} onClick={() => push('')}>
@@ -398,6 +484,15 @@ const CreatePackage = () => {
                     <div>
                       {values.packageBody.termsAndConditions.terms.map((term, index) => (
                         <div key={index}>
+                          <Typography
+                            variant="h6"
+                            style={{ height: '30px', position: 'relative', top: '10px', display: 'flex', justifyContent: 'flex-end' }}
+                            gutterBottom
+                          >
+                            <IconButton onClick={() => remove(index)} color="error" aria-label="delete">
+                              <ClearIcon />
+                            </IconButton>
+                          </Typography>
                           <Field
                             name={`packageBody.termsAndConditions.terms[${index}]`}
                             as={TextField}
@@ -412,9 +507,6 @@ const CreatePackage = () => {
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <Button type="button" variant="outlined" color="secondary" onClick={() => remove(index)}>
-                            Remove Terms
-                          </Button>
                         </div>
                       ))}
                       <Button type="button" variant="outlined" style={{ marginTop: '10px' }} onClick={() => push('')}>
@@ -433,6 +525,15 @@ const CreatePackage = () => {
                     <div>
                       {values.packageBody.termsAndConditions.conditions.map((condition, index) => (
                         <div key={index}>
+                          <Typography
+                            variant="h6"
+                            style={{ height: '30px', position: 'relative', top: '10px', display: 'flex', justifyContent: 'flex-end' }}
+                            gutterBottom
+                          >
+                            <IconButton onClick={() => remove(index)} color="error" aria-label="delete">
+                              <ClearIcon />
+                            </IconButton>
+                          </Typography>
                           <Field
                             name={`packageBody.termsAndConditions.conditions[${index}]`}
                             as={TextField}
@@ -447,9 +548,6 @@ const CreatePackage = () => {
                             className="error"
                             style={{ color: 'red' }}
                           />
-                          <Button type="button" variant="outlined" color="secondary" onClick={() => remove(index)}>
-                            Remove Condition
-                          </Button>
                         </div>
                       ))}
                       <Button type="button" variant="outlined" style={{ marginTop: '10px' }} onClick={() => push('')}>
