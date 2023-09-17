@@ -190,7 +190,7 @@ const CreateBooking = () => {
     endDate: Yup.date().required('End Date is required'),
     modifiedPackagePrice: Yup.number()
       .required('Modified Package Price is required')
-      .test('is-valid-price', 'Modified price must be 5% or more of the total cost', function () {
+      .test('is-valid-price', `Modified price must be ${minValidPrice()} or more`, function () {
         // const TotalCost = totalCost || 0; // Get the total cost from the form values
 
         const minValidPrice = totalCost * 1.05; // Calculate 5% of the total cost
@@ -208,7 +208,14 @@ const CreateBooking = () => {
       })
     )
   });
+  function minValidPrice() {
+    let fivePercent = calculate5Percent(totalCost);
+    let requiredCost = totalCost + fivePercent;
+    // let minval = requiredCost - MPPrice;
+    return requiredCost;
+  }
 
+  console.log('this value is to required', minValidPrice());
   const fetchClients = async () => {
     try {
       const response = await axios.get('/getclients');
