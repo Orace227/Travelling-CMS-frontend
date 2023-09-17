@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, TextField, Button, Grid, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { Container, Typography, TextField, Button, Grid, FormControl, InputLabel, MenuItem, Select, FormLabel } from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import toast, { Toaster } from 'react-hot-toast';
@@ -21,7 +21,10 @@ const generateSixDigitNumber = () => {
 const initialValues = {
   countryId: generateSixDigitNumber(),
   countryName: '',
-  continent: ''
+  continent: '',
+  countryImgName: '',
+  countryImgPath: '',
+  countryImg: {} // Use null for file uploads
 };
 
 const CreateCountry = () => {
@@ -29,16 +32,25 @@ const CreateCountry = () => {
 
   const handleSubmit = async (values) => {
     try {
-      console.log(values);
+      console.log('intial value', values);
+
       setLoading(true);
+      const formData = new FormData();
+      formData.append('countryImg', values.countryImg);
+      const uploadedImg = await axios.post('/uploadCountryImg', formData);
+      console.log(uploadedImg);
+      values.countryImgPath = uploadedImg.data.path;
+      console.log('img path edded', values);
 
-      const createCountry = await axios.post('/CreateCountry', values);
-      console.log(createCountry);
-      if (createCountry) {
-        toast.success('Country created successfully!!');
+      if (uploadedImg) {
+        const createCountry = await axios.post('/CreateCountry', values);
+        console.log(createCountry);
+        if (createCountry) {
+          toast.success('Country created successfully!!');
 
-        setLoading(false);
-        window.location.reload();
+          setLoading(false);
+          window.location.reload();
+        }
       }
     } catch (error) {
       console.error('An error occurred:', error);
@@ -59,7 +71,7 @@ const CreateCountry = () => {
       </Typography>
 
       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-        {({ values }) => (
+        {({ values,setFieldValue }) => (
           <Form>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
@@ -93,6 +105,28 @@ const CreateCountry = () => {
                   </Field>
                 </FormControl>
                 <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} />
+              </Grid>
+              <Grid item xs={12} sm={6} style={{ marginTop: '24px' }}>
+                <input
+                  id="countryImg"
+                  name="countryImg"
+                  type="file"
+                  onChange={(e) => {
+                    setFieldValue('countryImg', e.currentTarget.files[0]);
+                    setFieldValue('countryImgName', e.currentTarget.files[0].name);
+                  }}
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                />
+                <FormLabel htmlFor="countryImg">
+                  <Button variant="outlined" component="span" fullWidth style={{ textTransform: 'none' }}>
+                    Upload country Image
+                  </Button>
+                </FormLabel>
+                <div>
+                  {values.countryImgName && <p style={{ margin: '0', paddingTop: '8px' }}>Selected Image: {values.countryImgName}</p>}
+                </div>
+                <ErrorMessage name="countryImg" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
             </Grid>
             <Button
