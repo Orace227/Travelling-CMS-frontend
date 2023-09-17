@@ -10,27 +10,6 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 // import axios from 'axios';
 
-const validationSchema = Yup.object().shape({
-  bookingId: Yup.number().required('Booking ID is required'),
-  packageId: Yup.string()
-    .required('Package ID is required')
-    .matches(/^\d+$/, 'Package ID must contain only digits')
-    .min(6, 'Package ID must be at least 6 digits')
-    .max(6, 'Package ID must not exceed 6 digits'),
-  clientId: Yup.string().required('Client Name is required'),
-  startDate: Yup.date().required('Start Date is required'),
-  endDate: Yup.date().required('End Date is required'),
-  modifiedPackagePrice: Yup.number().required('Modified Package Price is required'),
-  bookingDetails: Yup.array().of(
-    Yup.object().shape({
-      bookingType: Yup.string().required('Booking Type is required'),
-      bookingName: Yup.string().required('Booking Name is required'),
-      docImgName: Yup.string().required('Document Name is required'),
-      docImg: Yup.mixed().required('Booking Document is required')
-    })
-  )
-});
-
 function generateSixDigitNumber() {
   const min = 100000; // Smallest 6-digit number
   const max = 999999; // Largest 6-digit number
@@ -42,21 +21,13 @@ function generateSixDigitNumber() {
 const defaultBookingDetail = {
   bookingType: '',
   bookingName: '',
+  price: '',
+  vandor: '',
   docImgName: '',
   docImgPath: '',
   docImg: {
     key: ''
   }
-};
-
-const initialValues = {
-  bookingId: generateSixDigitNumber(),
-  packageId: '',
-  clientId: '',
-  startDate: '',
-  endDate: '',
-  modifiedPackagePrice: '',
-  bookingDetails: [defaultBookingDetail]
 };
 
 const CreateBooking = () => {
@@ -65,6 +36,10 @@ const CreateBooking = () => {
   const [Packages, setPackages] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [totalCost, setTotalCost] = useState(0);
+  const [MPPrice, setMPPrice] = useState(0);
+  const [isToastVisible, setIsToastVisible] = useState(false);
+  const [isToastVisible1, setIsToastVisible1] = useState(false);
 
   const handleClientChange = (_, newValue, setFieldValue) => {
     // When a client is selected, update the clientId field with the client ID
@@ -169,7 +144,10 @@ const CreateBooking = () => {
         }
       }
     }
+    values.totalCost = totalCost;
+    values.modifiedPackagePrice = MPPrice;
     console.log('data', data);
+    // Calculate the total price of all booking details
 
     try {
       console.log('this is last:', values);
@@ -183,6 +161,53 @@ const CreateBooking = () => {
       console.error('Error creating booking:', error);
     }
   };
+  function calculate5Percent(number) {
+    // Calculate 5% of the number
+    const result = 0.05 * number;
+    return result;
+  }
+  // Custom validation function
+
+  const initialValues = {
+    bookingId: generateSixDigitNumber(),
+    packageId: '',
+    clientId: '',
+    totalCost: 0,
+    startDate: '',
+    endDate: '',
+    modifiedPackagePrice: MPPrice,
+    bookingDetails: [defaultBookingDetail]
+  };
+  const validationSchema = Yup.object().shape({
+    bookingId: Yup.number().required('Booking ID is required'),
+    packageId: Yup.string()
+      .required('Package ID is required')
+      .matches(/^\d+$/, 'Package ID must contain only digits')
+      .min(6, 'Package ID must be at least 6 digits')
+      .max(6, 'Package ID must not exceed 6 digits'),
+    clientId: Yup.string().required('Client Name is required'),
+    startDate: Yup.date().required('Start Date is required'),
+    endDate: Yup.date().required('End Date is required'),
+    modifiedPackagePrice: Yup.number()
+      .required('Modified Package Price is required')
+      .test('is-valid-price', 'Modified price must be 5% or more of the total cost', function () {
+        // const TotalCost = totalCost || 0; // Get the total cost from the form values
+
+        const minValidPrice = totalCost * 1.05; // Calculate 5% of the total cost
+        // console.log('minvalidvalue', minValidPrice, 'total cost', MPPrice);
+        return MPPrice >= minValidPrice;
+      }),
+    bookingDetails: Yup.array().of(
+      Yup.object().shape({
+        bookingType: Yup.string().required('Booking Type is required'),
+        bookingName: Yup.string().required('Booking Name is required'),
+        price: Yup.number().required('price is required'),
+        vandor: Yup.string().required('vandor is required'),
+        docImgName: Yup.string().required('Document is required'),
+        docImg: Yup.mixed().required('Booking Document is required')
+      })
+    )
+  });
 
   const fetchClients = async () => {
     try {
@@ -230,12 +255,53 @@ const CreateBooking = () => {
       setPackages(packageIDS);
     }
   };
-  console.log('clients:', clients);
+  // console.log('clients:', clients);
 
   useEffect(() => {
     fetchPackageInfo();
     fetchClients();
   }, []);
+
+  const handleTotalPrice = (e, index, values) => {
+    const newPrice = parseInt(e.target.value, 10) || 0;
+
+    // Update the price for the specific booking detail at the given index
+    const updatedBookingDetails = [...values.bookingDetails];
+    updatedBookingDetails[index].price = newPrice;
+
+    // Calculate the total price by summing up the prices of all booking details
+    const bookingDetailsPrice = updatedBookingDetails.reduce((total, bookingDetail) => {
+      return total + (parseInt(bookingDetail.price, 10) || 0);
+    }, 0);
+
+    // Update the total cost
+    setTotalCost(bookingDetailsPrice);
+
+    // Update the booking details in the form values
+    // values.setFieldValue('bookingDetails', updatedBookingDetails);
+  };
+
+  function handleModifiedPrice(e) {
+    let fivePercent = calculate5Percent(totalCost);
+    setMPPrice(e.target.value);
+    let recommndedPrice = fivePercent + totalCost;
+    console.log('recommndedPrice', recommndedPrice);
+
+    if (e.target.value >= recommndedPrice) {
+      console.log('price is correct', fivePercent);
+      if (!isToastVisible1) {
+        toast.success(`Modified Package Price is correct!!`);
+        setIsToastVisible1(true);
+      }
+    } else {
+      console.log('price is not correct', fivePercent);
+      if (!isToastVisible) {
+        toast.error(`Modified Package Price is not correct please add more`);
+        setIsToastVisible(true);
+      }
+    }
+  }
+
   return (
     <Container>
       <Typography variant="h2" style={{ marginBottom: '15px' }} gutterBottom>
@@ -305,8 +371,27 @@ const CreateBooking = () => {
                 <ErrorMessage name="endDate" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
               <Grid item xs={12} md={6}>
-                <Field fullWidth as={TextField} name="modifiedPackagePrice" label="Modified Package Price" variant="outlined" />
+                <Field
+                  fullWidth
+                  as={TextField}
+                  value={MPPrice}
+                  name="modifiedPackagePrice"
+                  onChange={handleModifiedPrice}
+                  label="Modified Package Price"
+                  variant="outlined"
+                />
                 <ErrorMessage name="modifiedPackagePrice" style={{ color: 'red' }} component="div" className="error" />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  fullWidth
+                  as={TextField}
+                  name="totalCost"
+                  label="Total Cost"
+                  variant="outlined"
+                  value={totalCost} // Bind the value to the totalCost state variable
+                  disabled
+                />
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="h3" style={{ marginTop: '10px' }}>
@@ -317,7 +402,13 @@ const CreateBooking = () => {
                     <div>
                       {values?.bookingDetails.map((_, index) => (
                         <Paper key={index} elevation={3} style={{ padding: '10px', margin: '20px' }}>
-                          <IconButton onClick={() => remove(index)} color="error" aria-label="delete">
+                          <IconButton
+                            onClick={() => {
+                              remove(index);
+                            }}
+                            color="error"
+                            aria-label="delete"
+                          >
                             <ClearIcon />
                           </IconButton>
 
@@ -352,6 +443,33 @@ const CreateBooking = () => {
                                 style={{ color: 'red' }}
                               />
                             </Grid>
+                            <Grid item xs={12} md={4}>
+                              <Field
+                                name={`bookingDetails.${index}.price`}
+                                onChange={(e) => {
+                                  handleTotalPrice(e, index, values); // Pass 'values' as an argument
+                                }}
+                                as={TextField}
+                                fullWidth
+                                label="Price"
+                                variant="outlined"
+                              />
+                              <ErrorMessage
+                                name={`bookingDetails.${index}.price`}
+                                component="div"
+                                className="error"
+                                style={{ color: 'red' }}
+                              />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                              <Field name={`bookingDetails.${index}.vandor`} as={TextField} fullWidth label="Vandor" variant="outlined" />
+                              <ErrorMessage
+                                name={`bookingDetails.${index}.vandor`}
+                                component="div"
+                                className="error"
+                                style={{ color: 'red' }}
+                              />
+                            </Grid>
                             <Grid item xs={12} sm={4} style={{ marginTop: '7px' }}>
                               <input
                                 id={`docImg-${index}`}
@@ -377,7 +495,7 @@ const CreateBooking = () => {
                                 )}
                               </div>
                               <ErrorMessage
-                                name={`bookingDetails.${index}.docImg`}
+                                name={`bookingDetails.${index}.docImgName`}
                                 component="div"
                                 className="error"
                                 style={{ color: 'red' }}
@@ -386,7 +504,12 @@ const CreateBooking = () => {
                           </Grid>
                         </Paper>
                       ))}
-                      <Button type="button" onClick={() => push({ bookingType: '', bookingName: '', docImg: '' })}>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          push({ bookingType: '', bookingName: '', price: '', vandor: '', docImg: '' });
+                        }}
+                      >
                         Add Booking Detail
                       </Button>
                     </div>
