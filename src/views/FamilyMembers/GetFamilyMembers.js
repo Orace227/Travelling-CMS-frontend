@@ -299,7 +299,7 @@ export default function GetFamilyMembers() {
         </Stack>
         <Toaster />
         {openEditModal && (
-          <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="xs" fullWidth>
+          <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="lg" fullWidth>
             <DialogTitle>Edit Customer</DialogTitle>
             <DialogContent>
               <Container>
