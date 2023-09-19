@@ -71,7 +71,7 @@ export default function ReadPackageData() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" style={{ fontSize: '18px', textAlign: 'justify' }}>
-                <strong>Is Live:</strong> {packageItem.isLive ? 'Yes' : 'No'}
+                <strong>Live:</strong> {packageItem.isLive ? 'Yes' : 'No'}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
