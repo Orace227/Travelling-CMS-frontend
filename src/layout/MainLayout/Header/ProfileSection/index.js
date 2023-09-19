@@ -71,8 +71,10 @@ const ProfileSection = () => {
     greetingMessage = 'Good Morning,';
   } else if (currentHour >= 12 && currentHour < 18) {
     greetingMessage = 'Good Afternoon,';
-  } else {
+  } else if (currentHour >= 18 && currentHour < 21) {
     greetingMessage = 'Good Evening,';
+  } else {
+    greetingMessage = 'Good Night,';
   }
 
   return (
