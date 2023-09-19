@@ -281,17 +281,17 @@ export default function ReadCustomerData() {
             </Divider>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Company Name:</strong> {customerList.companyName}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Company GST Email:</strong> {customerList.companyGSTEmail}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Company GST Number:</strong> {customerList.companyGSTNumber}
             </Typography>
           </Grid>
