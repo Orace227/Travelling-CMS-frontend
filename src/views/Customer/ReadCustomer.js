@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { Container, Typography, Grid, Divider } from '@mui/material';
+import { Container, Typography, Grid, Divider, Paper } from '@mui/material';
 import { useParams } from 'react-router-dom';
 
 export default function ReadCustomerData() {
   const [customerList, setCustomerList] = useState([]);
+  const [familyMembers, setFamilyMembers] = useState([]);
   let { clientId } = useParams();
   clientId = parseInt(clientId, 10);
-  console.log(clientId);
+
   const getCustomer = () => {
     return axios
       .get(`/getClientsById?clientId=${clientId}`)
       .then((response) => {
-        const oneClient = response.data.OneClient[0]; // Get the first client from the array
-        console.log('customer', oneClient);
+        const oneClient = response.data.OneClient[0];
         if (oneClient) {
           setCustomerList(oneClient);
         } else {
@@ -23,6 +23,23 @@ export default function ReadCustomerData() {
       })
       .catch((error) => {
         console.error('Error fetching customer', error);
+        throw error;
+      });
+  };
+
+  const getFamilyMembers = () => {
+    return axios
+      .get(`/getFamilyMembers?id=${clientId}`)
+      .then((response) => {
+        const allFamilyMembers = response.data.allFamilyMembers;
+        if (allFamilyMembers) {
+          setFamilyMembers(allFamilyMembers);
+        } else {
+          throw new Error('No family members found');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching family members', error);
         throw error;
       });
   };
@@ -38,7 +55,152 @@ export default function ReadCustomerData() {
       .finally(() => {
         toast.dismiss();
       });
+    getFamilyMembers();
   }, []);
+
+  const extractDate = (datetimeString) => {
+    if (datetimeString) {
+      const parts = datetimeString.split('T');
+      if (parts.length > 0) {
+        return parts[0];
+      }
+    }
+    return '';
+  };
+
+  const renderFrequentFlyerNumbers = (flyers) => {
+    if (!flyers || flyers.length === 0) {
+      return null;
+    }
+
+    return (
+      <Grid item xs={12}>
+        <Divider style={{ marginTop: '40px' }}>
+          <Typography variant="body1" style={{ fontSize: '22px', marginBottom: '10px' }}>
+            <strong>Frequent Flyer Numbers</strong>
+          </Typography>
+        </Divider>
+        <Grid container spacing={2}>
+          {flyers.map((flyer, index) => (
+            <Grid item xs={12} sm={4} key={index}>
+              <Typography variant="body1" style={{ fontSize: '17px' }}>
+                {index + 1}. <strong>Type:</strong> {flyer?.type}
+              </Typography>
+              <Typography variant="body1" style={{ fontSize: '17px' }}>
+                <strong>Number:</strong> {flyer?.number}
+              </Typography>
+              <div style={{ margin: '10px' }}></div>
+            </Grid>
+          ))}
+          {/* <Grid item xs={12}>
+            <Divider style={{ marginTop: '20px' }} />
+          </Grid> */}
+        </Grid>
+      </Grid>
+    );
+  };
+
+  const renderHotelLoyaltyNumbers = (loyalties) => {
+    if (!loyalties || loyalties.length === 0) {
+      return null;
+    }
+
+    return (
+      <Grid item xs={12}>
+        <Divider style={{ marginTop: '40px' }}>
+          <Typography variant="body1" style={{ fontSize: '22px', marginBottom: '10px' }}>
+            <strong>Hotel Loyalty Numbers</strong>
+          </Typography>
+        </Divider>
+        <Grid container spacing={2}>
+          {loyalties.map((loyalty, index) => (
+            <Grid item xs={12} sm={4} key={index}>
+              <Typography variant="body1" style={{ fontSize: '17px' }}>
+                {index + 1}. <strong>Type:</strong> {loyalty?.type}
+              </Typography>
+              <Typography variant="body1" style={{ fontSize: '17px' }}>
+                <strong>Number:</strong> {loyalty?.number}
+              </Typography>
+              <div style={{ margin: '10px' }}></div>
+            </Grid>
+          ))}
+          {/* <Grid item xs={12}>
+            <Divider style={{ marginTop: '20px' }} />
+          </Grid> */}
+        </Grid>
+      </Grid>
+    );
+  };
+
+  const renderFamilyMembers = () => {
+    if (!familyMembers || familyMembers.length === 0) {
+      return null;
+    }
+
+    return familyMembers.map((familyMember, index) => (
+      <Grid item xs={12} key={familyMember._id}>
+        <Paper style={{ padding: '16px', marginBottom: '20px' }}>
+          <Typography variant="h4" style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '16px' }}>
+            {index + 1}. {`${familyMember.firstName} ${familyMember.lastName}`}
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Email:</strong> {familyMember.email}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Mobile:</strong> {familyMember.mobile}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Date of Birth:</strong> {extractDate(familyMember.dateOfBirth)}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Passport Number:</strong> {familyMember.passportNumber}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Passport Expiry Date:</strong> {extractDate(familyMember.passportExpiryDate)}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Relationship:</strong> {familyMember.relationship}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Address:</strong> {familyMember.address}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>City:</strong> {familyMember.city}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Country:</strong> {familyMember.country}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '16px' }}>
+                <strong>Postal Code:</strong> {familyMember.postalCode}
+              </Typography>
+            </Grid>
+            {renderFrequentFlyerNumbers(familyMember.frequentFlyerNumbers)}
+            {renderHotelLoyaltyNumbers(familyMember.hotelLoyaltyNumbers)}
+          </Grid>
+        </Paper>
+      </Grid>
+    ));
+  };
 
   return (
     <>
@@ -65,7 +227,7 @@ export default function ReadCustomerData() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
-              <strong>Date of Birth:</strong> {customerList?.dateOfBirth}
+              <strong>Date of Birth:</strong> {extractDate(customerList?.dateOfBirth)}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -75,7 +237,7 @@ export default function ReadCustomerData() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
-              <strong>Passport Expiry Date:</strong> {customerList.passportExpiryDate}
+              <strong>Passport Expiry Date:</strong> {extractDate(customerList.passportExpiryDate)}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -108,6 +270,8 @@ export default function ReadCustomerData() {
               <strong>Postal Code:</strong> {customerList.postalCode}
             </Typography>
           </Grid>
+          {renderFrequentFlyerNumbers(customerList.frequentFlyerNumbers)}
+          {renderHotelLoyaltyNumbers(customerList.hotelLoyaltyNumbers)}
           <Grid item xs={12}>
             <Divider style={{ marginTop: '20px' }}>
               {' '}
@@ -121,64 +285,24 @@ export default function ReadCustomerData() {
               <strong>Company Name:</strong> {customerList.companyName}
             </Typography>
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
-              <strong>company GST Email:</strong> {customerList.companyGSTEmail}
+              <strong>Company GST Email:</strong> {customerList.companyGSTEmail}
             </Typography>
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
-              <strong>company GST Number: </strong> {customerList.companyGSTNumber}
+              <strong>Company GST Number:</strong> {customerList.companyGSTNumber}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Divider style={{ marginTop: '20px' }}>
               <Typography variant="body1" style={{ fontSize: '22px' }}>
-                <strong>Frequent Flyer Numbers</strong>
+                <strong>Family Members</strong>
               </Typography>
             </Divider>
           </Grid>
-
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              {customerList?.frequentFlyerNumbers?.map((flyer, index) => (
-                <Grid item xs={12} sm={4} key={index}>
-                  <Typography variant="body1" style={{ fontSize: '17px' }}>
-                    {index + 1}. <strong>Type:</strong> {flyer?.type}
-                  </Typography>
-                  <Typography variant="body1" style={{ fontSize: '17px' }}>
-                    <strong>Number:</strong> {flyer?.number}
-                  </Typography>
-                  <div style={{ margin: '10px' }}></div>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider style={{ marginTop: '20px' }}>
-              <Typography variant="body1" style={{ fontSize: '22px' }}>
-                <strong>Hotel Loyalty Numbers</strong>
-              </Typography>
-            </Divider>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              {customerList?.hotelLoyaltyNumbers?.map((loyaltyNumber, index) => (
-                <Grid item xs={12} sm={4} key={index}>
-                  <Typography variant="body1" style={{ fontSize: '17px' }}>
-                    {index + 1}. <strong>Type:</strong> {loyaltyNumber?.type}
-                  </Typography>
-                  <Typography variant="body1" style={{ fontSize: '17px' }}>
-                    <strong>Number:</strong> {loyaltyNumber?.number}
-                  </Typography>
-                  <div style={{ margin: '10px' }}></div>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
+          {renderFamilyMembers()}
         </Grid>
       </Container>
     </>
