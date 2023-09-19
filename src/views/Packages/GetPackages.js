@@ -747,7 +747,7 @@ export default function Customers() {
                           <TableCell align="left">{PackageId}</TableCell>
 
                           <TableCell align="left">
-                            <Link to={`/updatePackage/${PackageId}`} style={{ textDecoration: 'none', color: 'black' }} key={PackageId}>
+                            <Link to={`/GetPackage/${PackageId}`} style={{ textDecoration: 'none', color: 'black' }} key={PackageId}>
                               {packageName}
                             </Link>
                           </TableCell>

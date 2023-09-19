@@ -263,7 +263,7 @@ export default function Customers() {
         </Stack>
         <Toaster />
         {openEditModal && (
-          <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="xs" fullWidth>
+          <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="lg" fullWidth>
             <DialogTitle>Edit Customer</DialogTitle>
             <DialogContent>
               <Container>
@@ -303,6 +303,7 @@ export default function Customers() {
                           />
                           <ErrorMessage name="lastName" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
+
                         <Grid item xs={12} sm={6}>
                           <Field
                             name="email"
@@ -708,7 +709,9 @@ export default function Customers() {
 
                           <TableCell align="left">
                             <Typography noWrap>
-                              {firstName} {lastName}
+                              <Link to={`/GetCustomer/${clientId}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                {firstName} {lastName}
+                              </Link>
                             </Typography>
                           </TableCell>
 
