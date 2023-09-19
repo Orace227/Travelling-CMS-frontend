@@ -285,7 +285,18 @@ const CreateBooking = () => {
     setTotalCost(bookingDetailsPrice);
 
     // Update the booking details in the form values
-    // values.setFieldValue('bookingDetails', updatedBookingDetails);
+    values.bookingDetails = updatedBookingDetails; // Update the booking details array
+
+    // Update the total cost when booking details are removed
+    const originalBookingDetails = [...values.bookingDetails];
+    const removedBookingDetail = originalBookingDetails[index];
+    const removedPrice = parseInt(removedBookingDetail.price, 10) || 0;
+
+    // Check if the user deleted a booking detail (price is zero)
+    if (removedPrice === 0) {
+      // Subtract the price of the removed booking detail from the total cost
+      setTotalCost((prevTotal) => prevTotal - removedBookingDetail.price);
+    }
   };
 
   function handleModifiedPrice(e) {
@@ -412,6 +423,8 @@ const CreateBooking = () => {
                           <IconButton
                             onClick={() => {
                               remove(index);
+                              // setTotalCost(totalCos);
+                              // setFieldValue(`bookingDetails.${index}.price`, 0);
                             }}
                             color="error"
                             aria-label="delete"
@@ -453,8 +466,8 @@ const CreateBooking = () => {
                             <Grid item xs={12} md={4}>
                               <Field
                                 name={`bookingDetails.${index}.price`}
-                                onChange={(e) => {
-                                  handleTotalPrice(e, index, values); // Pass 'values' as an argument
+                                onBlur={(e) => {
+                                  handleTotalPrice(e, index, values); // Call the function when the input field loses focus
                                 }}
                                 as={TextField}
                                 fullWidth

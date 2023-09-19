@@ -382,7 +382,7 @@ export default function Customers() {
         </Stack>
         <Toaster />
         {openEditModal && (
-          <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="xs" fullWidth>
+          <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="lg" fullWidth>
             <DialogTitle>Edit Package</DialogTitle>
             <DialogContent>
               <Container>
@@ -746,7 +746,11 @@ export default function Customers() {
 
                           <TableCell align="left">{PackageId}</TableCell>
 
-                          <TableCell align="left">{packageName}</TableCell>
+                          <TableCell align="left">
+                            <Link to={`/updatePackage/${PackageId}`} style={{ textDecoration: 'none', color: 'black' }} key={PackageId}>
+                              {packageName}
+                            </Link>
+                          </TableCell>
 
                           <TableCell align="left">{packagePrice ? packagePrice : '--'}</TableCell>
                           <TableCell align="left">{packageType}</TableCell>

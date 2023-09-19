@@ -23,6 +23,7 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import ClearIcon from '@mui/icons-material/Clear';
 import { EditorState, convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
+
 const tourDetailSchema = Yup.object().shape({
   day: Yup.number().required('Day is required').positive().integer(),
   title: Yup.string().required('Title is required'),

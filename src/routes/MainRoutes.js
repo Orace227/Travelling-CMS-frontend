@@ -11,12 +11,14 @@ import Bookings from 'views/Booking/GetBookings';
 import CreateBooking from 'views/Booking/CreateBooking';
 import GetCountries from 'views/Country/GetContries';
 import CreateCountry from 'views/Country/CreateCountry';
+import ReadPackageData from 'views/Packages/ReadPackage';
 // import GetFamilyMemers from 'views/FamilyMembers/GetFamilymembers';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const Customers = Loadable(lazy(() => import('views/Customer/Customers')));
 const GetFamilyMembers = Loadable(lazy(() => import('views/FamilyMembers/GetFamilyMembers')));
+// const UpdatePackage = Loadable(lazy(() => import('views/Packages/UpdatePackage')));
 
 // sample page routing
 
@@ -63,6 +65,10 @@ const MainRoutes = {
       path: '/createPackage',
       element: <CreatePackage />
     },
+    {
+      path: '/updatePackage/:PackageId',
+      element: <ReadPackageData />
+    },
 
     {
       path: '/Bookings',
@@ -72,6 +78,7 @@ const MainRoutes = {
       path: '/createBooking',
       element: <CreateBooking />
     },
+
     {
       path: '/Countries',
       element: <GetCountries />

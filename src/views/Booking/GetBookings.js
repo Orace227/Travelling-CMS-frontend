@@ -14,10 +14,7 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent
+  Button
 } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
@@ -94,7 +91,7 @@ export default function Bookings() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [USERLIST, setUserlist] = useState([]);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  // const [openEditModal, setOpenEditModal] = useState(false);
 
   const fetchCustomers = () => {
     const promise = new Promise((resolve, reject) => {
@@ -221,10 +218,10 @@ export default function Bookings() {
       console.log({ error: err });
     }
   };
-  // Function to close the edit modal
-  const handleCloseEditModal = () => {
-    setOpenEditModal(false);
-  };
+  // // Function to close the edit modal
+  // const handleCloseEditModal = () => {
+  //   setOpenEditModal(false);
+  // };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -246,13 +243,6 @@ export default function Bookings() {
           </Link>
         </Stack>
         <Toaster />
-
-        {openEditModal && (
-          <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="xs" fullWidth>
-            <DialogTitle>Edit Customer</DialogTitle>
-            <DialogContent></DialogContent>
-          </Dialog>
-        )}
 
         <Card>
           <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterById} />
