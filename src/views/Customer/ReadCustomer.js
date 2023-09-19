@@ -191,7 +191,7 @@ export default function ReadCustomerData() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" style={{ fontSize: '16px' }}>
-                <strong>Postal Code:</strong> {familyMember.postalCode}
+                <strong>PostalCode:</strong> {familyMember.postalCode}
               </Typography>
             </Grid>
             {renderFrequentFlyerNumbers(familyMember.frequentFlyerNumbers)}
@@ -221,53 +221,53 @@ export default function ReadCustomerData() {
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Mobile:</strong> {customerList.mobile}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Date of Birth:</strong> {extractDate(customerList?.dateOfBirth)}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Passport Number:</strong> {customerList.passportNumber}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Passport Expiry Date:</strong> {extractDate(customerList.passportExpiryDate)}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Family Members:</strong> {customerList.familyMembers}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Total Bookings:</strong> {customerList.totalBookings}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Address:</strong> {customerList.address}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>City:</strong> {customerList.city}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
               <strong>Country:</strong> {customerList.country}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="body1" style={{ fontSize: '17px', textAlign: 'justify' }}>
-              <strong>Postal Code:</strong> {customerList.postalCode}
+            <Typography variant="body1" style={{ fontSize: '17px' }}>
+              <strong>PostalCode:</strong> {customerList.postalCode}
             </Typography>
           </Grid>
           {renderFrequentFlyerNumbers(customerList.frequentFlyerNumbers)}
