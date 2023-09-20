@@ -337,6 +337,12 @@ export default function Customers() {
                               inputMode: 'numeric',
                               maxLength: 10 // Add maximum length attribute
                             }}
+                            error={editedUserData.mobile && editedUserData.mobile.length !== 10}
+                            helperText={
+                              editedUserData.mobile && editedUserData.mobile.length !== 10
+                                ? 'Mobile number must be exactly 10 characters'
+                                : ''
+                            }
                           />
                           <ErrorMessage name="mobile" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>

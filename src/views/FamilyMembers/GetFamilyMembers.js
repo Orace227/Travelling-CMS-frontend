@@ -348,6 +348,12 @@ export default function GetFamilyMembers() {
                             margin="normal"
                             variant="outlined"
                             onKeyPress={handleMobileKeyPress}
+                            inputProps={{
+                              inputMode: 'numeric',
+                              maxLength: 10 // Add maximum length attribute
+                            }}
+                            error={editUserData.mobile && editUserData.mobile.length != 10}
+                            helperText={editUserData.mobile && editUserData.mobile.length != 10 ? 'Mobile number must be exactly 10 characters' : ''}
                           />
                           <ErrorMessage name="mobile" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
