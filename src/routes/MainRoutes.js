@@ -13,6 +13,7 @@ import GetCountries from 'views/Country/GetContries';
 import CreateCountry from 'views/Country/CreateCountry';
 import ReadPackageData from 'views/Packages/ReadPackage';
 import ReadCustomerData from 'views/Customer/ReadCustomer';
+import ReadBookingData from 'views/Booking/ReadBooking';
 // import GetFamilyMemers from 'views/FamilyMembers/GetFamilymembers';
 
 // dashboard routing
@@ -78,6 +79,10 @@ const MainRoutes = {
     {
       path: '/Bookings',
       element: <Bookings />
+    },
+    {
+      path: '/GetBooking/:bookingId/:clientId',
+      element: <ReadBookingData />
     },
     {
       path: '/createBooking',

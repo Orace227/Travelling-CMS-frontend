@@ -262,7 +262,7 @@ export default function Bookings() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // console.log(row);
-                    const { firstName, lastName, bookingId, packageId, startDate, endDate } = row;
+                    const { firstName, lastName, bookingId, clientId, packageId, startDate, endDate } = row;
                     const selectedUser = selected.indexOf(bookingId) !== -1;
 
                     return (
@@ -275,7 +275,9 @@ export default function Bookings() {
                           <TableCell align="left">{bookingId}</TableCell>
 
                           <TableCell align="left">
-                            {firstName} {lastName}
+                            <Link to={`/GetBooking/${bookingId}/${clientId}`} style={{ textDecoration: 'none', color: 'black' }}>
+                              {firstName} {lastName}
+                            </Link>
                           </TableCell>
                           <TableCell align="left">{packageId}</TableCell>
 
