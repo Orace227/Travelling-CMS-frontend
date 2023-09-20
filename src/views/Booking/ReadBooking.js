@@ -225,7 +225,8 @@ export default function ReadBookingData() {
                     <Typography variant="body1" style={{ fontSize: '17px' }}>
                       <strong>Booking Document Link: </strong>
                       <a
-                        href={`https://travelling-cms-backend.onrender.com/${detail.docImgPath}`}
+                        href={`http://localhost:7000/${detail.docImgPath}`}
+                        // href={`https://travelling-cms-backend.onrender.com/${detail.docImgPath}`}
                         style={{ textDecoration: 'none', color: 'black' }}
                         target="_blank"
                         rel="noopener noreferrer"

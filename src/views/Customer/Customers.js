@@ -207,9 +207,7 @@ export default function Customers() {
     firstName: Yup.string().required('First Name is required'),
     lastName: Yup.string().required('Last Name is required'),
     email: Yup.string().email('Invalid email address').required('Email is required'),
-    mobile: Yup.string()
-      .matches(/^[0-9]{10}$/, 'Mobile must contain exactly 10 digits')
-      .required('Mobile is required'),
+    mobile: Yup.string().required('Mobile is required'),
     // dateOfBirth: Yup.date().required('Date of Birth is required'),
     passportNumber: Yup.string().required('Passport Number is required'),
     // passportExpiryDate: Yup.date().required('Passport Expiry Date is required'),
