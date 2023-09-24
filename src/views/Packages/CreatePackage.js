@@ -18,11 +18,13 @@ import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { Editor } from 'react-draft-wysiwyg';
+// import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import ClearIcon from '@mui/icons-material/Clear';
-import { EditorState, convertToRaw } from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
+// import { convertToRaw } from 'draft-js';
+// import draftToHtml from 'draftjs-to-html';
+// import { EditorState } from 'draft-js';
+// import draftToHtml from 'draftjs-to-html';
 
 const tourDetailSchema = Yup.object().shape({
   day: Yup.number().required('Day is required').positive().integer(),
@@ -99,9 +101,8 @@ const CreatePackage = () => {
   // };
 
   // const [tour, setTour] = useState({});
-  // setTour(initialTour);
-  const [titleEditorState, setTitleEditorState] = useState(EditorState.createEmpty());
-  const [descriptionEditorState, setDescriptionEditorState] = useState(EditorState.createEmpty());
+  // const [titleEditorState, setTitleEditorState] = useState([]);
+  // const [descriptionEditorState, setDescriptionEditorState] = useState([]);
 
   const handlePriceKeyPress = (event) => {
     if (!/^\d+$/.test(event.key)) {
@@ -154,28 +155,28 @@ const CreatePackage = () => {
     GetCountries();
   }, []);
 
-  const editorStyle = {
-    minHeight: '80px',
-    padding: '8px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    backgroundColor: '#fff',
-    boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.1)',
-    fontSize: '14px',
-    lineHeight: '1.4',
-    color: '#333'
-  };
-  const toolbarOptions = {
-    options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'history'],
-    inline: {
-      inDropdown: false,
-      options: ['bold', 'italic', 'underline']
-    },
-    blockType: {
-      inDropdown: true,
-      options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6']
-    }
-  };
+  // const editorStyle = {
+  //   minHeight: '80px',
+  //   padding: '8px',
+  //   border: '1px solid #ddd',
+  //   borderRadius: '4px',
+  //   backgroundColor: '#fff',
+  //   boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.1)',
+  //   fontSize: '14px',
+  //   lineHeight: '1.4',
+  //   color: '#333'
+  // };
+  // const toolbarOptions = {
+  //   options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'history'],
+  //   inline: {
+  //     inDropdown: false,
+  //     options: ['bold', 'italic', 'underline']
+  //   },
+  //   blockType: {
+  //     inDropdown: true,
+  //     options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6']
+  //   }
+  // };
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
@@ -319,30 +320,42 @@ const CreatePackage = () => {
                               <ClearIcon />
                             </IconButton>
                           </Typography>
-                          <Editor
+                          <Field
                             name={`packageBody.tourDetails[${index}].title`}
-                            editorState={titleEditorState}
+                            as={TextField}
+                            label={`title`}
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                          />
+                          {/* <Editor
+                            name={`packageBody.tourDetails[${index}].title`}
+                            editorState={titleEditorState[index]}
                             toolbar={toolbarOptions}
                             onEditorStateChange={(newEditorState) => {
-                              setTitleEditorState(newEditorState);
-                              // Convert EditorState to HTML
-                              const contentState = newEditorState.getCurrentContent();
-                              const contentStateAsRaw = convertToRaw(contentState);
-                              const contentStateAsHTML = draftToHtml(contentStateAsRaw);
+                              const newEditorStates = [...titleEditorState];
+                              newEditorStates[index] = newEditorState;
+                              setTitleEditorState(newEditorStates);
 
-                              // Update your form field here with HTML
-                              // console.log(contentStateAsHTML);
-                              setFieldValue(`packageBody.tourDetails[${index}].title`, contentStateAsHTML);
+                              // Convert EditorState to HTML content
+                              // const contentState = newEditorState.getCurrentContent();
+                              // const contentStateAsRaw = convertToRaw(contentState);
+                              // const contentStateAsHTML = draftToHtml(contentStateAsRaw);
+                              // console.log(contentStateAsHTML)
+                              // Set the field value
+                              console.log(newEditorState.getCurrentContent());
+                              setFieldValue(`packageBody.tourDetails[${index}].title`);
+
+                              // Manually trigger field validation
+                              // validateField(`packageBody.tourDetails[${index}].title`);
                             }}
                             toolbarHidden={false}
                             editorStyle={editorStyle}
                             wrapperStyle={{ height: '100px', marginTop: '10px', marginBottom: '90px' }}
-                          />
-
+                          /> */}
                           <ErrorMessage
                             name={`packageBody.tourDetails[${index}].title`}
                             component="div"
-                            // style={{  }}
                             className="error"
                             style={{ color: 'red' }}
                           />
@@ -350,27 +363,27 @@ const CreatePackage = () => {
                           <Typography variant="h5" gutterBottom>
                             <div>add Description</div>
                           </Typography>
-                          <Editor
+                          <Field
                             name={`packageBody.tourDetails[${index}].description`}
-                            editorState={descriptionEditorState}
+                            as={TextField}
+                            label={`description`}
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                          />
+                          {/* <Editor
+                            name={`packageBody.tourDetails[${index}].description`}
+                            editorState={descriptionEditorState[index]}
                             toolbar={toolbarOptions}
                             onEditorStateChange={(newEditorState) => {
-                              setDescriptionEditorState(newEditorState);
-
-                              // Convert EditorState to HTML
-                              const contentState = newEditorState.getCurrentContent();
-                              const contentStateAsRaw = convertToRaw(contentState);
-
-                              // Convert raw content state to HTML
-                              const contentStateAsHTML = draftToHtml(contentStateAsRaw);
-                              // console.log(contentStateAsHTML);
-                              // Update your form field here with HTML
-                              setFieldValue(`packageBody.tourDetails[${index}].description`, contentStateAsHTML);
+                              const newEditorStates = [...descriptionEditorState];
+                              newEditorStates[index] = newEditorState;
+                              setDescriptionEditorState(newEditorStates);
                             }}
                             toolbarHidden={false}
                             editorStyle={editorStyle}
                             wrapperStyle={{ height: '100px', marginTop: '10px', marginBottom: '90px' }}
-                          />
+                          /> */}
                           <ErrorMessage
                             name={`packageBody.tourDetails[${index}].description`}
                             component="div"
