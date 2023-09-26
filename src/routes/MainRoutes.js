@@ -14,6 +14,7 @@ import CreateCountry from 'views/Country/CreateCountry';
 import ReadPackageData from 'views/Packages/ReadPackage';
 import ReadCustomerData from 'views/Customer/ReadCustomer';
 import ReadBookingData from 'views/Booking/ReadBooking';
+import GetInquiry from 'views/Inquiry/GetInquiry';
 // import GetFamilyMemers from 'views/FamilyMembers/GetFamilymembers';
 
 // dashboard routing
@@ -96,6 +97,10 @@ const MainRoutes = {
     {
       path: '/CreateCountry',
       element: <CreateCountry />
+    },
+    {
+      path: '/GetInquiry',
+      element: <GetInquiry />
     }
   ]
 };

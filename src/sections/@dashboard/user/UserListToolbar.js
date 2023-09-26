@@ -63,6 +63,8 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
               ? 'Customers...'
               : placeholder === 'Countries'
               ? 'Countries...'
+              : placeholder === 'Inquiries'
+              ? 'Inquiries...'
               : 'Bookings...'
           }
           `}

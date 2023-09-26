@@ -18,19 +18,9 @@ import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
-// import { Editor } from 'react-draft-wysiwyg';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import ClearIcon from '@mui/icons-material/Clear';
-// import { convertToRaw } from 'draft-js';
-// import draftToHtml from 'draftjs-to-html';
-// import { EditorState } from 'draft-js';
-// import draftToHtml from 'draftjs-to-html';
-
-const tourDetailSchema = Yup.object().shape({
-  day: Yup.number().required('Day is required').positive().integer(),
-  title: Yup.string().required('Title is required'),
-  description: Yup.string().required('Description is required')
-});
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 // Schema for the inclusions and exclusions arrays
 const inclusionsAndExclusionsSchema = Yup.object().shape({
@@ -46,7 +36,7 @@ const termsAndConditionsSchema = Yup.object().shape({
 
 // Schema for the entire packageBody object
 const packageBodySchema = Yup.object().shape({
-  tourDetails: Yup.array().of(tourDetailSchema), // Array of tour details
+  tourDetails: Yup.string().required('Tour details are required'),
   inclusionsAndExclusions: inclusionsAndExclusionsSchema, // Object with inclusions and exclusions arrays
   termsAndConditions: termsAndConditionsSchema // Object with terms and conditions arrays
 });
@@ -79,7 +69,7 @@ const initialValues = {
   country: '',
   continent: '',
   packageBody: {
-    tourDetails: [], // Initialize with an empty array
+    tourDetails: '', // Initialize with an empty array
     inclusionsAndExclusions: {
       inclusions: [], // Initialize with an empty array
       exclusions: [] // Initialize with an empty array
@@ -94,15 +84,7 @@ const initialValues = {
 const CreatePackage = () => {
   const [loading, setLoading] = useState(false);
   const [countries, setCountries] = useState([]);
-
-  // const initialTour = {
-  //   title: 'Initial Title',
-  //   description: 'Initial Description'
-  // };
-
-  // const [tour, setTour] = useState({});
-  // const [titleEditorState, setTitleEditorState] = useState([]);
-  // const [descriptionEditorState, setDescriptionEditorState] = useState([]);
+  const [quillContent, setQuillContent] = useState('');
 
   const handlePriceKeyPress = (event) => {
     if (!/^\d+$/.test(event.key)) {
@@ -112,7 +94,7 @@ const CreatePackage = () => {
 
   const handleSubmit = async (values) => {
     try {
-      // console.log(values);
+      console.log(values);
       setLoading(true);
       const formData = new FormData();
       formData.append('bannerImage', values.packageImg);
@@ -155,28 +137,18 @@ const CreatePackage = () => {
     GetCountries();
   }, []);
 
-  // const editorStyle = {
-  //   minHeight: '80px',
-  //   padding: '8px',
-  //   border: '1px solid #ddd',
-  //   borderRadius: '4px',
-  //   backgroundColor: '#fff',
-  //   boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.1)',
-  //   fontSize: '14px',
-  //   lineHeight: '1.4',
-  //   color: '#333'
-  // };
-  // const toolbarOptions = {
-  //   options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'history'],
-  //   inline: {
-  //     inDropdown: false,
-  //     options: ['bold', 'italic', 'underline']
-  //   },
-  //   blockType: {
-  //     inDropdown: true,
-  //     options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6']
-  //   }
-  // };
+  const quillModules = {
+    toolbar: [
+      [{ header: '1' }, { header: '2' }, { font: [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['bold', 'italic', 'underline'],
+      [{ align: [] }]
+    ]
+  };
+
+  console.log('edotor data ', quillContent);
+
+  const quillFormats = ['header', 'font', 'list', 'bold', 'italic', 'underline', 'align'];
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
@@ -293,116 +265,33 @@ const CreatePackage = () => {
                 <Typography variant="h5" gutterBottom>
                   Tour Details
                 </Typography>
-                <FieldArray name="packageBody.tourDetails">
-                  {({ push, remove }) => (
-                    <div>
-                      {values.packageBody.tourDetails.map((tour, index) => (
-                        <div key={index}>
-                          <Field
-                            name={`packageBody.tourDetails[${index}].day`}
-                            as={TextField}
-                            label={`Day ${tour.day}`}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                          <ErrorMessage
-                            name={`packageBody.tourDetails[${index}].day`}
-                            component="div"
-                            className="error"
-                            style={{ color: 'red' }}
-                          />
-                          <Typography variant="h5" gutterBottom>
-                            <div style={{ position: 'relative', top: '30px' }}>add title</div>
-                          </Typography>
-                          <Typography variant="h5" style={{ display: 'flex', justifyContent: 'flex-end' }} gutterBottom>
-                            <IconButton onClick={() => remove(index)} color="error" aria-label="delete">
-                              <ClearIcon />
-                            </IconButton>
-                          </Typography>
-                          <Field
-                            name={`packageBody.tourDetails[${index}].title`}
-                            as={TextField}
-                            label={`title`}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                          {/* <Editor
-                            name={`packageBody.tourDetails[${index}].title`}
-                            editorState={titleEditorState[index]}
-                            toolbar={toolbarOptions}
-                            onEditorStateChange={(newEditorState) => {
-                              const newEditorStates = [...titleEditorState];
-                              newEditorStates[index] = newEditorState;
-                              setTitleEditorState(newEditorStates);
-
-                              // Convert EditorState to HTML content
-                              // const contentState = newEditorState.getCurrentContent();
-                              // const contentStateAsRaw = convertToRaw(contentState);
-                              // const contentStateAsHTML = draftToHtml(contentStateAsRaw);
-                              // console.log(contentStateAsHTML)
-                              // Set the field value
-                              console.log(newEditorState.getCurrentContent());
-                              setFieldValue(`packageBody.tourDetails[${index}].title`);
-
-                              // Manually trigger field validation
-                              // validateField(`packageBody.tourDetails[${index}].title`);
-                            }}
-                            toolbarHidden={false}
-                            editorStyle={editorStyle}
-                            wrapperStyle={{ height: '100px', marginTop: '10px', marginBottom: '90px' }}
-                          /> */}
-                          <ErrorMessage
-                            name={`packageBody.tourDetails[${index}].title`}
-                            component="div"
-                            className="error"
-                            style={{ color: 'red' }}
-                          />
-                          <div style={{ marginTop: '10px' }}></div>
-                          <Typography variant="h5" gutterBottom>
-                            <div>add Description</div>
-                          </Typography>
-                          <Field
-                            name={`packageBody.tourDetails[${index}].description`}
-                            as={TextField}
-                            label={`description`}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                          {/* <Editor
-                            name={`packageBody.tourDetails[${index}].description`}
-                            editorState={descriptionEditorState[index]}
-                            toolbar={toolbarOptions}
-                            onEditorStateChange={(newEditorState) => {
-                              const newEditorStates = [...descriptionEditorState];
-                              newEditorStates[index] = newEditorState;
-                              setDescriptionEditorState(newEditorStates);
-                            }}
-                            toolbarHidden={false}
-                            editorStyle={editorStyle}
-                            wrapperStyle={{ height: '100px', marginTop: '10px', marginBottom: '90px' }}
-                          /> */}
-                          <ErrorMessage
-                            name={`packageBody.tourDetails[${index}].description`}
-                            component="div"
-                            className="error"
-                            style={{ color: 'red' }}
-                          />
-                        </div>
-                      ))}
-                      <Button
-                        type="button"
-                        variant="outlined"
-                        // style={{ marginTop: '0px' }}
-                        onClick={() => push({ day: '', title: '', description: '' })}
-                      >
-                        Add Tour Detail
-                      </Button>
-                    </div>
+                <Field
+                  name="packageBody.tourDetails"
+                  value={quillContent}
+                  render={({ field }) => (
+                    <ReactQuill
+                      {...field}
+                      value={quillContent}
+                      onChange={(value) => {
+                        setQuillContent(value);
+                        field.onChange(value); // Manually update Formik field value
+                        setFieldValue('packageBody.tourDetails', value);
+                      }}
+                      modules={quillModules}
+                      formats={quillFormats}
+                      style={{ height: '200px' }} // Adjust the height as needed
+                    />
                   )}
-                </FieldArray>
+                />
+                <ErrorMessage
+                  name="packageBody.tourDetails" // Make sure this matches the field name
+                  component="div"
+                  className="error"
+                  style={{
+                    color: 'red',
+                    marginTop: '50px'
+                  }}
+                />
               </Grid>
 
               <Grid item xs={12}>
