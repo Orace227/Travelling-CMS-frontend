@@ -137,14 +137,16 @@ const CreatePackage = () => {
     GetCountries();
   }, []);
 
-  const quillModules = {
-    toolbar: [
-      [{ header: '1' }, { header: '2' }, { font: [] }],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['bold', 'italic', 'underline'],
-      [{ align: [] }]
-    ]
-  };
+  const customToolbar = [
+    [{ header: '1' }, { header: '2' }, { font: [] }],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['bold', 'italic', 'underline'],
+    ['clean'],
+    [{ align: [] }],
+    [{ indent: '-1' }, { indent: '+1' }],
+    [{ color: [] }, { background: [] }],
+    ['copy', 'cut', 'paste'] // Add copy, cut, paste buttons
+  ];
 
   console.log('edotor data ', quillContent);
 
@@ -274,12 +276,16 @@ const CreatePackage = () => {
                       value={quillContent}
                       onChange={(value) => {
                         setQuillContent(value);
-                        field.onChange(value); // Manually update Formik field value
+                        field.onChange(value);
                         setFieldValue('packageBody.tourDetails', value);
                       }}
-                      modules={quillModules}
+                      modules={{
+                        toolbar: {
+                          container: customToolbar
+                        }
+                      }}
                       formats={quillFormats}
-                      style={{ height: '200px' }} // Adjust the height as needed
+                      style={{ height: '200px' }}
                     />
                   )}
                 />
@@ -289,13 +295,14 @@ const CreatePackage = () => {
                   className="error"
                   style={{
                     color: 'red',
-                    marginTop: '50px'
+                    position: 'relative',
+                    top: '50px'
                   }}
                 />
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h5" style={{ position: 'relative', top: '10px' }} gutterBottom>
+                <Typography variant="h5" style={{ position: 'relative', marginTop: '50px' }} gutterBottom>
                   Inclusions
                 </Typography>
                 <FieldArray name="packageBody.inclusionsAndExclusions.inclusions">

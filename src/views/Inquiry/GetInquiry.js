@@ -23,6 +23,7 @@ import { useEffect } from 'react';
 import React from 'react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -212,7 +213,11 @@ export default function GetInquiry() {
                             <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, _id)} />
                           </TableCell>
 
-                          <TableCell align="left">{fullName}</TableCell>
+                          <TableCell align="left">
+                            <Link to={`/GetInquiry/${_id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                              {fullName}
+                            </Link>
+                          </TableCell>
 
                           <TableCell align="left">{mobile}</TableCell>
                           <TableCell align="left">{email}</TableCell>

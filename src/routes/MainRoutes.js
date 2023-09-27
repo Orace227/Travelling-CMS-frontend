@@ -15,6 +15,7 @@ import ReadPackageData from 'views/Packages/ReadPackage';
 import ReadCustomerData from 'views/Customer/ReadCustomer';
 import ReadBookingData from 'views/Booking/ReadBooking';
 import GetInquiry from 'views/Inquiry/GetInquiry';
+import ReadInquryData from 'views/Inquiry/ReadInquiry';
 // import GetFamilyMemers from 'views/FamilyMembers/GetFamilymembers';
 
 // dashboard routing
@@ -101,6 +102,10 @@ const MainRoutes = {
     {
       path: '/GetInquiry',
       element: <GetInquiry />
+    },
+    {
+      path: '/GetInquiry/:inquiryId',
+      element: <ReadInquryData />
     }
   ]
 };
