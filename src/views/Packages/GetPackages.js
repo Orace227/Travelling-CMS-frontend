@@ -312,7 +312,7 @@ export default function Customers() {
 
   const downloadPdf = async (pdfUrl, fileName) => {
     try {
-      console.log(object)(pdfUrl, fileName);
+      console.log(pdfUrl, fileName);
       const response = await fetch(pdfUrl);
       if (!response.ok) {
         throw new Error('Failed to fetch PDF');
