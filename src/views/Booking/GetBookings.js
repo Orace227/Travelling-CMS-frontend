@@ -249,7 +249,7 @@ export default function Bookings() {
 
     const pdfUrl = `https://travelling-cms-backend.onrender.com/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
 
-    console.log(row);
+    // console.log(row);
     const fileName = `${row.packageName}.pdf`;
 
     // Show a "pending" toast message
