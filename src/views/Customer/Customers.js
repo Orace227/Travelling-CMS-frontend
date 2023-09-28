@@ -197,12 +197,12 @@ export default function Customers() {
   const handleSaveChanges = () => {
     handleCloseEditModal();
   };
-  const handleMobileKeyPress = (e) => {
-    // Prevent non-numeric characters
-    if (!/^\d+$/.test(e.key)) {
-      e.preventDefault();
-    }
-  };
+  // const handleMobileKeyPress = (e) => {
+  //   // Prevent non-numeric characters
+  //   if (!/^\d+$/.test(e.key)) {
+  //     e.preventDefault();
+  //   }
+  // };
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required('First Name is required'),
     lastName: Yup.string().required('Last Name is required'),
@@ -234,7 +234,7 @@ export default function Customers() {
   });
   const handleSubmit = async (values) => {
     // console.log(editedUserData);
-    // console.log('values', values);
+    console.log('values', values);
     const updatedCustomer = await axios.post('/updateClient', values);
     console.log(updatedCustomer);
     toast.success('Customer updated successfully!!');
@@ -275,11 +275,11 @@ export default function Customers() {
                             name="firstName"
                             as={TextField}
                             label="First Name"
-                            value={editedUserData.firstName || ' '}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, firstName: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.firstName || ' '}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, firstName: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             fullWidth
                             margin="normal"
                             variant="outlined"
@@ -291,11 +291,11 @@ export default function Customers() {
                             name="lastName"
                             as={TextField}
                             label="Last Name"
-                            value={editedUserData.lastName || ' '}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, lastName: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.lastName || ' '}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, lastName: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             fullWidth
                             margin="normal"
                             variant="outlined"
@@ -307,11 +307,11 @@ export default function Customers() {
                           <Field
                             name="email"
                             as={TextField}
-                            value={editedUserData.email || ' '}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, email: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.email || ' '}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, email: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             label="Email"
                             fullWidth
                             margin="normal"
@@ -325,12 +325,12 @@ export default function Customers() {
                             as={TextField}
                             label="Mobile"
                             type="text"
-                            value={editedUserData.mobile || ' '}
-                            onChange={(e) => {
-                              handleMobileKeyPress(e);
-                              const updatedUserData = { ...editedUserData, mobile: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.mobile || ' '}
+                            // onChange={(e) => {
+                            //   handleMobileKeyPress(e);
+                            //   const updatedUserData = { ...editedUserData, mobile: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             fullWidth
                             margin="normal"
                             variant="outlined"
@@ -370,11 +370,11 @@ export default function Customers() {
                           <Field
                             name="passportNumber"
                             as={TextField}
-                            value={editedUserData.passportNumber || ' '}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, passportNumber: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.passportNumber || ' '}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, passportNumber: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             label="Passport Number"
                             fullWidth
                             margin="normal"
@@ -544,11 +544,11 @@ export default function Customers() {
                         <Grid item xs={12}>
                           <Field
                             name="address"
-                            value={editedUserData.address || ' '}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, address: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.address || ' '}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, address: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             as={TextField}
                             label="Address"
                             fullWidth
@@ -561,11 +561,11 @@ export default function Customers() {
                           <Field
                             name="city"
                             as={TextField}
-                            value={editedUserData.city || ' '}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, city: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.city || ' '}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, city: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             label="City"
                             fullWidth
                             margin="normal"
@@ -576,11 +576,11 @@ export default function Customers() {
                         <Grid item xs={12}>
                           <Field
                             name="country"
-                            value={editedUserData.country || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, country: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.country || ''}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, country: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             as={TextField}
                             label="Country"
                             fullWidth
@@ -592,11 +592,11 @@ export default function Customers() {
                         <Grid item xs={12}>
                           <Field
                             name="postalCode"
-                            value={editedUserData.postalCode || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, postalCode: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.postalCode || ''}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, postalCode: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             as={TextField}
                             label="Postal Code"
                             fullWidth
@@ -615,11 +615,11 @@ export default function Customers() {
                             as={TextField}
                             label="Food Preferences"
                             fullWidth
-                            value={editedUserData.foodPreferences || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, foodPreferences: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.foodPreferences || ''}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, foodPreferences: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             margin="normal"
                             variant="outlined"
                           />
@@ -627,11 +627,11 @@ export default function Customers() {
                         <Grid item xs={12}>
                           <Field
                             name="companyName"
-                            value={editedUserData.companyName || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, companyName: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.companyName || ''}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, companyName: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             as={TextField}
                             label="Company Name"
                             fullWidth
@@ -644,11 +644,11 @@ export default function Customers() {
                             name="companyGSTNumber"
                             as={TextField}
                             label="Company GST Number"
-                            value={editedUserData.companyGSTNumber || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, companyGSTNumber: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.companyGSTNumber || ''}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, companyGSTNumber: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             fullWidth
                             margin="normal"
                             variant="outlined"
@@ -658,11 +658,11 @@ export default function Customers() {
                           <Field
                             name="companyGSTEmail"
                             as={TextField}
-                            value={editedUserData.companyGSTEmail || ''}
-                            onChange={(e) => {
-                              const updatedUserData = { ...editedUserData, companyGSTEmail: e.target.value };
-                              setEditedUserData(updatedUserData);
-                            }}
+                            // value={editedUserData.companyGSTEmail || ''}
+                            // onChange={(e) => {
+                            //   const updatedUserData = { ...editedUserData, companyGSTEmail: e.target.value };
+                            //   setEditedUserData(updatedUserData);
+                            // }}
                             label="Company GST Email"
                             fullWidth
                             margin="normal"
