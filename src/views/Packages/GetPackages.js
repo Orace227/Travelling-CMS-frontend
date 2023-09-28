@@ -354,9 +354,7 @@ export default function Customers() {
       // Hide the "pending" toast in case of an error
       toast.dismiss(pendingToastId);
       // Show an "error" toast
-      toast.error(`Error downloading PDF: ${error.message}`, {
-        position: toast.POSITION.TOP_CENTER
-      });
+      toast.error(`Error downloading PDF: ${error.message}`);
       console.error(error);
     }
   };
