@@ -226,7 +226,9 @@ export default function Customers() {
     address: Yup.string().required('Address is required'),
     city: Yup.string().required('City is required'),
     country: Yup.string().required('Country is required'),
-    postalCode: Yup.string().required('Postal Code is required'),
+    postalCode: Yup.string()
+      .required('Postal Code is required')
+      .matches(/^\d{6}$/, 'Postal Code must be a 6-digit number'),
     foodPreferences: Yup.string(),
     companyName: Yup.string(),
     companyGSTNumber: Yup.string(),

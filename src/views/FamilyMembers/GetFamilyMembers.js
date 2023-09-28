@@ -229,7 +229,7 @@ export default function GetFamilyMembers() {
     country: Yup.string().required('Country is required'),
     postalCode: Yup.string()
       .required('Postal Code is required')
-      .matches(/^\d{5}$/, 'Postal Code must be a 5-digit number'),
+      .matches(/^\d{6}$/, 'Postal Code must be a 6-digit number'),
     passportExpiryDate: Yup.date().nullable().required('Passport Expiry Date is required'),
     passportNumber: Yup.string().required('Passport Number is required'),
     foodPreferences: Yup.string()

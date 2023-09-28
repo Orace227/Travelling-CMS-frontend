@@ -9,7 +9,8 @@ import { useState } from 'react';
 const validationSchema = Yup.object().shape({
   countryId: Yup.number().required('Package ID is required'),
   countryName: Yup.string().required('Package name is required'),
-  continent: Yup.string().required('select country name')
+  continent: Yup.string().required('select country name'),
+  countryImgName: Yup.string().required('country Image is required')
 });
 
 const generateSixDigitNumber = () => {
@@ -71,7 +72,7 @@ const CreateCountry = () => {
       </Typography>
 
       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-        {({ values,setFieldValue }) => (
+        {({ values, setFieldValue }) => (
           <Form>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
@@ -126,7 +127,7 @@ const CreateCountry = () => {
                 <div>
                   {values.countryImgName && <p style={{ margin: '0', paddingTop: '8px' }}>Selected Image: {values.countryImgName}</p>}
                 </div>
-                <ErrorMessage name="countryImg" component="div" className="error" style={{ color: 'red' }} />
+                <ErrorMessage name="countryImgName" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
             </Grid>
             <Button
