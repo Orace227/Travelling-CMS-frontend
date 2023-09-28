@@ -223,6 +223,57 @@ export default function Bookings() {
   //   setOpenEditModal(false);
   // };
 
+  const downloadPdf = async (pdfUrl, fileName) => {
+    try {
+      const response = await fetch(pdfUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch PDF');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      return 'PDF downloaded successfully';
+    } catch (error) {
+      throw new Error(`Error downloading PDF: ${error.message}`);
+    }
+  };
+  const handleGeneratePdf = async (row) => {
+    // const pdfUrl = `http://localhost:7000/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
+
+    const pdfUrl = `https://travelling-cms-backend.onrender.com/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
+
+    console.log(row);
+    const fileName = `${row.packageName}.pdf`;
+
+    // Show a "pending" toast message
+    const pendingToastId = toast('Downloading PDF...', {
+      autoClose: false // Keep it open until the download is complete
+    });
+
+    try {
+      const result = await downloadPdf(pdfUrl, fileName);
+      console.log(result);
+      // Hide the "pending" toast when the download is complete
+      toast.dismiss(pendingToastId);
+      // Show a "success" toast
+      toast.success('PDF downloaded successfully');
+    } catch (error) {
+      // Hide the "pending" toast in case of an error
+      toast.dismiss(pendingToastId);
+      // Show an "error" toast
+      toast.error(`Error downloading PDF: ${error.message}`, {
+        position: toast.POSITION.TOP_CENTER
+      });
+      console.error(error);
+    }
+  };
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -285,7 +336,18 @@ export default function Bookings() {
 
                           <TableCell align="left">{endDate?.split('T')[0]}</TableCell>
                           {/* <TableCell align="left">{pdf}</TableCell> */}
-
+                          <TableCell align="left">
+                            {' '}
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => {
+                                handleGeneratePdf(row);
+                              }}
+                            >
+                              Generate PDF
+                            </Button>
+                          </TableCell>
                           <TableCell align="left">
                             <IconButton
                               size="large"
