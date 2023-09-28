@@ -232,9 +232,10 @@ export default function Customers() {
     companyGSTNumber: Yup.string(),
     companyGSTEmail: Yup.string().email('Invalid email address')
   });
-  const handleSubmit = async () => {
+  const handleSubmit = async (values) => {
     // console.log(editedUserData);
-    const updatedCustomer = await axios.post('/updateClient', editedUserData);
+    // console.log('values', values);
+    const updatedCustomer = await axios.post('/updateClient', values);
     console.log(updatedCustomer);
     toast.success('Customer updated successfully!!');
     handleSaveChanges();
@@ -266,7 +267,7 @@ export default function Customers() {
             <DialogContent>
               <Container>
                 <Formik initialValues={editedUserData} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                  {() => (
+                  {({ values }) => (
                     <Form>
                       <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
@@ -407,20 +408,19 @@ export default function Customers() {
                           <FieldArray name="frequentFlyerNumbers">
                             {({ push, remove }) => (
                               <div>
-                                {editedUserData.frequentFlyerNumbers.map((ffNumber, index) => (
+                                {values.frequentFlyerNumbers.map((ffNumber, index) => (
                                   <div key={index}>
                                     <Field
                                       name={`frequentFlyerNumbers[${index}].type`}
                                       as={TextField}
                                       label="Frequent Flyer Type"
-                                      value={editedUserData.frequentFlyerNumbers[index].type || ' '}
-                                      onChange={(e) => {
-                                        const updatedUserData = { ...editedUserData };
-                                        const frequentFlyerNumbers = [...updatedUserData.frequentFlyerNumbers];
-                                        frequentFlyerNumbers[index].type = e.target.value;
-                                        updatedUserData.frequentFlyerNumbers = frequentFlyerNumbers;
-                                        setEditedUserData(updatedUserData);
-                                      }}
+                                      // onChange={(e) => {
+                                      //   const updatedUserData = { ...editedUserData };
+                                      //   const frequentFlyerNumbers = [...updatedUserData.frequentFlyerNumbers];
+                                      //   frequentFlyerNumbers[index].type = e.target.value;
+                                      //   updatedUserData.frequentFlyerNumbers = frequentFlyerNumbers;
+                                      //   setEditedUserData(updatedUserData);
+                                      // }}
                                       fullWidth
                                       margin="normal"
                                       variant="outlined"
@@ -435,14 +435,13 @@ export default function Customers() {
                                       name={`frequentFlyerNumbers[${index}].number`}
                                       as={TextField}
                                       label="Frequent Flyer Number"
-                                      value={editedUserData.frequentFlyerNumbers[index].number || ''}
-                                      onChange={(e) => {
-                                        const updatedUserData = { ...editedUserData };
-                                        const frequentFlyerNumbers = [...updatedUserData.frequentFlyerNumbers];
-                                        frequentFlyerNumbers[index].number = e.target.value;
-                                        updatedUserData.frequentFlyerNumbers = frequentFlyerNumbers;
-                                        setEditedUserData(updatedUserData);
-                                      }}
+                                      // onChange={(e) => {
+                                      //   const updatedUserData = { ...editedUserData };
+                                      //   const frequentFlyerNumbers = [...updatedUserData.frequentFlyerNumbers];
+                                      //   frequentFlyerNumbers[index].number = e.target.value;
+                                      //   updatedUserData.frequentFlyerNumbers = frequentFlyerNumbers;
+                                      //   setEditedUserData(updatedUserData);
+                                      // }}
                                       fullWidth
                                       margin="normal"
                                       variant="outlined"
@@ -478,20 +477,20 @@ export default function Customers() {
                             {({ push, remove }) => (
                               <>
                                 <div>
-                                  {editedUserData.hotelLoyaltyNumbers.map((hlNumber, index) => (
+                                  {values.hotelLoyaltyNumbers.map((hlNumber, index) => (
                                     <div key={index}>
                                       <Field
                                         name={`hotelLoyaltyNumbers[${index}].type`}
                                         as={TextField}
                                         label="Hotel Loyalty Type"
-                                        value={editedUserData.hotelLoyaltyNumbers[index].type || ''}
-                                        onChange={(e) => {
-                                          const updatedUserData = { ...editedUserData };
-                                          const hotelLoyaltyNumbers = [...updatedUserData.hotelLoyaltyNumbers];
-                                          hotelLoyaltyNumbers[index].type = e.target.value;
-                                          updatedUserData.hotelLoyaltyNumbers = hotelLoyaltyNumbers;
-                                          setEditedUserData(updatedUserData);
-                                        }}
+                                        // value={editedUserData.hotelLoyaltyNumbers[index].type || ''}
+                                        // onChange={(e) => {
+                                        //   const updatedUserData = { ...editedUserData };
+                                        //   const hotelLoyaltyNumbers = [...updatedUserData.hotelLoyaltyNumbers];
+                                        //   hotelLoyaltyNumbers[index].type = e.target.value;
+                                        //   updatedUserData.hotelLoyaltyNumbers = hotelLoyaltyNumbers;
+                                        //   setEditedUserData(updatedUserData);
+                                        // }}
                                         fullWidth
                                         margin="normal"
                                         variant="outlined"
@@ -506,14 +505,14 @@ export default function Customers() {
                                         name={`hotelLoyaltyNumbers[${index}].number`}
                                         as={TextField}
                                         label="Hotel Loyalty Number"
-                                        value={editedUserData.hotelLoyaltyNumbers[index].number || ''}
-                                        onChange={(e) => {
-                                          const updatedUserData = { ...editedUserData };
-                                          const hotelLoyaltyNumbers = [...updatedUserData.hotelLoyaltyNumbers];
-                                          hotelLoyaltyNumbers[index].number = e.target.value;
-                                          updatedUserData.hotelLoyaltyNumbers = hotelLoyaltyNumbers;
-                                          setEditedUserData(updatedUserData);
-                                        }}
+                                        // value={values.hotelLoyaltyNumbers[index].number || ''}
+                                        // onChange={(e) => {
+                                        //   const updatedUserData = { ...editedUserData };
+                                        //   const hotelLoyaltyNumbers = [...updatedUserData.hotelLoyaltyNumbers];
+                                        //   hotelLoyaltyNumbers[index].number = e.target.value;
+                                        //   updatedUserData.hotelLoyaltyNumbers = hotelLoyaltyNumbers;
+                                        //   setEditedUserData(updatedUserData);
+                                        // }}
                                         fullWidth
                                         margin="normal"
                                         variant="outlined"

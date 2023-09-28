@@ -297,7 +297,6 @@ export default function GetFamilyMembers() {
             Add Family members
           </Button>
         </Stack>
-        <Toaster />
         {openEditModal && (
           <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="lg" fullWidth>
             <DialogTitle>Edit Customer</DialogTitle>
@@ -353,7 +352,9 @@ export default function GetFamilyMembers() {
                               maxLength: 10 // Add maximum length attribute
                             }}
                             error={editUserData.mobile && editUserData.mobile.length != 10}
-                            helperText={editUserData.mobile && editUserData.mobile.length != 10 ? 'Mobile number must be exactly 10 characters' : ''}
+                            helperText={
+                              editUserData.mobile && editUserData.mobile.length != 10 ? 'Mobile number must be exactly 10 characters' : ''
+                            }
                           />
                           <ErrorMessage name="mobile" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
@@ -464,7 +465,12 @@ export default function GetFamilyMembers() {
           </Dialog>
         )}
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+            placeholder="FamilyMember"
+          />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -569,6 +575,7 @@ export default function GetFamilyMembers() {
           />
         </Card>
       </Container>
+      <Toaster />
     </>
   );
 }

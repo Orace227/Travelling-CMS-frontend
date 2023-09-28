@@ -267,10 +267,8 @@ const CreatePackage = () => {
                 <Typography variant="h5" gutterBottom>
                   Tour Details
                 </Typography>
-                <Field
-                  name="packageBody.tourDetails"
-                  value={quillContent}
-                  render={({ field }) => (
+                <Field name="packageBody.tourDetails">
+                  {({ field }) => (
                     <ReactQuill
                       {...field}
                       value={quillContent}
@@ -288,7 +286,7 @@ const CreatePackage = () => {
                       style={{ height: '200px' }}
                     />
                   )}
-                />
+                </Field>
                 <ErrorMessage
                   name="packageBody.tourDetails" // Make sure this matches the field name
                   component="div"

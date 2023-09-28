@@ -88,6 +88,9 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -124,12 +127,6 @@ const TABLE_HEAD = [
   { id: 'action', label: 'action' }
 ];
 
-const tourDetailSchema = Yup.object().shape({
-  day: Yup.number().required('Day is required').positive().integer(),
-  title: Yup.string().required('Title is required'),
-  description: Yup.string().required('Description is required')
-});
-
 // Schema for the inclusions and exclusions arrays
 const inclusionsAndExclusionsSchema = Yup.object().shape({
   inclusions: Yup.array().of(Yup.string().required('inclusion is required')),
@@ -144,7 +141,8 @@ const termsAndConditionsSchema = Yup.object().shape({
 
 // Schema for the entire packageBody object
 const packageBodySchema = Yup.object().shape({
-  tourDetails: Yup.array().of(tourDetailSchema), // Array of tour details
+  tourDetails: Yup.string().required('Tour details are required'),
+  // Array of tour details
   inclusionsAndExclusions: inclusionsAndExclusionsSchema, // Object with inclusions and exclusions arrays
   termsAndConditions: termsAndConditionsSchema // Object with terms and conditions arrays
 });
@@ -170,6 +168,8 @@ export default function Customers() {
   const [USERLIST, setPackageDetails] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
   // const [isGene, setIsGene] = useState(false);
+  const [quillContent, setQuillContent] = useState('');
+
   const [editedUserData, setEditedUserData] = useState([]);
   // const [loading, setLoading] = useState(false);
 
@@ -333,8 +333,8 @@ export default function Customers() {
   };
 
   const handleGeneratePdf = async (row) => {
-    // const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
-    const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
+    const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
+    // const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
     console.log(row);
     const fileName = `${row.packageName}.pdf`;
 
@@ -366,6 +366,17 @@ export default function Customers() {
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
+
+  const customToolbar = [
+    [{ header: '1' }, { header: '2' }, { font: [] }],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['bold', 'italic', 'underline'],
+    ['clean'],
+    [{ align: [] }],
+    [{ indent: '-1' }, { indent: '+1' }],
+    [{ color: [] }, { background: [] }]
+  ];
+  const quillFormats = ['header', 'font', 'list', 'bold', 'italic', 'underline', 'align'];
 
   return (
     <>
@@ -492,73 +503,42 @@ export default function Customers() {
                           <Typography variant="h5" gutterBottom>
                             Tour Details
                           </Typography>
-                          <FieldArray name="packageBody.tourDetails">
-                            {({ push, remove }) => (
-                              <div>
-                                {values.packageBody.tourDetails.map((tour, index) => (
-                                  <div key={index}>
-                                    <Field
-                                      name={`packageBody.tourDetails[${index}].day`}
-                                      as={TextField}
-                                      label={`Day ${tour.day}`}
-                                      fullWidth
-                                      margin="normal"
-                                      variant="outlined"
-                                    />
-                                    <ErrorMessage
-                                      name={`packageBody.tourDetails[${index}].day`}
-                                      component="div"
-                                      className="error"
-                                      style={{ color: 'red' }}
-                                    />
-                                    <Field
-                                      name={`packageBody.tourDetails[${index}].title`}
-                                      as={TextField}
-                                      label="Title"
-                                      fullWidth
-                                      margin="normal"
-                                      variant="outlined"
-                                    />
-                                    <ErrorMessage
-                                      name={`packageBody.tourDetails[${index}].title`}
-                                      component="div"
-                                      className="error"
-                                      style={{ color: 'red' }}
-                                    />
-                                    <Field
-                                      name={`packageBody.tourDetails[${index}].description`}
-                                      as={TextField}
-                                      label="Description"
-                                      fullWidth
-                                      margin="normal"
-                                      variant="outlined"
-                                    />
-                                    <ErrorMessage
-                                      name={`packageBody.tourDetails[${index}].description`}
-                                      component="div"
-                                      className="error"
-                                      style={{ color: 'red' }}
-                                    />
-                                    <Button type="button" variant="outlined" color="secondary" onClick={() => remove(index)}>
-                                      Remove Tour Detail
-                                    </Button>
-                                  </div>
-                                ))}
-                                <Button
-                                  type="button"
-                                  variant="outlined"
-                                  style={{ marginTop: '10px' }}
-                                  onClick={() => push({ day: '', title: '', description: '' })}
-                                >
-                                  Add Tour Detail
-                                </Button>
-                              </div>
+                          <Field
+                            name="packageBody.tourDetails"
+                            value={quillContent}
+                            render={({ field }) => (
+                              <ReactQuill
+                                {...field}
+                                value={quillContent}
+                                onChange={(value) => {
+                                  setQuillContent(value);
+                                  field.onChange(value);
+                                  setFieldValue('packageBody.tourDetails', value);
+                                }}
+                                modules={{
+                                  toolbar: {
+                                    container: customToolbar
+                                  }
+                                }}
+                                formats={quillFormats}
+                                style={{ height: '200px' }}
+                              />
                             )}
-                          </FieldArray>
+                          />
+                          <ErrorMessage
+                            name="packageBody.tourDetails" // Make sure this matches the field name
+                            component="div"
+                            className="error"
+                            style={{
+                              color: 'red',
+                              position: 'relative',
+                              top: '50px'
+                            }}
+                          />
                         </Grid>
 
                         <Grid item xs={12}>
-                          <Typography variant="h5" gutterBottom>
+                          <Typography variant="h5" style={{ position: 'relative', marginTop: '50px' }} gutterBottom>
                             Inclusions
                           </Typography>
                           <FieldArray name="packageBody.inclusionsAndExclusions.inclusions">
