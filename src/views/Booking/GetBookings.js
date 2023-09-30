@@ -78,7 +78,7 @@ const TABLE_HEAD = [
   { id: 'packageId', label: 'Package ID', alignRight: false },
   { id: 'startDate', label: 'Trip Start Date', alignRight: false },
   { id: 'endDate', label: 'Trip End Date', alignRight: false },
-  // { id: 'pdf', label: 'PDF', alignRight: false },
+  { id: 'pdf', label: 'PDF', alignRight: false },
   { id: 'action', label: 'action' }
 ];
 
@@ -245,9 +245,9 @@ export default function Bookings() {
     }
   };
   const handleGeneratePdf = async (row) => {
-    // const pdfUrl = `http://localhost:7000/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
+    const pdfUrl = `http://localhost:7000/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
 
-    const pdfUrl = `https://travelling-cms-backend.onrender.com/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
+    // const pdfUrl = `https://travelling-cms-backend.onrender.com/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
 
     console.log(row);
     const fileName = `${`${row.firstName}${row.lastName}`}.pdf`;
@@ -364,6 +364,22 @@ export default function Bookings() {
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                  {USERLIST.length === 0 && (
+                    <TableRow>
+                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                        <Paper
+                          sx={{
+                            textAlign: 'center'
+                          }}
+                        >
+                          <Typography variant="h6" paragraph>
+                            No Booking
+                          </Typography>
+                          <Typography variant="body2">There are currently no Booking available.</Typography>
+                        </Paper>
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>

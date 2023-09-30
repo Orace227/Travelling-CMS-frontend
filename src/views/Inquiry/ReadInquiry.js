@@ -52,6 +52,11 @@ export default function ReadInquryData() {
             Full Name: {inquiry[0]?.fullName}
           </Typography>
           <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant="body1" style={{ fontSize: '18px' }}>
+                <strong>Package ID:</strong> {inquiry[0]?.packageId}
+              </Typography>
+            </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" style={{ fontSize: '18px' }}>
                 <strong>Mobile:</strong> {inquiry[0]?.mobile}

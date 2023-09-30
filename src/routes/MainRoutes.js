@@ -16,6 +16,7 @@ import ReadCustomerData from 'views/Customer/ReadCustomer';
 import ReadBookingData from 'views/Booking/ReadBooking';
 import GetInquiry from 'views/Inquiry/GetInquiry';
 import ReadInquryData from 'views/Inquiry/ReadInquiry';
+import GetConfirmedInquiry from 'views/Inquiry/GetConfirmedInquiry';
 // import GetFamilyMemers from 'views/FamilyMembers/GetFamilymembers';
 
 // dashboard routing
@@ -106,6 +107,10 @@ const MainRoutes = {
     {
       path: '/GetInquiry/:inquiryId',
       element: <ReadInquryData />
+    },
+    {
+      path: '/GetConfirmedInquiry',
+      element: <GetConfirmedInquiry />
     }
   ]
 };

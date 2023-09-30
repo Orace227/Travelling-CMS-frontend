@@ -61,7 +61,7 @@ const TABLE_HEAD = [
   { id: 'action', label: 'Action' }
 ];
 
-export default function GetInquiry() {
+export default function GetConfirmedInquiry() {
   // const [open, setOpen] = useState(null);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -76,7 +76,7 @@ export default function GetInquiry() {
   const GetInquiries = () => {
     const promise = new Promise((resolve, reject) => {
       axios
-        .get(`/GetInquiry?isConfirm=false`)
+        .get(`/GetInquiry?isConfirm=true`)
         .then((allInquiries) => {
           console.log(allInquiries);
           setPackageDetails(allInquiries.data.allInquiries);
@@ -277,9 +277,9 @@ export default function GetInquiry() {
                           }}
                         >
                           <Typography variant="h6" paragraph>
-                            No Inquiries
+                            No Confirm Inquiries
                           </Typography>
-                          <Typography variant="body2">There are currently no inquiries available.</Typography>
+                          <Typography variant="body2">There are currently no confirm inquiries available.</Typography>
                         </Paper>
                       </TableCell>
                     </TableRow>

@@ -25,10 +25,18 @@ const Inquiry = {
           icon: icons.IconBuildingBridge,
           url: '/GetInquiry',
           breadcrumbs: false
+        },
+        {
+          id: 'ConfirmedInquiry',
+          title: 'Confirmed Inquiries',
+          type: 'item',
+          icon: icons.IconBuildingBridge,
+          url: '/GetConfirmedInquiry',
+          breadcrumbs: false
         }
       ]
     }
   ]
 };
 
-export default Inquiry ;
+export default Inquiry;

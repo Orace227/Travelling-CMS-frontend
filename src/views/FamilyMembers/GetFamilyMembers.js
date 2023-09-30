@@ -535,6 +535,22 @@ export default function GetFamilyMembers() {
                       <TableCell colSpan={6} />
                     </TableRow>
                   )}
+                  {USERLIST.length === 0 && (
+                    <TableRow>
+                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                        <Paper
+                          sx={{
+                            textAlign: 'center'
+                          }}
+                        >
+                          <Typography variant="h6" paragraph>
+                            No Family Members
+                          </Typography>
+                          <Typography variant="body2">There are currently no Family Members available.</Typography>
+                        </Paper>
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
 
                 {isNotFound && (
