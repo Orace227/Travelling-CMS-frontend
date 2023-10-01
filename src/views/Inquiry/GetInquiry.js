@@ -89,8 +89,8 @@ export default function GetInquiry() {
 
     toast.promise(promise, {
       loading: 'Fetching Inquiries...',
-      success: 'Inquiries fetched successfully!',
-      error: 'Failed to fetch Inquiries!!'
+      success: 'Inquiries Fetched Successfully!',
+      error: 'Failed to Fetch Inquiries!!'
     });
   };
 
