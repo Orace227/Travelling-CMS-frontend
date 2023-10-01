@@ -79,7 +79,7 @@ const TABLE_HEAD = [
   { id: 'startDate', label: 'Trip Start Date', alignRight: false },
   { id: 'endDate', label: 'Trip End Date', alignRight: false },
   { id: 'pdf', label: 'PDF', alignRight: false },
-  { id: 'action', label: 'action' }
+  { id: 'action', label: 'Action' }
 ];
 
 export default function Bookings() {

@@ -85,7 +85,7 @@ export default function ReadBookingData() {
       <Toaster />
       <Container maxWidth="md" style={{ padding: '17px' }}>
         <Typography variant="h4" align="center" style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '17px' }}>
-          Customer Details
+          Booking Details
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -95,12 +95,12 @@ export default function ReadBookingData() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px' }}>
-              <strong>Email:</strong> {customerList.email}
+              <strong>Email Address:</strong> {customerList.email}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px' }}>
-              <strong>Mobile:</strong> {customerList.mobile}
+              <strong>Mobile No. :</strong> {customerList.mobile}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -211,13 +211,13 @@ export default function ReadBookingData() {
 
                   <Grid item xs={6} sm={6}>
                     <Typography variant="body1" style={{ fontSize: '17px' }}>
-                      <strong>price: </strong> {detail.price}
+                      <strong>Price: </strong> {detail.price}
                     </Typography>
                   </Grid>
 
                   <Grid item xs={6} sm={6}>
                     <Typography variant="body1" style={{ fontSize: '17px' }}>
-                      <strong>vandor: </strong> {detail.vandor}
+                      <strong>Vandor: </strong> {detail.vandor}
                     </Typography>
                   </Grid>
 

@@ -63,12 +63,12 @@ function applySortFilter(array, comparator, query) {
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'company', label: 'Company', alignRight: false },
-  { id: 'Mobile', label: 'Mobile No', alignRight: false },
-  { id: 'Email', label: 'Email', alignRight: false },
+  { id: 'Mobile', label: 'Mobile No.', alignRight: false },
+  { id: 'Email', label: 'Email Address', alignRight: false },
   { id: 'Family Members', label: 'Family Members', alignRight: false },
-  { id: 'total Bookings', label: 'total Bookings', alignRight: false },
-  { id: 'address', label: 'address', alignRight: false },
-  { id: 'action', label: 'action' }
+  { id: 'total Bookings', label: 'Total Bookings', alignRight: false },
+  { id: 'address', label: 'Address', alignRight: false },
+  { id: 'action', label: 'Action' }
 ];
 
 export default function Customers() {

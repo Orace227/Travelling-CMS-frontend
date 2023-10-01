@@ -146,12 +146,12 @@ export default function ReadCustomerData() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" style={{ fontSize: '16px' }}>
-                <strong>Email:</strong> {familyMember.email}
+                <strong>Email Address:</strong> {familyMember.email}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" style={{ fontSize: '16px' }}>
-                <strong>Mobile:</strong> {familyMember.mobile}
+                <strong>Mobile No.:</strong> {familyMember.mobile}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -217,12 +217,12 @@ export default function ReadCustomerData() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px' }}>
-              <strong>Email:</strong> {customerList.email}
+              <strong>Email Address:</strong> {customerList.email}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px' }}>
-              <strong>Mobile:</strong> {customerList.mobile}
+              <strong>Mobile No. :</strong> {customerList.mobile}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -267,7 +267,7 @@ export default function ReadCustomerData() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px' }}>
-              <strong>PostalCode:</strong> {customerList.postalCode}
+              <strong>Postal Code:</strong> {customerList.postalCode}
             </Typography>
           </Grid>
           {renderFrequentFlyerNumbers(customerList.frequentFlyerNumbers)}
@@ -287,7 +287,7 @@ export default function ReadCustomerData() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" style={{ fontSize: '17px' }}>
-              <strong>Company GST Email:</strong> {customerList.companyGSTEmail}
+              <strong>Company GST Email Address:</strong> {customerList.companyGSTEmail}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>

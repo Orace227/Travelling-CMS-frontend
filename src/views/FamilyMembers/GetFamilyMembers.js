@@ -63,11 +63,11 @@ function applySortFilter(array, comparator, query) {
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'relationship', label: 'relationship', alignRight: false },
-  { id: 'Mobile', label: 'Mobile No', alignRight: false },
-  { id: 'Email', label: 'Email', alignRight: false },
-  { id: 'address', label: 'address', alignRight: false },
-  { id: 'action', label: 'action' }
+  { id: 'relationship', label: 'Relationship', alignRight: false },
+  { id: 'Mobile', label: 'Mobile No.', alignRight: false },
+  { id: 'Email', label: 'Email Address', alignRight: false },
+  { id: 'address', label: 'Address', alignRight: false },
+  { id: 'action', label: 'Action' }
 ];
 
 export default function GetFamilyMembers() {

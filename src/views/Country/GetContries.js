@@ -116,8 +116,8 @@ function applySortFilter(array, comparator, query) {
 const TABLE_HEAD = [
   { id: 'id', label: 'Country ID ', alignRight: false },
   { id: 'name', label: 'Country Name', alignRight: false },
-  { id: 'continent', label: 'continent Name', alignRight: false },
-  { id: 'action', label: 'action' }
+  { id: 'continent', label: 'Continent Name', alignRight: false },
+  { id: 'action', label: 'Action' }
 ];
 
 const validationSchema = Yup.object().shape({

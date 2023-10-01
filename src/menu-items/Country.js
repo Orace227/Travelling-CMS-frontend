@@ -14,13 +14,13 @@ const country = {
     {
       id: 'countryMain',
       title: 'Countries',
-      caption: 'country Details',
+      caption: 'Country Details',
       icon: icons.IconBuildingBridge,
       type: 'collapse',
       children: [
         {
           id: 'country',
-          title: 'countries',
+          title: 'Countries',
           type: 'item',
           icon: icons.IconBuildingBridge,
           url: '/Countries',
@@ -28,7 +28,7 @@ const country = {
         },
         {
           id: 'createcountry',
-          title: 'Create country',
+          title: 'Create Country',
           type: 'item',
           icon: icons.IconPlus,
           url: '/CreateCountry',

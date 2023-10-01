@@ -124,7 +124,7 @@ const TABLE_HEAD = [
   { id: 'PackageType', label: 'Package Type', alignRight: false },
   { id: 'Status', label: 'Status', alignRight: false },
   { id: 'PDF', label: 'PDF', alignRight: false },
-  { id: 'action', label: 'action' }
+  { id: 'action', label: 'Action' }
 ];
 
 // Schema for the inclusions and exclusions arrays

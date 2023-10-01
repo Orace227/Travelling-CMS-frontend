@@ -79,7 +79,7 @@ const CreateCountry = () => {
                 {/* <TextField fullWidth  variant="outlined"   /> */}
                 <Field
                   name="countryId"
-                  label="COuntry ID"
+                  label="Country ID"
                   as={TextField}
                   value={values.countryId}
                   fullWidth
@@ -121,7 +121,7 @@ const CreateCountry = () => {
                 />
                 <FormLabel htmlFor="countryImg">
                   <Button variant="outlined" component="span" fullWidth style={{ textTransform: 'none' }}>
-                    Upload country Image
+                    Upload Country Image
                   </Button>
                 </FormLabel>
                 <div>
