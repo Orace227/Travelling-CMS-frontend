@@ -74,7 +74,7 @@ const CreateCustomer = () => {
     // console.log(values);
     try {
       await axios.post('/createClient', values);
-      toast.success('Customer created Successfully!!');
+      toast.success('Customer Created Successfully!!');
       window.location.reload();
     } catch (err) {
       toast.success({ error: err });

@@ -257,13 +257,13 @@ export default function GetCountries() {
       console.log(updatedPackage);
       console.log(editedUserData);
       if (updatedPackage) {
-        toast.success('Country updated successfully!!');
+        toast.success('Country Updated Successfully!!');
         handleSaveChanges();
         window.location.reload();
       }
     } catch (error) {
       console.error('Error updating Country:', error);
-      toast.error('Failed to update Country. Please try again.');
+      toast.error('Failed to Update Country. Please Try Again.');
     }
   };
 

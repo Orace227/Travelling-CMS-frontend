@@ -49,7 +49,7 @@ export default function ReadBookingData() {
   useEffect(() => {
     getBooknig()
       .then(() => {
-        toast.success('Booking fetched successfully!');
+        toast.success('Booking was Fetched Successfully!');
       })
       .catch(() => {
         toast.error('Failed to fetch Booking!');

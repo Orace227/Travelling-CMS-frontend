@@ -47,7 +47,7 @@ const CreateCountry = () => {
         const createCountry = await axios.post('/CreateCountry', values);
         console.log(createCountry);
         if (createCountry) {
-          toast.success('Country created successfully!!');
+          toast.success('Country Created Successfully!!');
 
           setLoading(false);
           window.location.reload();

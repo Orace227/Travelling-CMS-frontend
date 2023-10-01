@@ -30,7 +30,7 @@ export default function ReadInquryData() {
   useEffect(() => {
     getInquiryDetails()
       .then(() => {
-        toast.success('Inquiry fetched successfully!');
+        toast.success('Inquiry Fetched Successfully!');
       })
       .catch(() => {
         toast.error('Failed to fetch Inquiry!');

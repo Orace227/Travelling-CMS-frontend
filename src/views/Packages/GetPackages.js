@@ -270,7 +270,7 @@ export default function Customers() {
       if (isDelete) {
         const deletedCustomer = await axios.post('/deletePackage', { id: Package.PackageId });
         if (deletedCustomer) {
-          toast.success('Package deleted successfully!!');
+          toast.success('Package Deleted Successfully!!');
         }
       }
       window.location.reload();
@@ -300,7 +300,7 @@ export default function Customers() {
       console.log(updatedPackage);
       console.log(editedUserData);
       if (updatedPackage) {
-        toast.success('Customer updated successfully!!');
+        toast.success('Customer Updated Successfully!!');
         handleSaveChanges();
         window.location.reload();
       }
@@ -350,7 +350,7 @@ export default function Customers() {
       // Hide the "pending" toast when the download is complete
       toast.dismiss(pendingToastId);
       // Show a "success" toast
-      toast.success('PDF downloaded successfully');
+      toast.success('PDF Downloaded Successfully');
     } catch (error) {
       // Hide the "pending" toast in case of an error
       toast.dismiss(pendingToastId);

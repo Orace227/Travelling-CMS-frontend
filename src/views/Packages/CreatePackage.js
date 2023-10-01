@@ -105,7 +105,7 @@ const CreatePackage = () => {
         const createPackage = await axios.post('/createPackage', values);
         console.log(createPackage);
         if (createPackage) {
-          toast.success('Package created successfully!!');
+          toast.success('Package Created Successfully!!');
           setLoading(false);
 
           window.location.reload();

@@ -63,7 +63,7 @@ export default function CreateFamilyMembers() {
           .post('/createFamilyMembers', { FamilyMembersArr })
           .then((response) => {
             if (response) {
-              toast.success('Family members were successfully created!!');
+              toast.success('Family members were Successfully Created!!');
               setLoading(false);
               window.location.reload();
 

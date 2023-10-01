@@ -156,7 +156,7 @@ export default function GetInquiry() {
       if (isDelete) {
         const deletedInquiry = await axios.post('/DeleteInquiry', { id: Inquiry._id });
         if (deletedInquiry) {
-          toast.success('Inquiry deleted successfully!!');
+          toast.success('Inquiry Deleted Successfully!!');
         }
       }
       window.location.reload();

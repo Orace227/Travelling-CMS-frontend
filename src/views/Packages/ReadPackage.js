@@ -29,7 +29,7 @@ export default function ReadPackageData() {
   useEffect(() => {
     getPackages()
       .then(() => {
-        toast.success('Packages fetched successfully!');
+        toast.success('Packages Fetched Successfully!');
       })
       .catch(() => {
         toast.error('Failed to fetch packages!');

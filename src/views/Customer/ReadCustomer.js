@@ -47,7 +47,7 @@ export default function ReadCustomerData() {
   useEffect(() => {
     getCustomer()
       .then(() => {
-        toast.success('Customer fetched successfully!');
+        toast.success('Customer Fetched Successfully!');
       })
       .catch(() => {
         toast.error('Failed to fetch customer!');

@@ -121,7 +121,7 @@ export default function Bookings() {
 
             // Now, enrichedBookingData contains bookings with firstName from clientData
             setUserlist(enrichedBookingData);
-            toast.success('Bookings fetched successfully!');
+            toast.success('Bookings Fetched Successfully!!');
             resolve(enrichedBookingData);
           });
         })
@@ -208,7 +208,7 @@ export default function Bookings() {
       if (isDelete) {
         const deletedCustomer = await axios.post('/deleteBooking', { clientId: booking.clientId, bookingId: booking.bookingId });
         if (deletedCustomer) {
-          toast.success('Booking deleted successfully!!');
+          toast.success('Booking Seleted Successfully!!');
           window.location.reload();
           console.log(editedUserData);
         }
@@ -263,7 +263,7 @@ export default function Bookings() {
       // Hide the "pending" toast when the download is complete
       toast.dismiss(pendingToastId);
       // Show a "success" toast
-      toast.success('PDF downloaded successfully');
+      toast.success('PDF Downloaded Successfully');
     } catch (error) {
       // Hide the "pending" toast in case of an error
       toast.dismiss(pendingToastId);

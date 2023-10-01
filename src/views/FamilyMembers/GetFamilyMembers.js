@@ -193,7 +193,7 @@ export default function GetFamilyMembers() {
       if (isDelete) {
         const deletedCustomer = await axios.post('/DeleteFamilyMember', { clientId: user.clientId, FamilyMemberId: user.FamilyMemberId });
         if (deletedCustomer) {
-          toast.success('Customer deleted successfully!!');
+          toast.success('Customer Deleted Successfully!!');
         }
       }
       window.location.reload();
@@ -264,10 +264,10 @@ export default function GetFamilyMembers() {
       console.log(values);
       const updatedCustomer = await axios.post('/updateFamilyMember', values);
       console.log(updatedCustomer);
-      toast.success('Family Member updated successfully!!');
+      toast.success('Family Member Updated Successfully!!');
     } catch (error) {
       console.error('Error updating family member:', error);
-      toast.error('Failed to update family member. Please try again.');
+      toast.error('Failed to Update Family Member. Please Try Again.');
     } finally {
       setLoading(false);
       window.location.reload();

@@ -308,7 +308,7 @@ const CreateBooking = () => {
     if (e.target.value >= recommndedPrice) {
       console.log('price is correct', fivePercent);
       if (!isToastVisible1) {
-        toast.success(`Modified Package Price is correct!!`);
+        toast.success(`Modified Package Price is Correct!!`);
         setIsToastVisible1(true);
       }
     } else {
