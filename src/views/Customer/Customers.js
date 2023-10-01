@@ -90,11 +90,12 @@ export default function Customers() {
         .then((response) => {
           const customersData = response.data.allClients;
           setUserlist(customersData);
-          toast.success('Customers fetched successfully!');
+          toast.success('Customers Fetched Successfully!');
+
           resolve(customersData);
         })
         .catch((error) => {
-          toast.error('Failed to fetch customers. Please try again later.');
+          toast.error('Failed to Fetch Customers. Please try again later.');
           console.error('Error fetching customers:', error);
           reject(error);
         });
@@ -204,33 +205,33 @@ export default function Customers() {
   //   }
   // };
   const validationSchema = Yup.object().shape({
-    firstName: Yup.string().required('First Name is required'),
-    lastName: Yup.string().required('Last Name is required'),
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    mobile: Yup.string().required('Mobile is required'),
+    firstName: Yup.string().required('First Name is Required'),
+    lastName: Yup.string().required('Last Name is Required'),
+    email: Yup.string().email('Invalid email address').required('Email is Required'),
+    mobile: Yup.string().required('Mobile is Required'),
     // dateOfBirth: Yup.date().required('Date of Birth is required'),
-    passportNumber: Yup.string().required('Passport Number is required'),
+    passportNumber: Yup.string().required('Passport Number is Required'),
     // passportExpiryDate: Yup.date().required('Passport Expiry Date is required'),
     frequentFlyerNumbers: Yup.array().of(
       Yup.object().shape({
-        type: Yup.string().required('Frequent Flyer Type is required'),
-        number: Yup.string().required('Frequent Flyer Number is required')
+        type: Yup.string().required('Frequent Flyer Type is Required'),
+        number: Yup.string().required('Frequent Flyer Number is Required')
       })
     ),
     hotelLoyaltyNumbers: Yup.array().of(
       Yup.object().shape({
-        type: Yup.string().required('Hotel Loyalty Type is required'),
-        number: Yup.string().required('Hotel Loyalty Number is required')
+        type: Yup.string().required('Hotel Loyalty Type is Required'),
+        number: Yup.string().required('Hotel Loyalty Number is Required')
       })
     ),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('City is required'),
-    country: Yup.string().required('Country is required'),
-    postalCode: Yup.string().required('Postal Code is required'),
+    address: Yup.string().required('Address is Required'),
+    city: Yup.string().required('City is Required'),
+    country: Yup.string().required('Country is Required'),
+    postalCode: Yup.string().required('Postal Code is Required'),
     foodPreferences: Yup.string(),
     companyName: Yup.string(),
     companyGSTNumber: Yup.string(),
-    companyGSTEmail: Yup.string().email('Invalid email address')
+    companyGSTEmail: Yup.string().email()
   });
   const handleSubmit = async (values) => {
     // console.log(editedUserData);

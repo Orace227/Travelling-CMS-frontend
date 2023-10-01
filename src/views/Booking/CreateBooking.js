@@ -179,18 +179,18 @@ const CreateBooking = () => {
     bookingDetails: [defaultBookingDetail]
   };
   const validationSchema = Yup.object().shape({
-    bookingId: Yup.number().required('Booking ID is required'),
+    bookingId: Yup.number().required('Booking ID is Required'),
     packageId: Yup.string()
-      .required('Package ID is required')
+      .required('Package ID is Required')
       .matches(/^\d+$/, 'Package ID must contain only digits')
       .min(6, 'Package ID must be at least 6 digits')
       .max(6, 'Package ID must not exceed 6 digits'),
-    clientId: Yup.string().required('Client Name is required'),
-    startDate: Yup.date().required('Start Date is required'),
-    endDate: Yup.date().required('End Date is required'),
+    clientId: Yup.string().required('Client Name is Required'),
+    startDate: Yup.date().required('Start Date is Required'),
+    endDate: Yup.date().required('End Date is Required'),
     modifiedPackagePrice: Yup.number()
-      .required('Modified Package Price is required')
-      .test('is-valid-price', `Modified price must be ${minValidPrice()} or more`, function () {
+      .required('Modified Package Price is Required')
+      .test('is-valid-price', `Modified Price must be ${minValidPrice()} or more`, function () {
         // const TotalCost = totalCost || 0; // Get the total cost from the form values
 
         const minValidPrice = totalCost * 1.05; // Calculate 5% of the total cost
@@ -199,12 +199,12 @@ const CreateBooking = () => {
       }),
     bookingDetails: Yup.array().of(
       Yup.object().shape({
-        bookingType: Yup.string().required('Booking Type is required'),
-        bookingName: Yup.string().required('Booking Name is required'),
-        price: Yup.number().required('price is required'),
-        vandor: Yup.string().required('vandor is required'),
-        docImgName: Yup.string().required('Document is required'),
-        docImg: Yup.mixed().required('Booking Document is required')
+        bookingType: Yup.string().required('Booking Type is Required'),
+        bookingName: Yup.string().required('Booking Name is Required'),
+        price: Yup.number().required('Price is Required'),
+        vandor: Yup.string().required('Vandor is Required'),
+        docImgName: Yup.string().required('Document is Required'),
+        docImg: Yup.mixed().required('Booking Document is Required')
       })
     )
   });

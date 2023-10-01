@@ -129,31 +129,31 @@ const TABLE_HEAD = [
 
 // Schema for the inclusions and exclusions arrays
 const inclusionsAndExclusionsSchema = Yup.object().shape({
-  inclusions: Yup.array().of(Yup.string().required('inclusion is required')),
-  exclusions: Yup.array().of(Yup.string().required('exclusion is required'))
+  inclusions: Yup.array().of(Yup.string().required('inclusion is Required')),
+  exclusions: Yup.array().of(Yup.string().required('exclusion is Required'))
 });
 
 // Schema for the terms and conditions arrays
 const termsAndConditionsSchema = Yup.object().shape({
-  terms: Yup.array().of(Yup.string().required('term is required')),
-  conditions: Yup.array().of(Yup.string().required('condition is required'))
+  terms: Yup.array().of(Yup.string().required('term is Required')),
+  conditions: Yup.array().of(Yup.string().required('condition is Required'))
 });
 
 // Schema for the entire packageBody object
 const packageBodySchema = Yup.object().shape({
-  tourDetails: Yup.string().required('Tour details are required'),
+  tourDetails: Yup.string().required('Tour details are Required'),
   // Array of tour details
   inclusionsAndExclusions: inclusionsAndExclusionsSchema, // Object with inclusions and exclusions arrays
   termsAndConditions: termsAndConditionsSchema // Object with terms and conditions arrays
 });
 const validationSchema = Yup.object().shape({
-  packageName: Yup.string().required('Package name is required'),
-  packageDesc: Yup.string().required('Package Discription is required'),
-  isLive: Yup.boolean().required('Live status is required'),
-  packageType: Yup.string().required('Package type is required'),
+  packageName: Yup.string().required('Package name is Required'),
+  packageDesc: Yup.string().required('Package Discription is Required'),
+  isLive: Yup.boolean().required('Live status is Required'),
+  packageType: Yup.string().required('Package type is Required'),
   // packageImg: Yup.mixed().required('Package image is required'),
-  country: Yup.string().required('Country is required'),
-  continent: Yup.string().required('Continent is required'),
+  country: Yup.string().required('Country is Required'),
+  continent: Yup.string().required('Continent is Required'),
   packageBody: packageBodySchema
 });
 

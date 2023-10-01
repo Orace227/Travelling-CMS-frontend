@@ -10,22 +10,22 @@ import { useState } from 'react';
 const validationSchema = Yup.object().shape({
   familyMembers: Yup.array().of(
     Yup.object().shape({
-      firstName: Yup.string().required('First Name is required'),
-      lastName: Yup.string().required('Last Name is required'),
-      email: Yup.string().email('Invalid email address').required('Email is required'),
+      firstName: Yup.string().required('First Name is Required'),
+      lastName: Yup.string().required('Last Name is Required'),
+      email: Yup.string().email('Invalid email address').required('Email is Required'),
       mobile: Yup.string()
-        .required('Mobile number is required')
+        .required('Mobile number is Required')
         .matches(/^[0-9]+$/, 'Mobile number must contain only digits'),
-      dateOfBirth: Yup.date().nullable().required('Date of Birth is required'),
-      relationship: Yup.string().required('Relationship is required'),
-      address: Yup.string().required('Address is required'),
-      city: Yup.string().required('City is required'),
-      country: Yup.string().required('Country is required'),
+      dateOfBirth: Yup.date().nullable().required('Date of Birth is Required'),
+      relationship: Yup.string().required('Relationship is Required'),
+      address: Yup.string().required('Address is Required'),
+      city: Yup.string().required('City is Required'),
+      country: Yup.string().required('Country is Required'),
       postalCode: Yup.string()
-        .required('Postal Code is required')
+        .required('Postal Code is Required')
         .matches(/^\d{5}$/, 'Postal Code must be a 5-digit number'),
-      passportExpiryDate: Yup.date().nullable().required('Passport Expiry Date is required'),
-      passportNumber: Yup.string().required('Passport Number is required'),
+      passportExpiryDate: Yup.date().nullable().required('Passport Expiry Date is Required'),
+      passportNumber: Yup.string().required('Passport Number is Required'),
       foodPreferences: Yup.string()
     })
   )
@@ -131,7 +131,7 @@ export default function CreateFamilyMembers() {
                           name={`familyMembers[${index}].firstName`}
                           as={TextField}
                           type="text"
-                          label="first Name"
+                          label="First Name"
                           fullWidth
                           margin="normal"
                           variant="outlined"
@@ -147,7 +147,7 @@ export default function CreateFamilyMembers() {
                         <Field
                           name={`familyMembers[${index}].lastName`}
                           as={TextField}
-                          label="last Name"
+                          label="Last Name"
                           type="text"
                           fullWidth
                           margin="normal"

@@ -7,10 +7,10 @@ import axios from 'axios';
 import { useState } from 'react';
 
 const validationSchema = Yup.object().shape({
-  countryId: Yup.number().required('Package ID is required'),
-  countryName: Yup.string().required('Package name is required'),
-  continent: Yup.string().required('select country name'),
-  countryImgName: Yup.string().required('country Image is required')
+  countryId: Yup.number().required('Package ID is Required'),
+  countryName: Yup.string().required('Package Name is Required'),
+  continent: Yup.string().required('Select Country Name'),
+  countryImgName: Yup.string().required('Country Image is Required')
 });
 
 const generateSixDigitNumber = () => {

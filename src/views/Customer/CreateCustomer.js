@@ -6,39 +6,39 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
 const validationSchema = Yup.object().shape({
-  clientId: Yup.number().required('Client ID is required'),
-  familyMembers: Yup.number().required('Number of family members is required'),
-  firstName: Yup.string().required('First Name is required'),
+  clientId: Yup.number().required('Client ID is Required'),
+  familyMembers: Yup.number().required('Number of family members is Required'),
+  firstName: Yup.string().required('First Name is Required'),
   lastName: Yup.string().required('Last Name is required'),
-  email: Yup.string().email('Invalid email address').required('Email is required'),
+  email: Yup.string().email('Invalid email address').required('Email is Required'),
   mobile: Yup.string()
     .matches(/^[0-9]{10}$/, 'Mobile must contain exactly 10 digits')
     .required('Mobile is required'),
-  dateOfBirth: Yup.date().required('Date of Birth is required'),
-  passportNumber: Yup.string().required('Passport Number is required'),
-  passportExpiryDate: Yup.date().required('Passport Expiry Date is required'),
+  dateOfBirth: Yup.date().required('Date of Birth is Required'),
+  passportNumber: Yup.string().required('Passport Number is Required'),
+  passportExpiryDate: Yup.date().required('Passport Expiry Date is Required'),
   frequentFlyerNumbers: Yup.array().of(
     Yup.object().shape({
-      type: Yup.string().required('Frequent Flyer Type is required'),
-      number: Yup.string().required('Frequent Flyer Number is required')
+      type: Yup.string().required('Frequent Flyer Type is Required'),
+      number: Yup.string().required('Frequent Flyer Number is Required')
     })
   ),
   hotelLoyaltyNumbers: Yup.array().of(
     Yup.object().shape({
-      type: Yup.string().required('Hotel Loyalty Type is required'),
-      number: Yup.string().required('Hotel Loyalty Number is required')
+      type: Yup.string().required('Hotel Loyalty Type is Required'),
+      number: Yup.string().required('Hotel Loyalty Number is Required')
     })
   ),
-  address: Yup.string().required('Address is required'),
-  city: Yup.string().required('City is required'),
-  country: Yup.string().required('Country is required'),
+  address: Yup.string().required('Address is Required'),
+  city: Yup.string().required('City is Required'),
+  country: Yup.string().required('Country is Required'),
   postalCode: Yup.string()
-    .required('Postal Code is required')
-    .matches(/^\d{6}$/, 'Postal Code must be a 6-digit number'),
+    .required('Postal Code is Required')
+    .matches(/^\d{6}$/, 'Postal Code must be a 6-digit Number'),
   foodPreferences: Yup.string(),
   companyName: Yup.string(),
   companyGSTNumber: Yup.string(),
-  companyGSTEmail: Yup.string().email('Invalid email address')
+  companyGSTEmail: Yup.string().email('Invalid Email Address')
 });
 
 function generateSixDigitNumber() {
