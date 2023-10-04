@@ -176,14 +176,12 @@ export default function Customers() {
   const GetPackages = () => {
     const promise = new Promise((resolve, reject) => {
       axios
-        .get('/getLivePackages')
-        .then((LivePackages) => {
-          return axios.get('/getDraftPackages').then((DraftPackages) => {
-            const allPackages = [...LivePackages.data.allPackages, ...DraftPackages.data.allPackages];
-            setPackageDetails(allPackages);
+        .get('/getPackages')
+        .then((allPackages) => {
+          console.log(allPackages.data.allPackages);
+          setPackageDetails(allPackages.data.allPackages);
 
-            resolve(allPackages);
-          });
+          return resolve(allPackages);
         })
         .catch((error) => {
           reject(error);
@@ -711,62 +709,65 @@ export default function Customers() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    // console.log(row);
-                    const { PackageId, packageName, packageType, isLive, packagePrice } = row;
-                    const selectedUser = selected.indexOf(PackageId) !== -1;
+                  {filteredUsers
+                    .reverse()
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      // console.log(row);
+                      const { PackageId, packageName, packageType, isLive, packagePrice } = row;
+                      const selectedUser = selected.indexOf(PackageId) !== -1;
 
-                    return (
-                      <>
-                        <TableRow hover key={PackageId} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                          <TableCell padding="checkbox">
-                            <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, PackageId)} />
-                          </TableCell>
+                      return (
+                        <>
+                          <TableRow hover key={PackageId} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                            <TableCell padding="checkbox">
+                              <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, PackageId)} />
+                            </TableCell>
 
-                          <TableCell align="left">{PackageId}</TableCell>
+                            <TableCell align="left">{PackageId}</TableCell>
 
-                          <TableCell align="left">
-                            <Link to={`/GetPackage/${PackageId}`} style={{ textDecoration: 'none', color: 'black' }} key={PackageId}>
-                              {packageName}
-                            </Link>
-                          </TableCell>
+                            <TableCell align="left">
+                              <Link to={`/GetPackage/${PackageId}`} style={{ textDecoration: 'none', color: 'black' }} key={PackageId}>
+                                {packageName}
+                              </Link>
+                            </TableCell>
 
-                          <TableCell align="left">{packagePrice ? packagePrice : '--'}</TableCell>
-                          <TableCell align="left">{packageType}</TableCell>
+                            <TableCell align="left">{packagePrice ? packagePrice : '--'}</TableCell>
+                            <TableCell align="left">{packageType}</TableCell>
 
-                          <TableCell align="left">{isLive ? 'Live' : 'Draft'}</TableCell>
-                          <TableCell align="left">
-                            {' '}
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={() => {
-                                handleGeneratePdf(row);
-                              }}
-                            >
-                              Generate PDF
-                            </Button>
-                          </TableCell>
+                            <TableCell align="left">{isLive ? 'Live' : 'Draft'}</TableCell>
+                            <TableCell align="left">
+                              {' '}
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  handleGeneratePdf(row);
+                                }}
+                              >
+                                Generate PDF
+                              </Button>
+                            </TableCell>
 
-                          <TableCell align="left">
-                            <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
-                              <Iconify icon={'eva:edit-fill'} />
-                            </IconButton>
+                            <TableCell align="left">
+                              <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
+                                <Iconify icon={'eva:edit-fill'} />
+                              </IconButton>
 
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => {
-                                handleDeletePackage(row);
-                              }}
-                            >
-                              <Iconify icon={'eva:trash-2-outline'} />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      </>
-                    );
-                  })}
+                              <IconButton
+                                size="large"
+                                color="inherit"
+                                onClick={() => {
+                                  handleDeletePackage(row);
+                                }}
+                              >
+                                <Iconify icon={'eva:trash-2-outline'} />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        </>
+                      );
+                    })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
