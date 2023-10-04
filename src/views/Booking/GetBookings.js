@@ -225,10 +225,12 @@ export default function Bookings() {
 
   const downloadPdf = async (pdfUrl, fileName) => {
     try {
+      console.log(pdfUrl);
       const response = await fetch(pdfUrl);
       if (!response.ok) {
         throw new Error('Failed to fetch PDF');
       }
+      console.log(response);
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -245,9 +247,9 @@ export default function Bookings() {
     }
   };
   const handleGeneratePdf = async (row) => {
-    const pdfUrl = `http://localhost:7000/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
+    // const pdfUrl = `http://localhost:7000/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
 
-    // const pdfUrl = `https://travelling-cms-backend.onrender.com/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
+    const pdfUrl = `https://travelling-cms-backend.onrender.com/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
 
     console.log(row);
     const fileName = `${`${row.firstName}${row.lastName}`}.pdf`;
