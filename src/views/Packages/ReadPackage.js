@@ -42,7 +42,7 @@ export default function ReadPackageData() {
   return (
     <>
       <Toaster />
-      <Container maxWidth="md" style={{ padding: '16px' }}>
+      <Container maxWidth="lg" style={{ padding: '16px' }}>
         <Typography variant="h4" align="center" style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '16px' }}>
           Package Details
         </Typography>
