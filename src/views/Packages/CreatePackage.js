@@ -47,7 +47,7 @@ const validationSchema = Yup.object().shape({
   packageType: Yup.string().required('Package type is Required'),
   packageImg: Yup.mixed().required('Package image is Required'),
   country: Yup.string().required('Country is Required'),
-  continent: Yup.string().required('Continent is Required'),
+  // continent: Yup.string().required('Continent is Required'),
   packageBody: packageBodySchema
 });
 
@@ -85,6 +85,32 @@ const CreatePackage = () => {
   const [loading, setLoading] = useState(false);
   const [countries, setCountries] = useState([]);
   const [quillContent, setQuillContent] = useState('');
+  const [selectedContinent, setSelectedContinent] = useState('');
+
+  const continents = {
+    'North America': ['USA', 'Canada', 'Mexico'],
+    'South America': ['Brazil', 'Argentina'],
+    Europe: ['UK', 'Germany', 'France', 'Italy', 'Spain', 'Russia', 'Turkey'],
+    Australia: ['Australia', 'NewZealand'],
+    Asia: ['China', 'India', 'Japan', 'SouthKorea', 'SaudiArabia', 'Kazakhstan', 'Iran', 'Iraq', 'UAE', 'Qatar', 'pakistan'],
+    Africa: ['SouthAfrica', 'Egypt', 'Kenya', 'Nigeria']
+  };
+
+  const getContinentForCountry = (country) => {
+    for (const [continent, countries] of Object.entries(continents)) {
+      if (countries.includes(country)) {
+        return continent;
+      }
+    }
+    return ''; // Return an empty string if no match is found
+  };
+
+  const handleContinent = (country) => {
+    const continent = getContinentForCountry(country);
+    setSelectedContinent(continent);
+    console.log(continent);
+    console.log(selectedContinent);
+  };
 
   const handlePriceKeyPress = (event) => {
     if (!/^\d+$/.test(event.key)) {
@@ -98,10 +124,13 @@ const CreatePackage = () => {
       setLoading(true);
       const formData = new FormData();
       formData.append('bannerImage', values.packageImg);
+      // formData.append('continent', values.packageImg);
       const uploadedImg = await axios.post('/upload', formData);
       console.log(uploadedImg);
       values.packageImgPath = uploadedImg.data.path;
       if (uploadedImg) {
+        values.continent = selectedContinent;
+        console.log('updated values', values);
         const createPackage = await axios.post('/createPackage', values);
         console.log(createPackage);
         if (createPackage) {
@@ -204,7 +233,15 @@ const CreatePackage = () => {
                   <InputLabel htmlFor="country">Select Country</InputLabel>
                   <Field as={Select} label="Select Country" name="country" variant="outlined">
                     {countries.map((option) => (
-                      <MenuItem key={option.countryId} value={option.countryName}>
+                      <MenuItem
+                        key={option.countryId}
+                        value={option.countryName}
+                        onClick={() => {
+                          const country = option.countryName;
+
+                          handleContinent(country);
+                        }}
+                      >
                         {option.countryName}
                       </MenuItem>
                     ))}
@@ -213,20 +250,15 @@ const CreatePackage = () => {
                 <ErrorMessage name="country" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth variant="outlined" margin="normal">
-                  <InputLabel htmlFor="continent">Select Continent</InputLabel>
-                  <Field name="continent" as={Select} label="Select Continent" fullWidth>
-                    <MenuItem value="Africa">Africa</MenuItem>
-                    <MenuItem value="Asia">Asia</MenuItem>
-                    <MenuItem value="Europe">Europe</MenuItem>
-                    <MenuItem value="North America">North America</MenuItem>
-                    <MenuItem value="South America">South America</MenuItem>
-                    <MenuItem value="Australia">Australia</MenuItem>
-                    {/* You can add more continents as needed */}
-                  </Field>
-                </FormControl>
-                <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} />
+              <Grid item xs={12} sm={6} style={{ marginTop: '15px' }}>
+                <Field
+                  name="continent"
+                  as={TextField}
+                  label="Select Continent"
+                  fullWidth
+                  value={selectedContinent} // Set the selectedContinent as the initial value
+                />
+                {/* <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} /> */}
               </Grid>
 
               <Grid item xs={12} sm={6}>
