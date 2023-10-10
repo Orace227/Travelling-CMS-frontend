@@ -123,6 +123,7 @@ const TABLE_HEAD = [
   { id: 'PackagePirce', label: 'Package Price', alignRight: false },
   { id: 'PackageType', label: 'Package Type', alignRight: false },
   { id: 'Status', label: 'Status', alignRight: false },
+  { id: 'VisibleOnWebsite', label: 'Visible on Website', alignRight: false },
   { id: 'PDF', label: 'PDF', alignRight: false },
   { id: 'action', label: 'Action' }
 ];
@@ -304,7 +305,12 @@ export default function Customers() {
       }
     } catch (error) {
       console.error('Error updating package:', error);
-      toast.error('Failed to update customer. Please try again.');
+      if (error.response.status == 422) {
+        toast.error('You cannot make this package shown as there are already 4 packages of this type which is shown on website!!');
+      }
+      if (error.response.status == 500) {
+        toast.error('Failed to update customer. Please try again.');
+      }
     }
   };
 
@@ -472,7 +478,16 @@ export default function Customers() {
                             </Field>
                           </FormControl>
                         </Grid>
-                        <Grid item xs={12} sm={6} style={{ marginTop: '24px' }}>
+                        <Grid item xs={12} sm={6}>
+                          <FormControl fullWidth variant="outlined" margin="normal">
+                            <InputLabel htmlFor="isShown">Visible on Website</InputLabel>
+                            <Field name="isShown" as={Select} label="Show on Website" fullWidth initialvalue="false">
+                              <MenuItem value="true">Yes</MenuItem>
+                              <MenuItem value="false">No</MenuItem>
+                            </Field>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} style={{ marginTop: '24px' }}>
                           <input
                             id="packageImg"
                             name="packageImg"
@@ -714,7 +729,7 @@ export default function Customers() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
                       // console.log(row);
-                      const { PackageId, packageName, packageType, isLive, packagePrice } = row;
+                      const { PackageId, packageName, packageType, isLive, isShown, packagePrice } = row;
                       const selectedUser = selected.indexOf(PackageId) !== -1;
 
                       return (
@@ -736,6 +751,7 @@ export default function Customers() {
                             <TableCell align="left">{packageType}</TableCell>
 
                             <TableCell align="left">{isLive ? 'Live' : 'Draft'}</TableCell>
+                            <TableCell align="left">{isShown ? 'YES' : 'No'}</TableCell>
                             <TableCell align="left">
                               {' '}
                               <Button
@@ -750,6 +766,28 @@ export default function Customers() {
                             </TableCell>
 
                             <TableCell align="left">
+                              <IconButton
+                                size="large"
+                                color="inherit"
+                                onClick={() => {
+                                  // const link = `http://localhost:3001/Package/${row.PackageId}`;
+                                  const link = `https://client-cms.vercel.app//Package/${row.PackageId}`;
+                                  navigator.clipboard
+                                    .writeText(link)
+                                    .then(function () {
+                                      // The link has been successfully copied to the clipboard
+                                      toast.success('Link copied to clipboard: ' + link);
+                                    })
+                                    .catch(function (err) {
+                                      // Handle any errors that may occur during clipboard copy
+                                      console.log(err);
+                                      toast.error('Failed to copy link: ');
+                                    });
+                                }}
+                              >
+                                <Iconify icon={'eva:edit-fill'} />
+                              </IconButton>
+
                               <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
                                 <Iconify icon={'eva:edit-fill'} />
                               </IconButton>

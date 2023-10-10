@@ -88,15 +88,16 @@ const CreatePackage = () => {
   const [selectedContinent, setSelectedContinent] = useState('');
 
   const continents = {
-    'North America': ['USA', 'Canada', 'Mexico'],
-    'South America': ['Brazil', 'Argentina'],
-    Europe: ['UK', 'Germany', 'France', 'Italy', 'Spain', 'Russia', 'Turkey'],
-    Australia: ['Australia', 'NewZealand'],
-    Asia: ['China', 'India', 'Japan', 'SouthKorea', 'SaudiArabia', 'Kazakhstan', 'Iran', 'Iraq', 'UAE', 'Qatar', 'pakistan'],
-    Africa: ['SouthAfrica', 'Egypt', 'Kenya', 'Nigeria']
+    'North America': ['usa', 'canada', 'mexico'],
+    'South America': ['brazil', 'argentina'],
+    Europe: ['uk', 'germany', 'france', 'italy', 'spain', 'russia', 'turkey'],
+    Australia: ['australia', 'new zealand'],
+    Asia: ['china', 'india', 'japan', 'south korea', 'saudi arabia', 'kazakhstan', 'iran', 'iraq', 'uae', 'qatar', 'pakistan'],
+    Africa: ['south africa', 'egypt', 'kenya', 'nigeria']
   };
 
   const getContinentForCountry = (country) => {
+    country = country.toLowerCase(); // Convert country name to lowercase
     for (const [continent, countries] of Object.entries(continents)) {
       if (countries.includes(country)) {
         return continent;
@@ -144,6 +145,9 @@ const CreatePackage = () => {
       console.error('An error occurred:', error);
       if (error.response.status == 403) {
         toast.error('Package was already uploaded!!');
+      }
+      if (error.response.status == 422) {
+        toast.error('You cannot make this package shown as there are already 4 packages of this type which is shown on website!!');
       }
       if (error.response.status == 500) {
         toast.error('Some arror occurred!!');
@@ -271,8 +275,17 @@ const CreatePackage = () => {
                   </Field>
                 </FormControl>
               </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <InputLabel htmlFor="isShown">Visible on Website</InputLabel>
+                  <Field name="isShown" as={Select} label="Show on Website" fullWidth initialvalue="false">
+                    <MenuItem value="true">Yes</MenuItem>
+                    <MenuItem value="false">No</MenuItem>
+                  </Field>
+                </FormControl>
+              </Grid>
 
-              <Grid item xs={12} sm={6} style={{ marginTop: '24px' }}>
+              <Grid item xs={12} style={{ marginTop: '24px' }}>
                 <input
                   id="packageImg"
                   name="packageImg"

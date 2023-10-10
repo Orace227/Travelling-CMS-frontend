@@ -74,6 +74,11 @@ export default function ReadPackageData() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1" style={{ fontSize: '18px', textAlign: 'justify' }}>
+                  <strong>Visible on Website:</strong> {packageItem.isShown ? 'Yes' : 'No'}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body1" style={{ fontSize: '18px', textAlign: 'justify' }}>
                   <strong>Country:</strong> {packageItem.country}
                 </Typography>
               </Grid>

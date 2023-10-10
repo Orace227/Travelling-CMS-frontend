@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, TextField, Button, Grid, FormControl, InputLabel, MenuItem, Select, FormLabel } from '@mui/material';
+import { Container, Typography, TextField, Button, Grid, FormLabel } from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import toast, { Toaster } from 'react-hot-toast';
@@ -30,6 +30,36 @@ const initialValues = {
 
 const CreateCountry = () => {
   const [loading, setLoading] = useState(false);
+
+  let [Country, setCountry] = useState('');
+  const [selectedContinent, setSelectedContinent] = useState('');
+
+  const continents = {
+    'North America': ['usa', 'canada', 'mexico'],
+    'South America': ['brazil', 'argentina'],
+    Europe: ['uk', 'germany', 'france', 'italy', 'spain', 'russia', 'turkey'],
+    Australia: ['australia', 'new zealand'],
+    Asia: ['china', 'india', 'japan', 'south korea', 'saudi arabia', 'kazakhstan', 'iran', 'iraq', 'uae', 'qatar', 'pakistan'],
+    Africa: ['south africa', 'egypt', 'kenya', 'nigeria']
+  };
+
+  const getContinentForCountry = () => {
+    Country = Country.toLowerCase(); // Convert Country name to lowercase
+    for (const [continent, countries] of Object.entries(continents)) {
+      if (countries.includes(Country)) {
+        return continent;
+      }
+    }
+    return ''; // Return an empty string if no match is found
+  };
+
+  const handleContinent = async (setFieldValue) => {
+    const continent = getContinentForCountry(Country);
+    setSelectedContinent(continent);
+    setFieldValue('continent', continent);
+    console.log(continent);
+    console.log(selectedContinent);
+  };
 
   const handleSubmit = async (values) => {
     try {
@@ -89,22 +119,40 @@ const CreateCountry = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Field name="countryName" as={TextField} label="Country Name" fullWidth margin="normal" variant="outlined" />
-                <ErrorMessage name="countryName" component="div" className="error" style={{ color: 'red' }} />
+                <Field
+                  name="countryName"
+                  value={Country}
+                  onChange={async (e) => {
+                    setCountry(e.target.value);
+                    // handleContinent();
+                    setFieldValue('countryName', e.target.value);
+                  }}
+                  as={TextField}
+                  label="Country Name"
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    handleContinent(setFieldValue);
+                  }}
+                >
+                  Get Continent
+                </Button>
+                <ErrorMessage name="countryName" component="div" className="error" style={{ color: 'red', marginTop: '20px' }} />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth variant="outlined" margin="normal">
-                  <InputLabel htmlFor="continent">Select Continent</InputLabel>
-                  <Field name="continent" as={Select} label="Select Continent" fullWidth>
-                    <MenuItem value="Africa">Africa</MenuItem>
-                    <MenuItem value="Asia">Asia</MenuItem>
-                    <MenuItem value="Europe">Europe</MenuItem>
-                    <MenuItem value="North America">North America</MenuItem>
-                    <MenuItem value="South America">South America</MenuItem>
-                    <MenuItem value="Australia">Australia</MenuItem>
-                    {/* You can add more continents as needed */}
-                  </Field>
-                </FormControl>
+
+              <Grid item xs={12} sm={6} style={{ marginTop: '15px' }}>
+                <Field
+                  name="continent"
+                  as={TextField}
+                  label="Select Continent"
+                  fullWidth
+                  value={selectedContinent} // Set the selectedContinent as the initial value
+                />
                 <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
               <Grid item xs={12} sm={6} style={{ marginTop: '24px' }}>

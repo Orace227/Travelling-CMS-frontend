@@ -69,11 +69,7 @@ import {
   Button,
   // DialogActions,
   TextField,
-  Grid,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel
+  Grid
 } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
@@ -184,6 +180,35 @@ export default function GetCountries() {
       setSelected([]);
     }
   };
+  let [Country, setCountry] = useState('');
+  const [selectedContinent, setSelectedContinent] = useState('');
+
+  const continents = {
+    'North America': ['usa', 'canada', 'mexico'],
+    'South America': ['brazil', 'argentina'],
+    Europe: ['uk', 'germany', 'france', 'italy', 'spain', 'russia', 'turkey'],
+    Australia: ['australia', 'new zealand'],
+    Asia: ['china', 'india', 'japan', 'south korea', 'saudi arabia', 'kazakhstan', 'iran', 'iraq', 'uae', 'qatar', 'pakistan'],
+    Africa: ['south africa', 'egypt', 'kenya', 'nigeria']
+  };
+
+  const getContinentForCountry = () => {
+    Country = Country.toLowerCase(); // Convert Country name to lowercase
+    for (const [continent, countries] of Object.entries(continents)) {
+      if (countries.includes(Country)) {
+        return continent;
+      }
+    }
+    return ''; // Return an empty string if no match is found
+  };
+
+  const handleContinent = async (setFieldValue) => {
+    const continent = getContinentForCountry(Country);
+    setSelectedContinent(continent);
+    setFieldValue('continent', continent);
+    console.log(continent);
+    console.log(selectedContinent);
+  };
 
   const handleClick = (event, countryId) => {
     const selectedIndex = selected.indexOf(countryId);
@@ -220,6 +245,9 @@ export default function GetCountries() {
       const Country = USERLIST.find((country) => country.countryId == row.countryId);
       console.log(Country);
       setEditedUserData(Country);
+      setCountry(Country.countryName);
+      setSelectedContinent(Country.continent);
+
       setOpenEditModal(true);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -293,7 +321,7 @@ export default function GetCountries() {
             <DialogContent>
               <Container>
                 <Formik initialValues={editedUserData} validationSchema={validationSchema} onSubmit={handleEdit}>
-                  {() => (
+                  {({ setFieldValue }) => (
                     <Form>
                       <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
@@ -301,22 +329,40 @@ export default function GetCountries() {
                           {/* <ErrorMessage name="countryName" component="div" className="error" style={{ color: 'red' }} /> */}
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                          <Field name="countryName" as={TextField} label="Country Name" fullWidth margin="normal" variant="outlined" />
-                          <ErrorMessage name="countryName" component="div" className="error" style={{ color: 'red' }} />
+                          <Field
+                            name="countryName"
+                            value={Country}
+                            onChange={async (e) => {
+                              setCountry(e.target.value);
+                              // handleContinent();
+                              setFieldValue('countryName', e.target.value);
+                            }}
+                            as={TextField}
+                            label="Country Name"
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                          />
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                              handleContinent(setFieldValue);
+                            }}
+                          >
+                            Get Continent
+                          </Button>
+                          <ErrorMessage name="countryName" component="div" className="error" style={{ color: 'red', marginTop: '20px' }} />
                         </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <FormControl fullWidth variant="outlined" margin="normal">
-                            <InputLabel htmlFor="continent">Select Continent</InputLabel>
-                            <Field name="continent" as={Select} label="Select Continent" fullWidth>
-                              <MenuItem value="Africa">Africa</MenuItem>
-                              <MenuItem value="Asia">Asia</MenuItem>
-                              <MenuItem value="Europe">Europe</MenuItem>
-                              <MenuItem value="North America">North America</MenuItem>
-                              <MenuItem value="South America">South America</MenuItem>
-                              <MenuItem value="Australia">Australia</MenuItem>
-                              {/* You can add more continents as needed */}
-                            </Field>
-                          </FormControl>
+
+                        <Grid item xs={12} sm={6} style={{ marginTop: '15px' }}>
+                          <Field
+                            name="continent"
+                            as={TextField}
+                            label="Select Continent"
+                            fullWidth
+                            value={selectedContinent} // Set the selectedContinent as the initial value
+                          />
                           <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
                       </Grid>
@@ -359,42 +405,45 @@ export default function GetCountries() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    // console.log(row);
-                    const { countryId, countryName, continent } = row;
-                    const selectedUser = selected.indexOf(countryId) !== -1;
+                  {filteredUsers
+                    .reverse()
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      // console.log(row);
+                      const { countryId, countryName, continent } = row;
+                      const selectedUser = selected.indexOf(countryId) !== -1;
 
-                    return (
-                      <>
-                        <TableRow hover key={countryId} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                          <TableCell padding="checkbox">
-                            <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, countryId)} />
-                          </TableCell>
+                      return (
+                        <>
+                          <TableRow hover key={countryId} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                            <TableCell padding="checkbox">
+                              <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, countryId)} />
+                            </TableCell>
 
-                          <TableCell align="left">{countryId}</TableCell>
+                            <TableCell align="left">{countryId}</TableCell>
 
-                          <TableCell align="left">{countryName}</TableCell>
-                          <TableCell align="left">{continent}</TableCell>
+                            <TableCell align="left">{countryName}</TableCell>
+                            <TableCell align="left">{continent}</TableCell>
 
-                          <TableCell align="left">
-                            <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
-                              <Iconify icon={'eva:edit-fill'} />
-                            </IconButton>
+                            <TableCell align="left">
+                              <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
+                                <Iconify icon={'eva:edit-fill'} />
+                              </IconButton>
 
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => {
-                                handleDeletePackage(row);
-                              }}
-                            >
-                              <Iconify icon={'eva:trash-2-outline'} />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      </>
-                    );
-                  })}
+                              <IconButton
+                                size="large"
+                                color="inherit"
+                                onClick={() => {
+                                  handleDeletePackage(row);
+                                }}
+                              >
+                                <Iconify icon={'eva:trash-2-outline'} />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        </>
+                      );
+                    })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
