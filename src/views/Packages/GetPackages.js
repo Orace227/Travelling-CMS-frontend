@@ -295,14 +295,39 @@ export default function Customers() {
   const handleEdit = async (values) => {
     try {
       console.log(values);
-      const updatedPackage = await axios.post('/updatePackage', values);
-      console.log(updatedPackage);
-      console.log(editedUserData);
-      if (updatedPackage) {
-        toast.success('Customer Updated Successfully!!');
-        handleSaveChanges();
-        window.location.reload();
+      if (values?.packageImg) {
+        const filename = values.packageImgPath.split('\\')[1];
+        console.log(filename);
+        const DeletedBannerimg = await axios.post('/deleteBanner', { filename });
+        if (DeletedBannerimg) {
+          const formData = new FormData();
+          formData.append('bannerImage', values.packageImg);
+          // formData.append('continent', values.packageImg);
+          const uploadedImg = await axios.post('/upload', formData);
+          console.log(uploadedImg);
+          values.packageImgPath = uploadedImg.data.path;
+          if (uploadedImg) {
+            const updatedPackage = await axios.post('/updatePackage', values);
+            console.log(updatedPackage);
+            console.log(editedUserData);
+            if (updatedPackage) {
+              toast.success('Package Updated Successfully!!');
+              handleSaveChanges();
+              window.location.reload();
+            }
+          }
+        }
+      } else {
+        const updatedPackage = await axios.post('/updatePackage', values);
+        console.log(updatedPackage);
+        console.log(editedUserData);
+        if (updatedPackage) {
+          toast.success('Package Updated Successfully!!');
+          handleSaveChanges();
+          window.location.reload();
+        }
       }
+      // console.log({ 'img path': values.packageImgPath, PATH });
     } catch (error) {
       console.error('Error updating package:', error);
       if (error.response.status == 422) {
@@ -770,8 +795,8 @@ export default function Customers() {
                                 size="large"
                                 color="inherit"
                                 onClick={() => {
-                                  // const link = `http://localhost:3001/Package/${row.PackageId}`;
-                                  const link = `https://client-cms.vercel.app//Package/${row.PackageId}`;
+                                  const link = `http://localhost:3001/Package/${row.PackageId}`;
+                                  // const link = `https://client-cms.vercel.app//Package/${row.PackageId}`;
                                   navigator.clipboard
                                     .writeText(link)
                                     .then(function () {
@@ -785,8 +810,7 @@ export default function Customers() {
                                     });
                                 }}
                               >
-                                <Iconify icon={'eva:edit-fill'} />
-
+                                <Iconify icon={'eva:copy-fill'} />
                               </IconButton>
 
                               <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
