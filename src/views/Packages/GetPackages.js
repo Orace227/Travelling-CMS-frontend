@@ -1,52 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import { Grid } from '@mui/material';
-// import ShopProductCard from './PackageCard';
-// import axios from 'axios';
-// import toast, { Toaster } from 'react-hot-toast';
-
-// export default function GetPackages() {
-//   const [allPackages, setallPackages] = useState([]);
-
-//   const GetPackages = () => {
-//     const promise = new Promise((resolve, reject) => {
-//       axios
-//         .get('/getLivePackages')
-//         .then((LivePackages) => {
-//           return axios.get('/getDraftPackages').then((DraftPackages) => {
-//             const allPackages = [...LivePackages.data.allPackages, ...DraftPackages.data.allPackages];
-//             setallPackages(allPackages);
-//             resolve(allPackages);
-//           });
-//         })
-//         .catch((error) => {
-//           reject(error);
-//         });
-//     });
-
-//     toast.promise(promise, {
-//       loading: 'Fetching packages...',
-//       success: 'Packages fetched successfully!',
-//       error: 'Failed to fetch packages!'
-//     });
-//   };
-
-//   useEffect(() => {
-//     GetPackages();
-//   }, []);
-
-//   return (
-//     <>
-//       <Grid container spacing={5}>
-//         {allPackages.map((Package) => (
-//           <Grid key={Package._id} item xs={12} md={4}>
-//             <ShopProductCard Package={Package} />
-//           </Grid>
-//         ))}
-//       </Grid>
-//       <Toaster />
-//     </>
-//   );
-// }
 import { useState } from 'react';
 import { filter } from 'lodash';
 import {
@@ -128,6 +79,11 @@ const TABLE_HEAD = [
   { id: 'action', label: 'Action' }
 ];
 
+const tourDetailSchema = Yup.object().shape({
+  day: Yup.number().required('Day is required').positive().integer(),
+  title: Yup.string().required('Title is required'),
+  description: Yup.string().required('Description is required')
+});
 // Schema for the inclusions and exclusions arrays
 const inclusionsAndExclusionsSchema = Yup.object().shape({
   inclusions: Yup.array().of(Yup.string().required('inclusion is Required')),
@@ -142,7 +98,7 @@ const termsAndConditionsSchema = Yup.object().shape({
 
 // Schema for the entire packageBody object
 const packageBodySchema = Yup.object().shape({
-  tourDetails: Yup.string().required('Tour details are Required'),
+  tourDetails: Yup.array().of(tourDetailSchema),
   // Array of tour details
   inclusionsAndExclusions: inclusionsAndExclusionsSchema, // Object with inclusions and exclusions arrays
   termsAndConditions: termsAndConditionsSchema // Object with terms and conditions arrays
@@ -296,7 +252,7 @@ export default function Customers() {
     try {
       console.log(values);
       if (values?.packageImg) {
-        const filename = values.packageImgPath.split('\\')[1];
+        const filename = values?.packageImgPath?.split('\\')[1];
         console.log(filename);
         const DeletedBannerimg = await axios.post('/deleteBanner', { filename });
         if (DeletedBannerimg) {
@@ -540,38 +496,98 @@ export default function Customers() {
                           <Typography variant="h5" gutterBottom>
                             Tour Details
                           </Typography>
-                          <Field
-                            name="packageBody.tourDetails"
-                            value={quillContent}
-                            render={({ field }) => (
-                              <ReactQuill
-                                {...field}
-                                value={quillContent}
-                                onChange={(value) => {
-                                  setQuillContent(value);
-                                  field.onChange(value);
-                                  setFieldValue('packageBody.tourDetails', value);
-                                }}
-                                modules={{
-                                  toolbar: {
-                                    container: customToolbar
-                                  }
-                                }}
-                                formats={quillFormats}
-                                style={{ height: '200px' }}
-                              />
+                          <FieldArray name="packageBody.tourDetails">
+                            {({ push, remove }) => (
+                              <div>
+                                {values.packageBody.tourDetails.map((tour, index) => (
+                                  <div key={index}>
+                                    <Field
+                                      name={`packageBody.tourDetails[${index}].day`}
+                                      as={TextField}
+                                      label={`Day ${tour.day}`}
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
+                                    <ErrorMessage
+                                      name={`packageBody.tourDetails[${index}].day`}
+                                      component="div"
+                                      className="error"
+                                      style={{ color: 'red' }}
+                                    />
+                                    <Field
+                                      name={`packageBody.tourDetails[${index}].title`}
+                                      as={TextField}
+                                      label="Title"
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
+                                    <ErrorMessage
+                                      name={`packageBody.tourDetails[${index}].title`}
+                                      component="div"
+                                      className="error"
+                                      style={{ color: 'red' }}
+                                    />
+                                    <Field name={`packageBody.tourDetails[${index}].description`}>
+                                      {(
+                                        { field = { value: '' } } // Provide a default value for field
+                                      ) => (
+                                        <ReactQuill
+                                          {...field}
+                                          value={quillContent[index] || ' '} // Use quillContent[index]
+                                          onChange={(value) => {
+                                            const newQuillContent = [...quillContent];
+                                            newQuillContent[index] = value; // Update the specific index
+                                            setQuillContent(newQuillContent);
+                                            field.onChange(value);
+                                            setFieldValue(`packageBody.tourDetails[${index}].description`, value);
+                                          }}
+                                          modules={{
+                                            toolbar: {
+                                              container: customToolbar
+                                            }
+                                          }}
+                                          formats={quillFormats}
+                                          style={{ height: '200px', marginTop: '10px' }}
+                                        />
+                                      )}
+                                    </Field>
+                                    <ErrorMessage
+                                      name={`packageBody.tourDetails[${index}].description`}
+                                      component="div"
+                                      className="error"
+                                      style={{
+                                        color: 'red',
+                                        position: 'relative',
+                                        top: '50px'
+                                      }}
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="outlined"
+                                      color="secondary"
+                                      style={{ marginTop: '60px' }}
+                                      onClick={() => remove(index)}
+                                    >
+                                      Remove Tour Detail
+                                    </Button>
+                                  </div>
+                                ))}
+                                <Button
+                                  type="button"
+                                  variant="outlined"
+                                  style={{ marginTop: '10px' }}
+                                  onClick={() => {
+                                    push({ day: '', title: '', description: '' });
+                                    setQuillContent([...quillContent, '']); // Add an empty string for the new description
+                                  }}
+                                >
+                                  Add Tour Detail
+                                </Button>
+                              </div>
                             )}
-                          />
-                          <ErrorMessage
-                            name="packageBody.tourDetails" // Make sure this matches the field name
-                            component="div"
-                            className="error"
-                            style={{
-                              color: 'red',
-                              position: 'relative',
-                              top: '50px'
-                            }}
-                          />
+                          </FieldArray>
                         </Grid>
 
                         <Grid item xs={12}>
@@ -795,8 +811,8 @@ export default function Customers() {
                                 size="large"
                                 color="inherit"
                                 onClick={() => {
-                                  const link = `http://localhost:3001/Package/${row.PackageId}`;
-                                  // const link = `https://client-cms.vercel.app//Package/${row.PackageId}`;
+                                  // const link = `http://localhost:3001/Package/${row.PackageId}`;
+                                  const link = `https://client-cms.vercel.app/Package/${row.PackageId}`;
                                   navigator.clipboard
                                     .writeText(link)
                                     .then(function () {

@@ -22,6 +22,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
+const tourDetailSchema = Yup.object().shape({
+  day: Yup.number().required('Day is required').positive().integer(),
+  title: Yup.string().required('Title is required'),
+  description: Yup.string().required('Description is required')
+});
+
 // Schema for the inclusions and exclusions arrays
 const inclusionsAndExclusionsSchema = Yup.object().shape({
   inclusions: Yup.array().of(Yup.string().required('inclusion is Required')),
@@ -36,7 +42,7 @@ const termsAndConditionsSchema = Yup.object().shape({
 
 // Schema for the entire packageBody object
 const packageBodySchema = Yup.object().shape({
-  tourDetails: Yup.string().required('Tour details are Required'),
+  tourDetails: Yup.array().of(tourDetailSchema),
   inclusionsAndExclusions: inclusionsAndExclusionsSchema, // Object with inclusions and exclusions arrays
   termsAndConditions: termsAndConditionsSchema // Object with terms and conditions arrays
 });
@@ -69,7 +75,7 @@ const initialValues = {
   country: '',
   continent: '',
   packageBody: {
-    tourDetails: '', // Initialize with an empty array
+    tourDetails: [], // Initialize with an empty array
     inclusionsAndExclusions: {
       inclusions: [], // Initialize with an empty array
       exclusions: [] // Initialize with an empty array
@@ -178,7 +184,7 @@ const CreatePackage = () => {
     [{ align: [] }],
     [{ indent: '-1' }, { indent: '+1' }],
     [{ color: [] }, { background: [] }],
-    ['copy', 'cut', 'paste'] // Add copy, cut, paste buttons
+    ['copy', 'cut', 'paste'][('ql-new-line', 'ql-space')] // Add copy, cut, paste buttons
   ];
 
   console.log('edotor data ', quillContent);
@@ -307,45 +313,107 @@ const CreatePackage = () => {
                 </div>
                 <ErrorMessage name="packageImg" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
-
+              
               <Grid item xs={12}>
                 <Typography variant="h5" gutterBottom>
                   Tour Details
                 </Typography>
-                <Field name="packageBody.tourDetails">
-                  {({ field }) => (
-                    <ReactQuill
-                      {...field}
-                      value={quillContent}
-                      onChange={(value) => {
-                        setQuillContent(value);
-                        field.onChange(value);
-                        setFieldValue('packageBody.tourDetails', value);
-                      }}
-                      modules={{
-                        toolbar: {
-                          container: customToolbar
-                        }
-                      }}
-                      formats={quillFormats}
-                      style={{ height: '200px' }}
-                    />
+                <FieldArray name="packageBody.tourDetails">
+                  {({ push, remove }) => (
+                    <div>
+                      {values.packageBody.tourDetails.map((tour, index) => (
+                        <div key={index}>
+                          <Field
+                            name={`packageBody.tourDetails[${index}].day`}
+                            as={TextField}
+                            label={`Day ${tour.day}`}
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                          />
+                          <ErrorMessage
+                            name={`packageBody.tourDetails[${index}].day`}
+                            component="div"
+                            className="error"
+                            style={{ color: 'red' }}
+                          />
+                          <Field
+                            name={`packageBody.tourDetails[${index}].title`}
+                            as={TextField}
+                            label="Title"
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                          />
+                          <ErrorMessage
+                            name={`packageBody.tourDetails[${index}].title`}
+                            component="div"
+                            className="error"
+                            style={{ color: 'red' }}
+                          />
+                          <Field name={`packageBody.tourDetails[${index}].description`}>
+                            {(
+                              { field = { value: '' } } // Provide a default value for field
+                            ) => (
+                              <ReactQuill
+                                {...field}
+                                value={quillContent[index] || ' '} // Use quillContent[index]
+                                onChange={(value) => {
+                                  const newQuillContent = [...quillContent];
+                                  newQuillContent[index] = value; // Update the specific index
+                                  setQuillContent(newQuillContent);
+                                  field.onChange(value);
+                                  setFieldValue(`packageBody.tourDetails[${index}].description`, value);
+                                }}
+                                modules={{
+                                  toolbar: {
+                                    container: customToolbar
+                                  }
+                                }}
+                                formats={quillFormats}
+                                style={{ height: '200px', marginTop: '10px' }}
+                              />
+                            )}
+                          </Field>
+                          <ErrorMessage
+                            name={`packageBody.tourDetails[${index}].description`}
+                            component="div"
+                            className="error"
+                            style={{
+                              color: 'red',
+                              position: 'relative',
+                              top: '50px'
+                            }}
+                          />
+                          <Button
+                            type="button"
+                            variant="outlined"
+                            color="secondary"
+                            style={{ marginTop: '60px' }}
+                            onClick={() => remove(index)}
+                          >
+                            Remove Tour Detail
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        type="button"
+                        variant="outlined"
+                        style={{ marginTop: '10px' }}
+                        onClick={() => {
+                          push({ day: '', title: '', description: '' });
+                          setQuillContent([...quillContent, '']); // Add an empty string for the new description
+                        }}
+                      >
+                        Add Tour Detail
+                      </Button>
+                    </div>
                   )}
-                </Field>
-                <ErrorMessage
-                  name="packageBody.tourDetails" // Make sure this matches the field name
-                  component="div"
-                  className="error"
-                  style={{
-                    color: 'red',
-                    position: 'relative',
-                    top: '50px'
-                  }}
-                />
+                </FieldArray>
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h5" style={{ position: 'relative', marginTop: '50px' }} gutterBottom>
+                <Typography variant="h5" style={{ position: 'relative', marginTop: '10px' }} gutterBottom>
                   Inclusions
                 </Typography>
                 <FieldArray name="packageBody.inclusionsAndExclusions.inclusions">
