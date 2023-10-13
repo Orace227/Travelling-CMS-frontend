@@ -233,6 +233,7 @@ const CreatePackage = () => {
                     <MenuItem value="Sustainable paths">Sustainable paths</MenuItem>
                     <MenuItem value="Wildlife Drives">Wildlife Drives</MenuItem>
                     <MenuItem value="Cruise Vacations">Cruise Vacations</MenuItem>
+                    <MenuItem value="Leisure">Leisure</MenuItem>
                   </Field>
                 </FormControl>
                 <ErrorMessage name="packageType" component="div" className="error" style={{ color: 'red' }} />
@@ -313,7 +314,7 @@ const CreatePackage = () => {
                 </div>
                 <ErrorMessage name="packageImg" component="div" className="error" style={{ color: 'red' }} />
               </Grid>
-              
+
               <Grid item xs={12}>
                 <Typography variant="h5" gutterBottom>
                   Tour Details
