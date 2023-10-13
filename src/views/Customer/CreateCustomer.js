@@ -1,9 +1,10 @@
 import React from 'react';
-import { Container, Typography, TextField, Button, Grid } from '@mui/material';
+import { Container, Typography, TextField, Button, Grid, Paper, IconButton, FormLabel } from '@mui/material';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const validationSchema = Yup.object().shape({
   clientId: Yup.number().required('Client ID is Required'),
@@ -38,7 +39,15 @@ const validationSchema = Yup.object().shape({
   foodPreferences: Yup.string(),
   companyName: Yup.string(),
   companyGSTNumber: Yup.string(),
-  companyGSTEmail: Yup.string().email('Invalid Email Address')
+  companyGSTEmail: Yup.string().email('Invalid Email Address'),
+  bookingDetails: Yup.array().of(
+    Yup.object().shape({
+      bookingType: Yup.string().required('Document Type is Required'),
+      bookingName: Yup.string().required('Document Name is Required'),
+      docImgName: Yup.string().required('Document is Required'),
+      docImg: Yup.mixed().required(' Document is Required')
+    })
+  )
 });
 
 function generateSixDigitNumber() {
@@ -47,6 +56,15 @@ function generateSixDigitNumber() {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+const defaultBookingDetail = {
+  bookingType: '',
+  bookingName: '',
+  docImgName: '',
+  docImgPath: '',
+  docImg: {
+    key: ''
+  }
+};
 const initialValues = {
   clientId: generateSixDigitNumber(),
   familyMembers: 0,
@@ -66,12 +84,88 @@ const initialValues = {
   foodPreferences: '',
   companyName: '',
   companyGSTNumber: '',
-  companyGSTEmail: ''
+  companyGSTEmail: '',
+  bookingDetails: [defaultBookingDetail]
 };
 
 const CreateCustomer = () => {
   const handleSubmit = async (values) => {
-    // console.log(values);
+    console.log(values);
+    const formData = new FormData();
+    // setLoading(true);
+    // toast.loading('Create Booking...');
+    // Filter out the booking details for the desired booking type
+    const bookingTypeToImages = {};
+
+    values.bookingDetails.forEach((bookingDetail) => {
+      const bookingType = bookingDetail.bookingType;
+
+      // If the booking type is not already in the object, initialize it as an empty array
+      if (!bookingTypeToImages[bookingType]) {
+        bookingTypeToImages[bookingType] = [];
+      }
+
+      // Add the image object to the array
+      bookingTypeToImages[bookingType].push({
+        docImg: bookingDetail.docImg
+      });
+    });
+
+    const keys = Object.keys(bookingTypeToImages);
+
+    // Using a loop to extract docImg from each object
+    let paths = [];
+    for (let i = 0; i < keys.length; i++) {
+      // let i = 0;
+      const docImgs = bookingTypeToImages[keys[i]].map((item) => item.docImg);
+
+      formData.append('key', keys[i]);
+      formData.append('clientId', values.clientId);
+
+      // Append each image individually
+      docImgs.forEach((docImg) => {
+        formData.append('docImg', docImg);
+      });
+      console.log(formData);
+      try {
+        const response = await axios.post('/upload-common-doc', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log(`Response for key ${keys[i]}:`, response.data.uploadedFilesPath);
+        const pathsForCurrentKey = response.data.uploadedFilesPath.map((uploadedFile) => ({
+          path: uploadedFile.path,
+          originalname: uploadedFile.originalname
+        }));
+        paths.push(...pathsForCurrentKey);
+      } catch (error) {
+        console.error(`Error for key ${keys[i]}:`, error);
+      }
+      // Clear formData for the next iteration
+      formData.delete('key');
+      formData.delete('clientId');
+      formData.delete('docImg');
+    }
+    console.log('paths', paths);
+    console.log('values', values);
+
+    let data = values;
+    for (let i = 0; i < data.bookingDetails.length; i++) {
+      const bookingDetail = data.bookingDetails[i];
+      const docImgName = bookingDetail.docImgName;
+
+      // Loop through the paths array to find a matching originalname
+      for (let j = 0; j < paths.length; j++) {
+        const pathObj = paths[j];
+        if (pathObj.originalname === docImgName) {
+          // Update the docImgPath property with the path from the paths object
+          bookingDetail.docImgPath = pathObj.path;
+          console.log('docImgPath', bookingDetail.docImgPath);
+          break; // Stop searching once a match is found
+        }
+      }
+    }
     try {
       await axios.post('/createClient', values);
       toast.success('Customer Created Successfully!!');
@@ -95,7 +189,7 @@ const CreateCustomer = () => {
       </Typography>
 
       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-        {({ values }) => (
+        {({ values, setFieldValue }) => (
           <Form>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -287,6 +381,105 @@ const CreateCustomer = () => {
               <Grid item xs={12}>
                 <Field name="companyGSTEmail" as={TextField} label="Company GST Email" fullWidth margin="normal" variant="outlined" />
                 <ErrorMessage name="companyGSTEmail" component="div" className="error" style={{ color: 'red' }} />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="h3" style={{ marginTop: '10px' }}>
+                  Upload Common Document
+                </Typography>
+                <FieldArray name="bookingDetails">
+                  {({ push, remove }) => (
+                    <div>
+                      {values?.bookingDetails.map((_, index) => (
+                        <Paper key={index} elevation={3} style={{ padding: '10px', margin: '20px' }}>
+                          <IconButton
+                            onClick={() => {
+                              remove(index);
+                              // setTotalCost(totalCos);
+                              // setFieldValue(`bookingDetails.${index}.price`, 0);
+                            }}
+                            color="error"
+                            aria-label="delete"
+                          >
+                            <ClearIcon />
+                          </IconButton>
+
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} md={4}>
+                              <Field
+                                name={`bookingDetails.${index}.bookingType`}
+                                as={TextField}
+                                fullWidth
+                                label="Document Type"
+                                variant="outlined"
+                              />
+                              <ErrorMessage
+                                name={`bookingDetails.${index}.bookingType`}
+                                component="div"
+                                className="error"
+                                style={{ color: 'red' }}
+                              />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                              <Field
+                                name={`bookingDetails.${index}.bookingName`}
+                                as={TextField}
+                                fullWidth
+                                label="Document Name"
+                                variant="outlined"
+                              />
+                              <ErrorMessage
+                                name={`bookingDetails.${index}.bookingName`}
+                                component="div"
+                                className="error"
+                                style={{ color: 'red' }}
+                              />
+                            </Grid>
+
+                            <Grid item xs={12} sm={4} style={{ marginTop: '7px' }}>
+                              <input
+                                id={`docImg-${index}`}
+                                type="file"
+                                name={`bookingDetails[${index}].docImg`}
+                                onChange={(e) => {
+                                  setFieldValue(`bookingDetails[${index}].docImg`, e?.currentTarget?.files[0]);
+                                  setFieldValue(`bookingDetails[${index}].docImgName`, e?.currentTarget?.files[0]?.name);
+                                }}
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                              />
+                              <FormLabel htmlFor={`docImg-${index}`}>
+                                <Button variant="outlined" component="span" fullWidth style={{ textTransform: 'none' }}>
+                                  Upload Document
+                                </Button>
+                              </FormLabel>
+                              <div>
+                                {values?.bookingDetails[index]?.docImgName && (
+                                  <p style={{ margin: '0', paddingTop: '8px' }}>
+                                    Selected Document: {values?.bookingDetails[index]?.docImgName}
+                                  </p>
+                                )}
+                              </div>
+                              <ErrorMessage
+                                name={`bookingDetails.${index}.docImgName`}
+                                component="div"
+                                className="error"
+                                style={{ color: 'red' }}
+                              />
+                            </Grid>
+                          </Grid>
+                        </Paper>
+                      ))}
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          push({ bookingType: '', bookingName: '', price: '', vandor: '', docImg: '' });
+                        }}
+                      >
+                        Add More Document
+                      </Button>
+                    </div>
+                  )}
+                </FieldArray>
               </Grid>
             </Grid>
             <Button type="submit" variant="contained" color="primary" size="large" style={{ marginTop: '1rem' }}>

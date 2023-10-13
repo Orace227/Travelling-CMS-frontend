@@ -703,64 +703,67 @@ export default function Customers() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    // console.log(row);
-                    const { clientId, firstName, lastName, companyName, familyMembers, totalBookings, email, mobile, address } = row;
-                    const selectedUser = selected.indexOf(clientId) !== -1;
+                  {filteredUsers
+                    .reverse()
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      // console.log(row);
+                      const { clientId, firstName, lastName, companyName, familyMembers, totalBookings, email, mobile, address } = row;
+                      const selectedUser = selected.indexOf(clientId) !== -1;
 
-                    return (
-                      <>
-                        <TableRow hover key={clientId} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                          <TableCell padding="checkbox">
-                            <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, clientId)} />
-                          </TableCell>
+                      return (
+                        <>
+                          <TableRow hover key={clientId} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                            <TableCell padding="checkbox">
+                              <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, clientId)} />
+                            </TableCell>
 
-                          <TableCell align="left">
-                            <Typography noWrap>
-                              <Link to={`/GetCustomer/${clientId}`} style={{ textDecoration: 'none', color: 'black' }}>
-                                {firstName} {lastName}
-                              </Link>
-                            </Typography>
-                          </TableCell>
+                            <TableCell align="left">
+                              <Typography noWrap>
+                                <Link to={`/GetCustomer/${clientId}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                  {firstName} {lastName}
+                                </Link>
+                              </Typography>
+                            </TableCell>
 
-                          <TableCell align="left">{companyName}</TableCell>
+                            <TableCell align="left">{companyName}</TableCell>
 
-                          <TableCell align="left">{mobile}</TableCell>
+                            <TableCell align="left">{mobile}</TableCell>
 
-                          <TableCell align="left">{email}</TableCell>
+                            <TableCell align="left">{email}</TableCell>
 
-                          <TableCell align="left">{familyMembers}</TableCell>
-                          <TableCell align="left">{totalBookings}</TableCell>
-                          <TableCell align="left">{address}</TableCell>
+                            <TableCell align="left">{familyMembers}</TableCell>
+                            <TableCell align="left">{totalBookings}</TableCell>
+                            <TableCell align="left">{address}</TableCell>
 
-                          <TableCell align="left">
-                            <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
-                              <Iconify icon={'eva:edit-fill'} />
-                            </IconButton>
+                            <TableCell align="left">
+                              <IconButton size="large" color="inherit" onClick={() => handleOpenEditModal(row)}>
+                                <Iconify icon={'eva:edit-fill'} />
+                              </IconButton>
 
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => {
-                                handleDeleteCustomer(row);
-                              }}
-                            >
-                              <Iconify icon={'eva:trash-2-outline'} />
-                            </IconButton>
-                            <Button
-                              component={Link}
-                              to={`/familyMembers?clientId=${clientId}`} // Specify the correct URL here
-                              variant="contained"
-                              style={{ textAlign: 'center' }}
-                              color="primary"
-                            >
-                              Family Details
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      </>
-                    );
-                  })}
+                              <IconButton
+                                size="large"
+                                color="inherit"
+                                onClick={() => {
+                                  handleDeleteCustomer(row);
+                                }}
+                              >
+                                <Iconify icon={'eva:trash-2-outline'} />
+                              </IconButton>
+                              <Button
+                                component={Link}
+                                to={`/familyMembers?clientId=${clientId}`} // Specify the correct URL here
+                                variant="contained"
+                                style={{ textAlign: 'center' }}
+                                color="primary"
+                              >
+                                Family Details
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        </>
+                      );
+                    })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
