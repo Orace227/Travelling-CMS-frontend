@@ -150,6 +150,9 @@ export default function ReadCustomerData() {
           {Documents.map((doc, key) => (
             <Grid item xs={6} sm={6} key={key}>
               <Typography variant="body1" style={{ fontSize: '17px' }}>
+                {key + 1}. <strong>Document Name:</strong> {doc?.bookingName}
+              </Typography>
+              <Typography variant="body1" style={{ fontSize: '17px' }}>
                 <strong>Booking Document Link: </strong>
                 <a
                   href={`http://localhost:7000/${doc.docImgPath}`}
