@@ -34,6 +34,7 @@ export default function ReadCustomerData() {
       .then((response) => {
         const allFamilyMembers = response.data.allFamilyMembers;
         if (allFamilyMembers) {
+          console.log(allFamilyMembers);
           setFamilyMembers(allFamilyMembers);
         } else {
           throw new Error('No family members found');
@@ -151,8 +152,8 @@ export default function ReadCustomerData() {
               <Typography variant="body1" style={{ fontSize: '17px' }}>
                 <strong>Booking Document Link: </strong>
                 <a
-                  // href={`http://localhost:7000/${doc.docImgPath}`}
-                  href={`https://travelling-cms-backend.onrender.com/${doc.docImgPath}`}
+                  href={`http://localhost:7000/${doc.docImgPath}`}
+                  // href={`https://travelling-cms-backend.onrender.com/${doc.docImgPath}`}
                   style={{ textDecoration: 'none', color: 'black' }}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -234,6 +235,7 @@ export default function ReadCustomerData() {
             </Grid>
             {renderFrequentFlyerNumbers(familyMember.frequentFlyerNumbers)}
             {renderHotelLoyaltyNumbers(familyMember.hotelLoyaltyNumbers)}
+            {renderDocuments(familyMember.bookingDetails)}
           </Grid>
         </Paper>
       </Grid>
