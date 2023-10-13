@@ -146,7 +146,7 @@ export default function ReadCustomerData() {
           </Typography>
         </Divider>
         <Grid container spacing={2}>
-          {Documents.map((doc, index) => (
+          {Documents.map((doc) => (
             <Grid item xs={6} sm={6}>
               <Typography variant="body1" style={{ fontSize: '17px' }}>
                 <strong>Booking Document Link: </strong>
