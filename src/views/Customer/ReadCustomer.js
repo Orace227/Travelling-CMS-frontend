@@ -16,6 +16,7 @@ export default function ReadCustomerData() {
       .then((response) => {
         const oneClient = response.data.OneClient[0];
         if (oneClient) {
+          console.log(oneClient);
           setCustomerList(oneClient);
         } else {
           throw new Error('No customer found');
@@ -122,6 +123,43 @@ export default function ReadCustomerData() {
                 <strong>Number:</strong> {loyalty?.number}
               </Typography>
               <div style={{ margin: '10px' }}></div>
+            </Grid>
+          ))}
+          {/* <Grid item xs={12}>
+            <Divider style={{ marginTop: '20px' }} />
+          </Grid> */}
+        </Grid>
+      </Grid>
+    );
+  };
+
+  const renderDocuments = (Documents) => {
+    if (!Documents || Documents.length === 0) {
+      return null;
+    }
+
+    return (
+      <Grid item xs={12}>
+        <Divider style={{ marginTop: '40px' }}>
+          <Typography variant="body1" style={{ fontSize: '22px', marginBottom: '10px' }}>
+            <strong>Common Documents</strong>
+          </Typography>
+        </Divider>
+        <Grid container spacing={2}>
+          {Documents.map((doc, index) => (
+            <Grid item xs={6} sm={6}>
+              <Typography variant="body1" style={{ fontSize: '17px' }}>
+                <strong>Booking Document Link: </strong>
+                <a
+                  // href={`http://localhost:7000/${doc.docImgPath}`}
+                  href={`https://travelling-cms-backend.onrender.com/${doc.docImgPath}`}
+                  style={{ textDecoration: 'none', color: 'black' }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  OPEN
+                </a>
+              </Typography>
             </Grid>
           ))}
           {/* <Grid item xs={12}>
@@ -270,6 +308,7 @@ export default function ReadCustomerData() {
               <strong>Postal Code:</strong> {customerList.postalCode}
             </Typography>
           </Grid>
+          {renderDocuments(customerList.bookingDetails)}
           {renderFrequentFlyerNumbers(customerList.frequentFlyerNumbers)}
           {renderHotelLoyaltyNumbers(customerList.hotelLoyaltyNumbers)}
           <Grid item xs={12}>
