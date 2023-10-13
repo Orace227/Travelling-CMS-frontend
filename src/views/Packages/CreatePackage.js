@@ -354,10 +354,10 @@ const CreatePackage = () => {
                           />
                           <Field name={`packageBody.tourDetails[${index}].description`}>
                             {(
-                              { field = { value: '' } } // Provide a default value for field
+                              { field = {name: ' ' } } // Provide a default value for field
                             ) => (
                               <ReactQuill
-                                {...field}
+                                {...field.name}
                                 value={quillContent[index] || ' '} // Use quillContent[index]
                                 onChange={(value) => {
                                   const newQuillContent = [...quillContent];
