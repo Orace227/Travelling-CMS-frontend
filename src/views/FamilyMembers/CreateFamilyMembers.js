@@ -3,9 +3,10 @@ import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { useLocation } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-import { Button, Container, Grid, TextField, Typography } from '@mui/material';
+import { Button, Container, Grid, TextField, Typography, Paper, IconButton, FormLabel } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const validationSchema = Yup.object().shape({
   familyMembers: Yup.array().of(
@@ -26,14 +27,22 @@ const validationSchema = Yup.object().shape({
         .matches(/^\d{5}$/, 'Postal Code must be a 5-digit number'),
       passportExpiryDate: Yup.date().nullable().required('Passport Expiry Date is Required'),
       passportNumber: Yup.string().required('Passport Number is Required'),
-      foodPreferences: Yup.string()
+      foodPreferences: Yup.string(),
+      bookingDetails: Yup.array().of(
+        Yup.object().shape({
+          bookingType: Yup.string().required('Document Type is Required'),
+          bookingName: Yup.string().required('Document Name is Required'),
+          docImgName: Yup.string().required('Document is Required'),
+          docImg: Yup.mixed().required('Document is Required')
+        })
+      )
     })
   )
   // ... other top-level validations if needed
 });
+
 export default function CreateFamilyMembers() {
   const [loading, setLoading] = useState(false);
-
   const location = useLocation();
 
   const getClientId = () => {
@@ -48,47 +57,132 @@ export default function CreateFamilyMembers() {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  const handleSubmit = (values) => {
-    // console.log(values.familyMembers);
+  const handleSubmit = async (values) => {
+    try {
+      // Set loading state and show a loading message
+      console.log(values);
+      setLoading(true);
+      toast.loading('Uploading documents...');
 
-    const promise = new Promise((resolve, reject) => {
-      try {
-        setLoading(true);
-        const FamilyMembersArr = values?.familyMembers.map((familyMember) => ({
-          ...familyMember,
-          FamilyMemberId: generateSixDigitNumber()
-        }));
-        console.log(FamilyMembersArr);
-        axios
-          .post('/createFamilyMembers', { FamilyMembersArr })
-          .then((response) => {
-            if (response) {
-              toast.success('Family members were Successfully Created!!');
-              setLoading(false);
-              window.location.reload();
+      // Generate FamilyMemberIds for each family member
+      values.familyMembers.forEach((familyMember) => {
+        familyMember.FamilyMemberId = generateSixDigitNumber();
+      });
 
-              resolve();
-            } else {
-              setLoading(false);
-              reject(new Error('Failed to create family members'));
+      const paths = await uploadDocuments(values);
+
+      if (paths) {
+        // Documents uploaded successfully, now update the document paths in the original object
+        for (const familyMember of values.familyMembers) {
+          familyMember.bookingDetails.forEach((bookingDetail) => {
+            const docImgName = bookingDetail.docImgName;
+            const matchingPath = paths.find((pathObj) => pathObj.originalname === docImgName);
+            if (matchingPath) {
+              bookingDetail.docImgPath = matchingPath.path;
             }
-          })
-          .catch((error) => {
-            console.log({ error });
-            setLoading(false);
-            reject(error);
           });
-      } catch (err) {
-        console.log({ error: err });
+        }
+
+        // Clear loading state
         setLoading(false);
-        reject(err);
+
+        // After uploading documents and updating docImgPath, create family members
+        toast.loading('Creating family members...');
+
+        const FamilyMembersArr = values.familyMembers.map((familyMember) => ({
+          ...familyMember
+        }));
+
+        const familyMembersResponse = await axios.post('/createFamilyMembers', { FamilyMembersArr });
+
+        if (!familyMembersResponse.data) {
+          // Handle the case when creating family members fails
+          toast.error('Failed to create family members');
+        } else {
+          toast.success('Family members and documents were successfully created!');
+          window.location.reload();
+        }
+      } else {
+        // Handle the case when document upload fails
+        toast.error('Failed to upload documents');
       }
-    });
-    toast.promise(promise, {
-      loading: 'Creating family members...',
-      success: 'Family members were successfully created!',
-      error: 'Failed to create family members!'
-    });
+    } catch (error) {
+      console.error('Error:', error);
+      // Clear loading state and show an error message
+      setLoading(false);
+      toast.error('Failed to upload documents and create family members');
+      // window.location.reload();
+    }
+  };
+
+  const uploadDocuments = async (values) => {
+    const paths = [];
+
+    // An array to store promises for each document upload
+    const uploadPromises = [];
+
+    for (const familyMember of values.familyMembers) {
+      const bookingTypeToImages = {};
+
+      familyMember.bookingDetails.forEach((bookingDetail) => {
+        const bookingType = bookingDetail.bookingType;
+
+        if (!bookingTypeToImages[bookingType]) {
+          bookingTypeToImages[bookingType] = [];
+        }
+
+        bookingTypeToImages[bookingType].push({
+          docImg: bookingDetail.docImg
+        });
+      });
+
+      const keys = Object.keys(bookingTypeToImages);
+
+      for (let i = 0; i < keys.length; i++) {
+        const docImgs = bookingTypeToImages[keys[i]].map((item) => item.docImg);
+
+        const formData = new FormData();
+        formData.append('key', keys[i]);
+        formData.append('clientId', `${familyMember.clientId}_${familyMember.FamilyMemberId}`);
+
+        docImgs.forEach((docImg) => {
+          formData.append('docImg', docImg);
+        });
+
+        // Create a promise for each document upload
+        const uploadPromise = axios.post('/upload-common-doc', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        uploadPromises.push(uploadPromise);
+      }
+    }
+
+    // Wait for all document uploads to complete
+    const responses = await Promise.all(uploadPromises);
+
+    for (const response of responses) {
+      const pathsForCurrentKey = response.data.uploadedFilesPath.map((uploadedFile) => ({
+        path: uploadedFile.path,
+        originalname: uploadedFile.originalname
+      }));
+
+      paths.push(...pathsForCurrentKey);
+    }
+
+    return paths;
+  };
+
+  const defaultBookingDetail = {
+    bookingType: '',
+    bookingName: '',
+    docImgName: '',
+    docImgPath: '',
+    docImg: {
+      key: ''
+    }
   };
 
   const initialValues = {
@@ -108,7 +202,8 @@ export default function CreateFamilyMembers() {
         postalCode: '',
         passportNumber: '',
         passportExpiryDate: '',
-        foodPreferences: ''
+        foodPreferences: '',
+        bookingDetails: [defaultBookingDetail]
       }
     ]
   };
@@ -119,7 +214,7 @@ export default function CreateFamilyMembers() {
         Create Family Members
       </Typography>
       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-        {({ values }) => (
+        {({ values, setFieldValue }) => (
           <Form>
             <FieldArray name="familyMembers">
               {({ push, remove }) => (
@@ -328,6 +423,106 @@ export default function CreateFamilyMembers() {
                           className="error"
                           style={{ color: 'red' }}
                         />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <Typography variant="h3" style={{ marginTop: '10px' }}>
+                          Upload Common Document
+                        </Typography>
+                        <FieldArray name={`familyMembers[${index}].bookingDetails`}>
+                          {({ push: pushDocument, remove: removeDocument }) => (
+                            <div>
+                              {familyMember.bookingDetails.map((document, docIndex) => (
+                                <Paper key={docIndex} elevation={3} style={{ padding: '10px', margin: '20px' }}>
+                                  <IconButton
+                                    onClick={() => {
+                                      removeDocument(docIndex);
+                                    }}
+                                    color="error"
+                                    aria-label="delete"
+                                  >
+                                    <ClearIcon />
+                                  </IconButton>
+                                  <Grid container spacing={2}>
+                                    <Grid item xs={12} md={4}>
+                                      <Field
+                                        name={`familyMembers[${index}].bookingDetails[${docIndex}].bookingType`}
+                                        as={TextField}
+                                        fullWidth
+                                        label="Document Type"
+                                        variant="outlined"
+                                      />
+                                      <ErrorMessage
+                                        name={`familyMembers[${index}].bookingDetails[${docIndex}].bookingType`}
+                                        component="div"
+                                        className="error"
+                                        style={{ color: 'red' }}
+                                      />
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                      <Field
+                                        name={`familyMembers[${index}].bookingDetails[${docIndex}].bookingName`}
+                                        as={TextField}
+                                        fullWidth
+                                        label="Document Name"
+                                        variant="outlined"
+                                      />
+                                      <ErrorMessage
+                                        name={`familyMembers[${index}].bookingDetails[${docIndex}].bookingName`}
+                                        component="div"
+                                        className="error"
+                                        style={{ color: 'red' }}
+                                      />
+                                    </Grid>
+                                    <Grid item xs={12} sm={4} style={{ marginTop: '7px' }}>
+                                      <input
+                                        id={`docImg-${index}-${docIndex}`}
+                                        type="file"
+                                        name={`familyMembers[${index}].bookingDetails[${docIndex}].docImg`}
+                                        onChange={(e) => {
+                                          setFieldValue(
+                                            `familyMembers[${index}].bookingDetails[${docIndex}].docImg`,
+                                            e.currentTarget.files[0]
+                                          );
+                                          setFieldValue(
+                                            `familyMembers[${index}].bookingDetails[${docIndex}].docImgName`,
+                                            e.currentTarget.files[0]?.name
+                                          );
+                                        }}
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                      />
+                                      <FormLabel htmlFor={`docImg-${index}-${docIndex}`}>
+                                        <Button variant="outlined" component="span" fullWidth style={{ textTransform: 'none' }}>
+                                          Upload Document
+                                        </Button>
+                                      </FormLabel>
+                                      <div>
+                                        {document.docImgName && (
+                                          <p style={{ margin: '0', paddingTop: '8px' }}>Selected Document: {document.docImgName}</p>
+                                        )}
+                                      </div>
+                                      <ErrorMessage
+                                        name={`familyMembers[${index}].bookingDetails[${docIndex}].docImgName`}
+                                        component="div"
+                                        className="error"
+                                        style={{ color: 'red' }}
+                                      />
+                                    </Grid>
+                                  </Grid>
+                                </Paper>
+                              ))}
+                              <Button
+                                type="button"
+                                onClick={() => {
+                                  pushDocument({ ...defaultBookingDetail });
+                                }}
+                              >
+                                Add More Document
+                              </Button>
+                            </div>
+                          )}
+                        </FieldArray>
                       </Grid>
 
                       <Grid item xs={12}>
