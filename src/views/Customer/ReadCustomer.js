@@ -146,8 +146,8 @@ export default function ReadCustomerData() {
           </Typography>
         </Divider>
         <Grid container spacing={2}>
-          {Documents.map((doc) => (
-            <Grid item xs={6} sm={6}>
+          {Documents.map((doc, key) => (
+            <Grid item xs={6} sm={6} key={key}>
               <Typography variant="body1" style={{ fontSize: '17px' }}>
                 <strong>Booking Document Link: </strong>
                 <a
@@ -163,8 +163,8 @@ export default function ReadCustomerData() {
             </Grid>
           ))}
           {/* <Grid item xs={12}>
-            <Divider style={{ marginTop: '20px' }} />
-          </Grid> */}
+    <Divider style={{ marginTop: '20px' }} />
+  </Grid> */}
         </Grid>
       </Grid>
     );
