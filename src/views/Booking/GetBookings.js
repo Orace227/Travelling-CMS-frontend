@@ -311,58 +311,61 @@ export default function Bookings() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    // console.log(row);
-                    const { firstName, lastName, bookingId, clientId, packageId, startDate, endDate } = row;
-                    const selectedUser = selected.indexOf(bookingId) !== -1;
+                  {filteredUsers
+                    .reverse()
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      // console.log(row);
+                      const { firstName, lastName, bookingId, clientId, packageId, startDate, endDate } = row;
+                      const selectedUser = selected.indexOf(bookingId) !== -1;
 
-                    return (
-                      <>
-                        <TableRow hover key={bookingId} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                          <TableCell padding="checkbox">
-                            <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, bookingId)} />
-                          </TableCell>
+                      return (
+                        <>
+                          <TableRow hover key={bookingId} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                            <TableCell padding="checkbox">
+                              <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, bookingId)} />
+                            </TableCell>
 
-                          <TableCell align="left">{bookingId}</TableCell>
+                            <TableCell align="left">{bookingId}</TableCell>
 
-                          <TableCell align="left">
-                            <Link to={`/GetBooking/${bookingId}/${clientId}`} style={{ textDecoration: 'none', color: 'black' }}>
-                              {firstName} {lastName}
-                            </Link>
-                          </TableCell>
-                          <TableCell align="left">{packageId}</TableCell>
+                            <TableCell align="left">
+                              <Link to={`/GetBooking/${bookingId}/${clientId}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                {firstName} {lastName}
+                              </Link>
+                            </TableCell>
+                            <TableCell align="left">{packageId}</TableCell>
 
-                          <TableCell align="left">{startDate?.split('T')[0]}</TableCell>
+                            <TableCell align="left">{startDate?.split('T')[0]}</TableCell>
 
-                          <TableCell align="left">{endDate?.split('T')[0]}</TableCell>
-                          {/* <TableCell align="left">{pdf}</TableCell> */}
-                          <TableCell align="left">
-                            {' '}
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={() => {
-                                handleGeneratePdf(row);
-                              }}
-                            >
-                              Generate PDF
-                            </Button>
-                          </TableCell>
-                          <TableCell align="left">
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => {
-                                handleDeleteCustomer(row);
-                              }}
-                            >
-                              <Iconify icon={'eva:trash-2-outline'} />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      </>
-                    );
-                  })}
+                            <TableCell align="left">{endDate?.split('T')[0]}</TableCell>
+                            {/* <TableCell align="left">{pdf}</TableCell> */}
+                            <TableCell align="left">
+                              {' '}
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  handleGeneratePdf(row);
+                                }}
+                              >
+                                Generate PDF
+                              </Button>
+                            </TableCell>
+                            <TableCell align="left">
+                              <IconButton
+                                size="large"
+                                color="inherit"
+                                onClick={() => {
+                                  handleDeleteCustomer(row);
+                                }}
+                              >
+                                <Iconify icon={'eva:trash-2-outline'} />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        </>
+                      );
+                    })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
