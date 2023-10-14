@@ -93,13 +93,28 @@ export default function ReadPackageData() {
               <strong>Tour Details</strong>
             </Typography>
             <List>
-              {packageItem.packageBody.tourDetails.map((tourDetail) => (
+              {/* {packageItem.packageBody.tourDetails.map((tourDetail) => (
                 <>
                   {console.log(tourDetail)}
                   <Typography variant="body1" style={{ fontSize: '16px', textAlign: 'justify' }}>
                     <div dangerouslySetInnerHTML={{ __html: tourDetail }} style={{ fontSize: '16px', textAlign: 'justify' }} />
                   </Typography>
                 </>
+              ))} */}
+              {packageItem.packageBody.tourDetails?.map((tourDetail, index) => (
+                <div key={index}>
+                  <div className="text-2xl">
+                    Day {tourDetail?.day} : {'  '} {tourDetail?.title}
+                  </div>
+                  <div
+                    className="ml-8"
+                    key={index}
+                    dangerouslySetInnerHTML={{
+                      __html: tourDetail.description
+                    }}
+                  />
+                  <br></br>
+                </div>
               ))}
             </List>
             <Divider style={{ marginTop: '20px' }} />
