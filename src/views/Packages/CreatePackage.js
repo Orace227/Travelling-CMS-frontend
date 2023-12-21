@@ -323,34 +323,41 @@ const CreatePackage = () => {
                     <div>
                       {values.packageBody.tourDetails.map((tour, index) => (
                         <div key={index}>
-                          <Field
-                            name={`packageBody.tourDetails[${index}].day`}
-                            as={TextField}
-                            label={`Day ${tour.day}`}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                          <ErrorMessage
-                            name={`packageBody.tourDetails[${index}].day`}
-                            component="div"
-                            className="error"
-                            style={{ color: 'red' }}
-                          />
-                          <Field
-                            name={`packageBody.tourDetails[${index}].title`}
-                            as={TextField}
-                            label="Title"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                          />
-                          <ErrorMessage
-                            name={`packageBody.tourDetails[${index}].title`}
-                            component="div"
-                            className="error"
-                            style={{ color: 'red' }}
-                          />
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                              <Field
+                                name={`packageBody.tourDetails[${index}].day`}
+                                as={TextField}
+                                label={`Day ${tour.day}`}
+                                fullWidth
+                                margin="normal"
+                                variant="outlined"
+                              />
+                              <ErrorMessage
+                                name={`packageBody.tourDetails[${index}].day`}
+                                component="div"
+                                className="error"
+                                style={{ color: 'red' }}
+                              />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                              <Field
+                                name={`packageBody.tourDetails[${index}].title`}
+                                as={TextField}
+                                label="Title"
+                                fullWidth
+                                margin="normal"
+                                variant="outlined"
+                              />
+                              <ErrorMessage
+                                name={`packageBody.tourDetails[${index}].title`}
+                                component="div"
+                                className="error"
+                                style={{ color: 'red' }}
+                              />
+                            </Grid>
+                          </Grid>
+
                           <Field name={`packageBody.tourDetails[${index}].description`}>
                             {(
                               { field = { name: ' ' } } // Provide a default value for field

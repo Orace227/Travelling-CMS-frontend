@@ -40,19 +40,19 @@ const Dashboard = () => {
           <Grid item lg={4} md={6} sm={6} xs={12}>
             {/* <TotalOrderLineChartCard isLoading={isLoading} /> */}
             <Link to="/createCustomer">
-              <button className="bg-[#5e35b1] w-full  rounded-lg text-white hover:bg-purple-600 p-3">create a new Customer</button>
+              <button className="bg-[#5e35b1] w-full  rounded-lg text-white hover:bg-purple-600 p-3">Create a New Customer</button>
             </Link>
           </Grid>
           <Grid item lg={4} md={6} sm={6} xs={12}>
             <Link to="/createPackage">
               {/* <TotalOrderLineChartCard isLoading={isLoading} /> */}
-              <button className="bg-[#5e35b1] w-full rounded-lg text-white hover:bg-purple-600 p-3">create a new Package</button>
+              <button className="bg-[#5e35b1] w-full rounded-lg text-white hover:bg-purple-600 p-3">Create a New Package</button>
             </Link>
           </Grid>
           <Grid item lg={4} md={6} sm={6} xs={12}>
             <Link to="/createBooking">
               {/* <TotalOrderLineChartCard isLoading={isLoading} /> */}
-              <button className="bg-[#5e35b1] w-full rounded-lg text-white hover:bg-purple-600 p-3">create a new Booking</button>
+              <button className="bg-[#5e35b1] w-full rounded-lg text-white hover:bg-purple-600 p-3">Create a New Booking</button>
             </Link>
           </Grid>
           {/* <Grid item lg={4} md={12} sm={12} xs={12}>
