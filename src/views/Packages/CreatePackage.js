@@ -92,7 +92,6 @@ const CreatePackage = () => {
   const [countries, setCountries] = useState([]);
   const [quillContent, setQuillContent] = useState('');
   const [selectedContinent, setSelectedContinent] = useState('');
-
   const continents = {
     'North America': ['usa', 'canada', 'mexico'],
     'South America': ['brazil', 'argentina'],
@@ -354,7 +353,7 @@ const CreatePackage = () => {
                           />
                           <Field name={`packageBody.tourDetails[${index}].description`}>
                             {(
-                              { field = {name: ' ' } } // Provide a default value for field
+                              { field = { name: ' ' } } // Provide a default value for field
                             ) => (
                               <ReactQuill
                                 {...field.name}

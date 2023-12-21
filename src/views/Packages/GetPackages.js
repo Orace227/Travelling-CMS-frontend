@@ -297,7 +297,7 @@ export default function Customers() {
 
   const downloadPdf = async (pdfUrl, fileName) => {
     try {
-      console.log(pdfUrl, fileName);
+      console.log(pdfUrl);
       const response = await fetch(pdfUrl);
       if (!response.ok) {
         throw new Error('Failed to fetch PDF');
@@ -314,13 +314,13 @@ export default function Customers() {
 
       return 'PDF downloaded successfully';
     } catch (error) {
-      throw new Error(`Error downloading PDF: ${error.message}`);
+      throw new Error(`Error downloading PDF: ${error}`);
     }
   };
 
   const handleGeneratePdf = async (row) => {
-    // const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
-    const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
+    const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
+    // const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
     console.log(row);
     const fileName = `${row.packageName}.pdf`;
 
@@ -531,10 +531,10 @@ export default function Customers() {
                                     />
                                     <Field name={`packageBody.tourDetails[${index}].description`}>
                                       {(
-                                        { field = { value: '' } } // Provide a default value for field
+                                        { field = { name: ' ' } } // Provide a default value for field
                                       ) => (
                                         <ReactQuill
-                                          {...field}
+                                          {...field.name}
                                           value={quillContent[index] || ' '} // Use quillContent[index]
                                           onChange={(value) => {
                                             const newQuillContent = [...quillContent];
@@ -811,8 +811,8 @@ export default function Customers() {
                                 size="large"
                                 color="inherit"
                                 onClick={() => {
-                                  // const link = `http://localhost:3001/Package/${row.PackageId}`;
-                                  const link = `https://client-cms.vercel.app/Package/${row.PackageId}`;
+                                  const link = `http://localhost:3001/Package/${row.PackageId}`;
+                                  // const link = `https://client-cms.vercel.app/Package/${row.PackageId}`;
                                   navigator.clipboard
                                     .writeText(link)
                                     .then(function () {

@@ -14,6 +14,7 @@ import BookingCard from './BookingCard';
 // import TotalIncomeLightCard from './TotalIncomeLightCard';
 // import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
+import { Link } from 'react-router-dom';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
@@ -25,7 +26,7 @@ const Dashboard = () => {
 
   return (
     <Grid container spacing={gridSpacing}>
-      <Grid item xs={12}>
+      <Grid item xs={12} className="mt-5">
         <Grid container spacing={gridSpacing}>
           <Grid item lg={4} md={6} sm={6} xs={12}>
             <EarningCard isLoading={isLoading} />
@@ -36,9 +37,24 @@ const Dashboard = () => {
           <Grid item lg={4} md={6} sm={6} xs={12}>
             <BookingCard isLoading={isLoading} />
           </Grid>
-          {/* <Grid item lg={4} md={6} sm={6} xs={12}>
-            <TotalOrderLineChartCard isLoading={isLoading} />
-          </Grid> */}
+          <Grid item lg={4} md={6} sm={6} xs={12}>
+            {/* <TotalOrderLineChartCard isLoading={isLoading} /> */}
+            <Link to="/createCustomer">
+              <button className="bg-[#5e35b1] w-full  rounded-lg text-white hover:bg-purple-600 p-3">create a new Customer</button>
+            </Link>
+          </Grid>
+          <Grid item lg={4} md={6} sm={6} xs={12}>
+            <Link to="/createPackage">
+              {/* <TotalOrderLineChartCard isLoading={isLoading} /> */}
+              <button className="bg-[#5e35b1] w-full rounded-lg text-white hover:bg-purple-600 p-3">create a new Package</button>
+            </Link>
+          </Grid>
+          <Grid item lg={4} md={6} sm={6} xs={12}>
+            <Link to="/createBooking">
+              {/* <TotalOrderLineChartCard isLoading={isLoading} /> */}
+              <button className="bg-[#5e35b1] w-full rounded-lg text-white hover:bg-purple-600 p-3">create a new Booking</button>
+            </Link>
+          </Grid>
           {/* <Grid item lg={4} md={12} sm={12} xs={12}>
             <Grid container spacing={gridSpacing}>
               <Grid item sm={6} xs={12} md={6} lg={12}>
