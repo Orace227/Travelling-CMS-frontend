@@ -324,7 +324,7 @@ const CreatePackage = () => {
                       {values.packageBody.tourDetails.map((tour, index) => (
                         <div key={index}>
                           <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={4}>
                               <Field
                                 name={`packageBody.tourDetails[${index}].day`}
                                 as={TextField}
@@ -340,7 +340,7 @@ const CreatePackage = () => {
                                 style={{ color: 'red' }}
                               />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={4}>
                               <Field
                                 name={`packageBody.tourDetails[${index}].title`}
                                 as={TextField}
