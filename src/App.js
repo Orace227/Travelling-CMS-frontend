@@ -25,7 +25,7 @@ const token = Cookies.get('userCredentials');
 
 const App = () => {
   const customization = useSelector((state) => state.customization);
-  axios.defaults.baseURL = 'http://localhost:7000/';
+  axios.defaults.baseURL = 'http://0.0.0.0:7000/';
   // axios.defaults.baseURL = 'https://travelling-cms-backend.onrender.com';
   const Navigate = useNavigate();
 
