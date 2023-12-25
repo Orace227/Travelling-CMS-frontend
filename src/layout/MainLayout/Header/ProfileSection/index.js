@@ -20,6 +20,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import { IconLogout, IconSettings } from '@tabler/icons';
+import toast, { Toaster } from 'react-hot-toast';
+import Cookies from 'js-cookie';
 
 const ProfileSection = () => {
   const theme = useTheme();
@@ -29,9 +31,18 @@ const ProfileSection = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
-
   const handleLogout = async () => {
-    console.log('Logout');
+    try {
+      // Delete the 'userCredentials' cookie
+      Cookies.remove('userCredentials');
+      toast.success('You are logged out successfully');
+      navigate('/login');
+    } catch (error) {
+      toast.error('You are not logged out successfully');
+
+      // Handle any errors, such as network issues or server errors
+      console.error('Logout error:', error);
+    }
   };
 
   const handleClose = (event) => {
@@ -79,6 +90,7 @@ const ProfileSection = () => {
 
   return (
     <>
+      <Toaster />
       <Chip
         sx={{
           height: '48px',
