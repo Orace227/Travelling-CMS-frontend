@@ -256,7 +256,7 @@ export default function Customers() {
             Customers
           </Typography>
           <Link to="/createCustomer">
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" className="bg-blue-500 hover:bg-blue-400" startIcon={<Iconify icon="eva:plus-fill" />}>
               Add Customer
             </Button>
           </Link>

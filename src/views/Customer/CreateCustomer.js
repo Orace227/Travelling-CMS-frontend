@@ -482,7 +482,14 @@ const CreateCustomer = () => {
                 </FieldArray>
               </Grid>
             </Grid>
-            <Button type="submit" variant="contained" color="primary" size="large" style={{ marginTop: '1rem' }}>
+            <Button
+              type="submit"
+              variant="contained"
+              className="bg-blue-500 hover:bg-blue-400"
+              color="primary"
+              size="large"
+              style={{ marginTop: '1rem' }}
+            >
               Submit
             </Button>
           </Form>

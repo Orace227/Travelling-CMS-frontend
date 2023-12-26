@@ -288,7 +288,7 @@ export default function Bookings() {
             Booking History
           </Typography>
           <Link to="/createBooking">
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" className="bg-blue-500 hover:bg-blue-400" startIcon={<Iconify icon="eva:plus-fill" />}>
               Add Booking
             </Button>
           </Link>

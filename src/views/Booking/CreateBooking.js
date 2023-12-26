@@ -537,7 +537,7 @@ const CreateBooking = () => {
                 </FieldArray>
               </Grid>
               <Grid item xs={12}>
-                <Button variant="contained" color="primary" type="submit">
+                <Button variant="contained" className="bg-blue-500 hover:bg-blue-400" color="primary" type="submit">
                   {loading ? 'loading...' : 'Submit'}
                 </Button>
               </Grid>

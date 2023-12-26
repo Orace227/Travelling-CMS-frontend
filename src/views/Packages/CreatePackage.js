@@ -591,6 +591,7 @@ const CreatePackage = () => {
               variant="contained"
               color="primary"
               size="large"
+              className="bg-blue-500 hover:bg-blue-400"
               // onSubmit={handleSave}
               style={{ marginTop: '1rem', marginLeft: '10px' }}
               disabled={loading} // Disable the button when loading is true

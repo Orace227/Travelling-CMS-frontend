@@ -309,7 +309,7 @@ export default function GetCountries() {
             Countries
           </Typography>
           <Link to="/CreateCountry">
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" className="bg-blue-500 hover:bg-blue-400" startIcon={<Iconify icon="eva:plus-fill" />}>
               Add Country
             </Button>
           </Link>

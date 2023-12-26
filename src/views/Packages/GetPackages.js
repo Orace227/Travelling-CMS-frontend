@@ -370,7 +370,7 @@ export default function Customers() {
             Packages
           </Typography>
           <Link to="/createPackage">
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" className="bg-blue-500 hover:bg-blue-400" startIcon={<Iconify icon="eva:plus-fill" />}>
               Add Package
             </Button>
           </Link>
