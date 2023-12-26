@@ -72,6 +72,7 @@ const FirebaseLogin = ({ ...others }) => {
         Cookies.set('userCredentials', JSON.stringify({ email: values.email, password: values.password }), { expires: 7 });
 
         Navigate('/dashboard');
+        window.location.reload();
       } else {
         toast.error('Invalid username or password');
       }
@@ -94,7 +95,7 @@ const FirebaseLogin = ({ ...others }) => {
         Navigate('/dashboard');
       }
     }
-  }, []);
+  }, [Navigate]);
   return (
     <>
       {/* <Grid container direction="column" justifyContent="center" spacing={2}>
