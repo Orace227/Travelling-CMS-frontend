@@ -528,6 +528,7 @@ export default function CreateFamilyMembers() {
                       <Grid item xs={12}>
                         <Button
                           variant="contained"
+                          className="bg-blue-500 hover:bg-blue-400"
                           style={{ marginBottom: '10px' }}
                           color="secondary"
                           size="small"
@@ -538,13 +539,13 @@ export default function CreateFamilyMembers() {
                       </Grid>
                     </Grid>
                   ))}
-                  <Button variant="contained" color="primary" size="small" onClick={() => push({ ...initialValues.familyMembers[0] })}>
+                  <Button variant="contained" color="primary" className="bg-blue-500 hover:bg-blue-400" size="small" onClick={() => push({ ...initialValues.familyMembers[0] })}>
                     Add Family Member
                   </Button>
                 </div>
               )}
             </FieldArray>
-            <Button type="submit" variant="contained" color="primary" size="large" style={{ marginTop: '1rem' }}>
+            <Button type="submit" variant="contained" className="bg-blue-500 hover:bg-blue-400" color="primary" size="large" style={{ marginTop: '1rem' }}>
               {loading ? 'Loading...' : 'Submit'}
             </Button>
           </Form>

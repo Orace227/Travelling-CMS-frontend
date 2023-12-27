@@ -319,8 +319,8 @@ export default function Customers() {
   };
 
   const handleGeneratePdf = async (row) => {
-    const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
-    // const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
+    // const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
+    const pdfUrl = `http://admin.blueescapeholidays.com/api/generate-pdf/${row.PackageId}`;
     console.log(row);
     const fileName = `${row.packageName}.pdf`;
 
@@ -736,6 +736,7 @@ export default function Customers() {
                         variant="contained"
                         color="primary"
                         size="large"
+                        className="bg-blue-500 hover:bg-blue-400"
                         style={{ marginTop: '1rem' }}
                         // disabled={loading} // Disable the button when loading is true
                       >
@@ -798,6 +799,7 @@ export default function Customers() {
                               <Button
                                 variant="contained"
                                 color="primary"
+                                className="bg-blue-500 hover:bg-blue-400"
                                 onClick={() => {
                                   handleGeneratePdf(row);
                                 }}

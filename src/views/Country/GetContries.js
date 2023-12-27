@@ -184,12 +184,51 @@ export default function GetCountries() {
   const [selectedContinent, setSelectedContinent] = useState('');
 
   const continents = {
-    'North America': ['usa', 'canada', 'mexico'],
-    'South America': ['brazil', 'argentina'],
-    Europe: ['uk', 'germany', 'france', 'italy', 'spain', 'russia', 'turkey'],
-    Australia: ['australia', 'new zealand'],
-    Asia: ['china', 'india', 'japan', 'south korea', 'saudi arabia', 'kazakhstan', 'iran', 'iraq', 'uae', 'qatar', 'pakistan'],
-    Africa: ['south africa', 'egypt', 'kenya', 'nigeria']
+    'North America': ['usa', 'canada', 'mexico', 'cuba', 'jamaica', 'haiti', 'dominican republic' /* Add more countries as needed */],
+    'South America': ['brazil', 'argentina', 'chile', 'colombia', 'peru', 'venezuela', 'ecuador' /* Add more countries as needed */],
+    Europe: [
+      'uk',
+      'germany',
+      'france',
+      'italy',
+      'spain',
+      'russia',
+      'turkey',
+      'greece',
+      'sweden',
+      'norway',
+      'poland',
+      'portugal' /* Add more countries as needed */
+    ],
+    Australia: ['australia', 'new zealand' /* Add more countries as needed */],
+    Asia: [
+      'china',
+      'india',
+      'japan',
+      'south korea',
+      'saudi arabia',
+      'kazakhstan',
+      'iran',
+      'iraq',
+      'uae',
+      'qatar',
+      'pakistan',
+      'afghanistan',
+      'bangladesh',
+      'sri lanka' /* Add more countries as needed */
+    ],
+    Africa: [
+      'south africa',
+      'egypt',
+      'kenya',
+      'nigeria',
+      'morocco',
+      'ethiopia',
+      'uganda',
+      'ghana',
+      'tanzania',
+      'algeria' /* Add more countries as needed */
+    ]
   };
 
   const getContinentForCountry = () => {
@@ -206,8 +245,8 @@ export default function GetCountries() {
     const continent = getContinentForCountry(Country);
     setSelectedContinent(continent);
     setFieldValue('continent', continent);
-    console.log(continent);
-    console.log(selectedContinent);
+    // console.log(continent);
+    // console.log(selectedContinent);
   };
 
   const handleClick = (event, countryId) => {
@@ -346,6 +385,7 @@ export default function GetCountries() {
                           <Button
                             variant="contained"
                             color="primary"
+                            className="bg-blue-500 hover:bg-blue-400"
                             onClick={() => {
                               handleContinent(setFieldValue);
                             }}
@@ -370,6 +410,7 @@ export default function GetCountries() {
                         type="submit"
                         variant="contained"
                         color="primary"
+                        className="bg-blue-500 hover:bg-blue-400"
                         size="large"
                         style={{ marginTop: '1rem' }}
                         // disabled={loading} // Disable the button when loading is true
