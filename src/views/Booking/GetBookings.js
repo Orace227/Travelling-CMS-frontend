@@ -248,7 +248,7 @@ export default function Bookings() {
   };
   const handleGeneratePdf = async (row) => {
     // const pdfUrl = `http://localhost:7000/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
-    const pdfUrl = `http://admin.blueescapeholidays.com/api/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
+    const pdfUrl = `https://admin.blueescapeholidays.com/api/BookedPdfGenerate?clientId=${row.clientId}&packageId=${row.packageId}&bookingId=${row.bookingId}`;
 
     console.log(row);
     const fileName = `${`${row.firstName}${row.lastName}`}.pdf`;
