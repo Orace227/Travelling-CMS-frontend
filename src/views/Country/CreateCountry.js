@@ -7,8 +7,8 @@ import axios from 'axios';
 import { useState } from 'react';
 
 const validationSchema = Yup.object().shape({
-  countryId: Yup.number().required('Package ID is Required'),
-  countryName: Yup.string().required('Package Name is Required'),
+  countryId: Yup.number().required('Country ID is Required'),
+  countryName: Yup.string().required('Country Name is Required'),
   continent: Yup.string().required('Select Country Name'),
   countryImgName: Yup.string().required('Country Image is Required')
 });
@@ -35,7 +35,17 @@ const CreateCountry = () => {
   const [selectedContinent, setSelectedContinent] = useState('');
 
   const continents = {
-    'North America': ['usa', 'canada', 'mexico', 'cuba', 'jamaica', 'haiti', 'dominican republic' /* Add more countries as needed */],
+    'North America': [
+      'usa',
+      'canada',
+      'mexico',
+      'cuba',
+      'jamaica',
+      'haiti',
+      'dominican republic',
+      'america',
+      'canada' /* Add more countries as needed */
+    ],
     'South America': ['brazil', 'argentina', 'chile', 'colombia', 'peru', 'venezuela', 'ecuador' /* Add more countries as needed */],
     Europe: [
       'uk',
@@ -49,7 +59,8 @@ const CreateCountry = () => {
       'sweden',
       'norway',
       'poland',
-      'portugal' /* Add more countries as needed */
+      'portugal',
+      'romania'
     ],
     Australia: ['australia', 'new zealand' /* Add more countries as needed */],
     Asia: [
@@ -82,10 +93,10 @@ const CreateCountry = () => {
     ]
   };
 
-  const getContinentForCountry = () => {
+  const getContinentForCountry = (Country) => {
     Country = Country.toLowerCase(); // Convert Country name to lowercase
     for (const [continent, countries] of Object.entries(continents)) {
-      if (countries.includes(Country)) {
+      if (countries.some((country) => country.includes(Country))) {
         return continent;
       }
     }
@@ -96,8 +107,8 @@ const CreateCountry = () => {
     const continent = getContinentForCountry(Country);
     setSelectedContinent(continent);
     setFieldValue('continent', continent);
-    console.log(continent);
-    console.log(selectedContinent);
+    // console.log(continent);
+    // console.log(selectedContinent);
   };
 
   const handleSubmit = async (values) => {
@@ -163,7 +174,7 @@ const CreateCountry = () => {
                   value={Country}
                   onChange={async (e) => {
                     setCountry(e.target.value);
-                    // handleContinent();
+                    handleContinent();
                     setFieldValue('countryName', e.target.value);
                   }}
                   as={TextField}

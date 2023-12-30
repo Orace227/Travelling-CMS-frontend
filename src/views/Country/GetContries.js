@@ -184,7 +184,17 @@ export default function GetCountries() {
   const [selectedContinent, setSelectedContinent] = useState('');
 
   const continents = {
-    'North America': ['usa', 'canada', 'mexico', 'cuba', 'jamaica', 'haiti', 'dominican republic' /* Add more countries as needed */],
+    'North America': [
+      'usa',
+      'canada',
+      'mexico',
+      'cuba',
+      'jamaica',
+      'haiti',
+      'dominican republic',
+      'america',
+      'canada' /* Add more countries as needed */
+    ],
     'South America': ['brazil', 'argentina', 'chile', 'colombia', 'peru', 'venezuela', 'ecuador' /* Add more countries as needed */],
     Europe: [
       'uk',
@@ -198,7 +208,8 @@ export default function GetCountries() {
       'sweden',
       'norway',
       'poland',
-      'portugal' /* Add more countries as needed */
+      'portugal',
+      'romania' /* Add more countries as needed */
     ],
     Australia: ['australia', 'new zealand' /* Add more countries as needed */],
     Asia: [
@@ -231,16 +242,15 @@ export default function GetCountries() {
     ]
   };
 
-  const getContinentForCountry = () => {
+  const getContinentForCountry = (Country) => {
     Country = Country.toLowerCase(); // Convert Country name to lowercase
     for (const [continent, countries] of Object.entries(continents)) {
-      if (countries.includes(Country)) {
+      if (countries.some((country) => country.includes(Country))) {
         return continent;
       }
     }
     return ''; // Return an empty string if no match is found
   };
-
   const handleContinent = async (setFieldValue) => {
     const continent = getContinentForCountry(Country);
     setSelectedContinent(continent);
@@ -373,7 +383,7 @@ export default function GetCountries() {
                             value={Country}
                             onChange={async (e) => {
                               setCountry(e.target.value);
-                              // handleContinent();
+                              handleContinent();
                               setFieldValue('countryName', e.target.value);
                             }}
                             as={TextField}
