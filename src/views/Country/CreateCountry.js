@@ -77,7 +77,8 @@ const CreateCountry = () => {
       'pakistan',
       'afghanistan',
       'bangladesh',
-      'sri lanka' /* Add more countries as needed */
+      'sri lanka',
+      'thailand' /* Add more countries as needed */
     ],
     Africa: [
       'south africa',
