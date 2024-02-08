@@ -320,7 +320,8 @@ export default function Customers() {
 
   const handleGeneratePdf = async (row) => {
     // const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
-    const pdfUrl = `https://admin.blueescapeholidays.com/api/generate-pdf/${row.PackageId}`;
+    const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
+    // const pdfUrl = `https://admin.blueescapeholidays.com/api/generate-pdf/${row.PackageId}`;
     console.log(row);
     const fileName = `${row.packageName}.pdf`;
 
