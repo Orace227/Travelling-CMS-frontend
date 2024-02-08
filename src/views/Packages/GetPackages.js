@@ -124,11 +124,28 @@ export default function Customers() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [USERLIST, setPackageDetails] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedContinent, setSelectedContinent] = useState('');
+  const [countries, setCountries] = useState([]);
   // const [isGene, setIsGene] = useState(false);
   const [quillContent, setQuillContent] = useState('');
 
   const [editedUserData, setEditedUserData] = useState([]);
   // const [loading, setLoading] = useState(false);
+
+  const GetCountries = async () => {
+    try {
+      const Countries = await axios.get('/GetCountries');
+      if (Countries) {
+        console.log(Countries.data.allCountries);
+        setCountries(Countries.data.allCountries);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    GetCountries();
+  }, []);
 
   const GetPackages = () => {
     const promise = new Promise((resolve, reject) => {
@@ -156,6 +173,31 @@ export default function Customers() {
     GetPackages();
   }, []);
 
+  const continents = {
+    'North America': ['usa', 'canada', 'mexico'],
+    'South America': ['brazil', 'argentina'],
+    Europe: ['uk', 'germany', 'france', 'italy', 'spain', 'russia', 'turkey'],
+    Australia: ['australia', 'new zealand'],
+    Asia: ['china', 'india', 'japan', 'south korea', 'saudi arabia', 'kazakhstan', 'iran', 'iraq', 'uae', 'qatar', 'pakistan'],
+    Africa: ['south africa', 'egypt', 'kenya', 'nigeria']
+  };
+
+  const getContinentForCountry = (country) => {
+    country = country.toLowerCase(); // Convert country name to lowercase
+    for (const [continent, countries] of Object.entries(continents)) {
+      if (countries.includes(country)) {
+        return continent;
+      }
+    }
+    return ''; // Return an empty string if no match is found
+  };
+
+  const handleContinent = (country) => {
+    const continent = getContinentForCountry(country);
+    setSelectedContinent(continent);
+    console.log(continent);
+    console.log(selectedContinent);
+  };
   // const handleCloseMenu = () => {
   //   setOpen(null);
   // };
@@ -210,9 +252,16 @@ export default function Customers() {
     try {
       console.log(row);
       const Package = USERLIST.find((Package) => Package.PackageId == row.PackageId);
-      console.log(Package);
-      setEditedUserData(Package);
+      console.log({ Package });
+      let array = [];
+      // Package?.packageBody?.tourDetails?.forEach((element) => {
+      //   //   // console.log(element);
+      //   array.push(element.description);
+      // });
+      // console.log(array);
+      // setQuillContent(array);
       setOpenEditModal(true);
+      setEditedUserData(Package);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -320,8 +369,8 @@ export default function Customers() {
 
   const handleGeneratePdf = async (row) => {
     // const pdfUrl = `http://localhost:7000/generate-pdf/${row.PackageId}`;
-    const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
-    // const pdfUrl = `https://admin.blueescapeholidays.com/api/generate-pdf/${row.PackageId}`;
+    // const pdfUrl = `https://travelling-cms-backend.onrender.com/generate-pdf/${row.PackageId}`;
+    const pdfUrl = `https://admin.blueescapeholidays.com/api/generate-pdf/${row.PackageId}`;
     console.log(row);
     const fileName = `${row.packageName}.pdf`;
 
@@ -425,29 +474,42 @@ export default function Customers() {
                               <MenuItem value="Sustainable paths">Sustainable paths</MenuItem>
                               <MenuItem value="Wildlife Drives">Wildlife Drives</MenuItem>
                               <MenuItem value="Cruise Vacations">Cruise Vacations</MenuItem>
+                              <MenuItem value="Leisure">Leisure</MenuItem>
                             </Field>
                           </FormControl>
                           <ErrorMessage name="packageType" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <Field name="country" as={TextField} label="Country" type="text" fullWidth margin="normal" variant="outlined" />
+                        <Grid item xs={12} md={6}>
+                          <FormControl fullWidth margin="normal" variant="outlined">
+                            <InputLabel htmlFor="country">Select Country</InputLabel>
+                            <Field as={Select} label="Select Country" name="country" variant="outlined">
+                              {countries.map((option) => (
+                                <MenuItem
+                                  key={option.countryId}
+                                  value={option.countryName}
+                                  onClick={() => {
+                                    const country = option.countryName;
+
+                                    handleContinent(country);
+                                  }}
+                                >
+                                  {option.countryName}
+                                </MenuItem>
+                              ))}
+                            </Field>
+                          </FormControl>
                           <ErrorMessage name="country" component="div" className="error" style={{ color: 'red' }} />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
-                          <FormControl fullWidth variant="outlined" margin="normal">
-                            <InputLabel htmlFor="continent">Select Continent</InputLabel>
-                            <Field name="continent" as={Select} label="Select Continent" fullWidth>
-                              <MenuItem value="Africa">Africa</MenuItem>
-                              <MenuItem value="Asia">Asia</MenuItem>
-                              <MenuItem value="Europe">Europe</MenuItem>
-                              <MenuItem value="North America">North America</MenuItem>
-                              <MenuItem value="South America">South America</MenuItem>
-                              <MenuItem value="Australia">Australia</MenuItem>
-                              {/* You can add more continents as needed */}
-                            </Field>
-                          </FormControl>
-                          <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} />
+                        <Grid item xs={12} sm={6} style={{ marginTop: '15px' }}>
+                          <Field
+                            name="continent"
+                            as={TextField}
+                            label="Select Continent"
+                            fullWidth
+                            value={selectedContinent} // Set the selectedContinent as the initial value
+                          />
+                          {/* <ErrorMessage name="continent" component="div" className="error" style={{ color: 'red' }} /> */}
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
@@ -487,8 +549,8 @@ export default function Customers() {
                             </Button>
                           </FormLabel>
                           <div>
-                            {values.packageImgName && (
-                              <p style={{ margin: '0', paddingTop: '8px' }}>Selected Image: {values.packageImgName}</p>
+                            {values?.packageImgName && (
+                              <p style={{ margin: '0', paddingTop: '8px' }}>Selected Image: {values?.packageImgName}</p>
                             )}
                           </div>
                           {/* <ErrorMessage name="packageImg" component="div" className="error" style={{ color: 'red' }} /> */}
@@ -531,18 +593,17 @@ export default function Customers() {
                                       style={{ color: 'red' }}
                                     />
                                     <Field name={`packageBody.tourDetails[${index}].description`}>
-                                      {(
-                                        { field = { name: ' ' } } // Provide a default value for field
-                                      ) => (
+                                      {({ field = { name: `packageBody.tourDetails[${index}].description` } }) => (
                                         <ReactQuill
-                                          {...field.name}
-                                          value={quillContent[index] || ' '} // Use quillContent[index]
+                                          value={quillContent[index] || field.value}
                                           onChange={(value) => {
                                             const newQuillContent = [...quillContent];
-                                            newQuillContent[index] = value; // Update the specific index
+                                            newQuillContent[index] = value;
                                             setQuillContent(newQuillContent);
-                                            field.onChange(value);
-                                            setFieldValue(`packageBody.tourDetails[${index}].description`, value);
+                                            setFieldValue(field.name, value);
+                                            {
+                                              /* Update Formik value */
+                                            }
                                           }}
                                           modules={{
                                             toolbar: {
@@ -554,6 +615,7 @@ export default function Customers() {
                                         />
                                       )}
                                     </Field>
+
                                     <ErrorMessage
                                       name={`packageBody.tourDetails[${index}].description`}
                                       component="div"

@@ -92,6 +92,7 @@ const CreatePackage = () => {
   const [countries, setCountries] = useState([]);
   const [quillContent, setQuillContent] = useState('');
   const [selectedContinent, setSelectedContinent] = useState('');
+  
   const continents = {
     'North America': ['usa', 'canada', 'mexico'],
     'South America': ['brazil', 'argentina'],
