@@ -253,7 +253,7 @@ export default function Customers() {
       console.log(row);
       const Package = USERLIST.find((Package) => Package.PackageId == row.PackageId);
       console.log({ Package });
-      let array = [];
+
       // Package?.packageBody?.tourDetails?.forEach((element) => {
       //   //   // console.log(element);
       //   array.push(element.description);
