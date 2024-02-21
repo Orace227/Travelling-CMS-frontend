@@ -48,7 +48,7 @@ const CreateCountry = () => {
     ],
     'South America': ['brazil', 'argentina', 'chile', 'colombia', 'peru', 'venezuela', 'ecuador' /* Add more countries as needed */],
     Europe: [
-      'uk',
+      'united kingdom',
       'germany',
       'france',
       'italy',

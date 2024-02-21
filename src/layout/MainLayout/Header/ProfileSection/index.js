@@ -147,7 +147,7 @@ const ProfileSection = () => {
                       <Stack direction="column" spacing={1}>
                         <Typography variant="h3">{greetingMessage}</Typography>
                         <Typography component="span" variant="h3" sx={{ fontWeight: 400 }}>
-                          Johne Doe
+                          Kartik More
                         </Typography>
                       </Stack>
                     </Stack>

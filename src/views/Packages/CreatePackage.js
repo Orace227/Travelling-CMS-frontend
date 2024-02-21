@@ -23,7 +23,17 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 const tourDetailSchema = Yup.object().shape({
-  day: Yup.number().required('Day is required').positive().integer(),
+  day: Yup.number()
+    .transform((originalValue) => {
+      const parsedValue = parseFloat(originalValue);
+      return isNaN(parsedValue) ? undefined : parsedValue;
+    })
+    .test('is-number', 'Only numbers are acceptable', (value) => !isNaN(value))
+    .required('Day is required')
+    .positive()
+    .integer()
+    .min(1, 'Number must be at least 1')
+    .max(365, 'Number must be at most 365'),
   title: Yup.string().required('Title is required'),
   description: Yup.string().required('Description is required')
 });
@@ -92,16 +102,66 @@ const CreatePackage = () => {
   const [countries, setCountries] = useState([]);
   const [quillContent, setQuillContent] = useState('');
   const [selectedContinent, setSelectedContinent] = useState('');
-  
-  const continents = {
-    'North America': ['usa', 'canada', 'mexico'],
-    'South America': ['brazil', 'argentina'],
-    Europe: ['uk', 'germany', 'france', 'italy', 'spain', 'russia', 'turkey'],
-    Australia: ['australia', 'new zealand'],
-    Asia: ['china', 'india', 'japan', 'south korea', 'saudi arabia', 'kazakhstan', 'iran', 'iraq', 'uae', 'qatar', 'pakistan'],
-    Africa: ['south africa', 'egypt', 'kenya', 'nigeria']
-  };
 
+  const continents = {
+    'North America': [
+      'usa',
+      'canada',
+      'mexico',
+      'cuba',
+      'jamaica',
+      'haiti',
+      'dominican republic',
+      'america',
+      'canada' /* Add more countries as needed */
+    ],
+    'South America': ['brazil', 'argentina', 'chile', 'colombia', 'peru', 'venezuela', 'ecuador' /* Add more countries as needed */],
+    Europe: [
+      'united kingdom',
+      'germany',
+      'france',
+      'italy',
+      'spain',
+      'russia',
+      'turkey',
+      'greece',
+      'sweden',
+      'norway',
+      'poland',
+      'portugal',
+      'romania'
+    ],
+    Australia: ['australia', 'new zealand' /* Add more countries as needed */],
+    Asia: [
+      'china',
+      'india',
+      'japan',
+      'south korea',
+      'saudi arabia',
+      'kazakhstan',
+      'iran',
+      'iraq',
+      'uae',
+      'qatar',
+      'pakistan',
+      'afghanistan',
+      'bangladesh',
+      'sri lanka',
+      'thailand' /* Add more countries as needed */
+    ],
+    Africa: [
+      'south africa',
+      'egypt',
+      'kenya',
+      'nigeria',
+      'morocco',
+      'ethiopia',
+      'uganda',
+      'ghana',
+      'tanzania',
+      'algeria' /* Add more countries as needed */
+    ]
+  };
   const getContinentForCountry = (country) => {
     country = country.toLowerCase(); // Convert country name to lowercase
     for (const [continent, countries] of Object.entries(continents)) {
@@ -113,6 +173,7 @@ const CreatePackage = () => {
   };
 
   const handleContinent = (country) => {
+    country = country.toLowerCase();
     const continent = getContinentForCountry(country);
     setSelectedContinent(continent);
     console.log(continent);

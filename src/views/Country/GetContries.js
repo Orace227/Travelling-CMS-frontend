@@ -310,7 +310,7 @@ export default function GetCountries() {
       if (isDelete) {
         const deletedCustomer = await axios.post('/DeleteCountry', { countryId: Country.countryId });
         if (deletedCustomer) {
-          toast.success('Package deleted successfully!!');
+          toast.success('Country deleted successfully!!');
         }
       }
       window.location.reload();
