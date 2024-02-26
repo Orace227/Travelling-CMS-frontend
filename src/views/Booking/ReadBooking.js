@@ -226,7 +226,8 @@ export default function ReadBookingData() {
                       <strong>Booking Document Link: </strong>
                       <a
                         // href={`http://localhost:7000/${detail.docImgPath}`}
-                        href={`https://travelling-cms-backend.onrender.com/${detail.docImgPath}`}
+                        // href={`https://travelling-cms-backend.onrender.com/${detail.docImgPath}`}
+                        href={`https://admin.blueescapeholidays.com/api/${detail.docImgPath}`}
                         style={{ textDecoration: 'none', color: 'black' }}
                         target="_blank"
                         rel="noopener noreferrer"

@@ -155,8 +155,9 @@ export default function ReadCustomerData() {
               <Typography variant="body1" style={{ fontSize: '17px' }}>
                 <strong>Booking Document Link: </strong>
                 <a
-                  href={`http://localhost:7000/${doc.docImgPath}`}
+                  // href={`http://localhost:7000/${doc.docImgPath}`}
                   // href={`https://travelling-cms-backend.onrender.com/${doc.docImgPath}`}
+                  href={`https://admin.blueescapeholidays.com/api/${detail.docImgPath}`}
                   style={{ textDecoration: 'none', color: 'black' }}
                   target="_blank"
                   rel="noopener noreferrer"
